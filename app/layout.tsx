@@ -28,6 +28,12 @@ export default function RootLayout({
       <Head>
         <title>YoinkUI</title>
         <meta name="description" content="Copy any UI in just one click" />
+        <meta name="twitter:card" content="summary_large_image"/>
+        <meta name="twitter:site" content="@kiannn.k"/>
+        <meta name="twitter:creator" content="@kiannn.k" />
+        <meta name="twitter:title" content="YoinkUI" />
+        <meta name="twitter:description" content="Copy any UI in just one click" />
+        <meta name="twitter:image" content="/twitterCard.png"></meta>
       </Head>
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
         {children}

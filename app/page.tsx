@@ -38,7 +38,7 @@ export default function Home() {
     <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20">
       <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
         <div className="flex space-x-5 items-center mx-auto">
-          <Image src={"/yoinkUI.svg"} alt="YoinkUI Logo" width={60} height={60} className="md:w-[60px] md:h-[60px] w-10 h-10" />
+          <Image src={"/YoinkUI.png"} alt="YoinkUI Logo" width={60} height={60} className="md:w-[60px] md:h-[60px] w-10 h-10" />
           <h1 className="md:text-6xl text-4xl font-bold text-center w-full">YoinkUI</h1>
         </div>
         <p className="text-zinc-700 text-center w-full">Copy any landing page with just one click. <br />

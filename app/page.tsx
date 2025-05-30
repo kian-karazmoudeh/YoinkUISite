@@ -1,6 +1,7 @@
 "use client";
 
 import { createClient } from "@/utils/supabase/client";
+import Head from "next/head";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
@@ -36,6 +37,16 @@ export default function Home() {
 
   return (
     <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20">
+      <Head>
+        <title>YoinkUI</title>
+        <meta name="description" content="Copy any UI in just one click" />
+        <meta name="twitter:card" content="summary_large_image"/>
+        <meta name="twitter:site" content="@kiannn.k"/>
+        <meta name="twitter:creator" content="@kiannn.k" />
+        <meta name="twitter:title" content="YoinkUI" />
+        <meta name="twitter:description" content="Copy any UI in just one click" />
+        <meta name="twitter:image" content="/twitterCard.png"></meta>
+      </Head>
       <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
         <div className="flex space-x-5 items-center mx-auto">
           <Image src={"/YoinkUI.png"} alt="YoinkUI Logo" width={60} height={60} className="md:w-[60px] md:h-[60px] w-10 h-10" />

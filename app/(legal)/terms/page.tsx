@@ -1,3 +1,8 @@
+export const metadata = {
+  title: "Terms of Service | YoinkUI",
+  // description: "YoinkUI - Copy any component with 1 click",
+};
+
 const TermsOfServicePage = () => {
   return (
     <>

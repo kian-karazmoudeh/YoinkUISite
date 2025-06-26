@@ -56,33 +56,21 @@ const Navbar = () => {
               className="text-zinc-900 leading-[24px] text-sm block font-semibold cursor-pointer"
               href="/pricing"
             >
-              Pricing
-            </Link>
-            <Link
-              className="text-zinc-900 leading-[24px] text-sm block font-semibold cursor-pointer"
-              href="/help-center"
-            >
-              Help
-            </Link>
-            <Link
-              className="text-zinc-900 leading-[24px] text-sm block font-semibold cursor-pointer"
-              href="/careers"
-            >
-              Careers
+              Contact us
             </Link>
           </div>
           <div className="gap-x-5 grow-[1] md:flex hidden justify-end items-center">
-            <Link
+            {/* <Link
               className="text-zinc-900 leading-[24px] text-sm block font-semibold cursor-pointer"
               href="https://app.cluely.com/login"
             >
               Log in
-            </Link>
+            </Link> */}
             <Link
-              className="text-white leading-[24px] gap-x-1 text-sm bg-black flex font-semibold cursor-pointer px-2 py-1 rounded-[2.68435e+07px]"
+              className="text-white leading-[24px] gap-x-1 text-sm bg-black flex font-semibold cursor-pointer px-4 py-1 rounded-[2.68435e+07px]"
               href="https://app.cluely.com/signup"
             >
-              Sign up
+              Add to Chrome / Edge
               <svg
                 width="20"
                 height="21"

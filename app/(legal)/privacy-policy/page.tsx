@@ -1,5 +1,10 @@
 import Link from "next/link";
 
+export const metadata = {
+  title: "Privacy Policy | YoinkUI",
+  // description: "YoinkUI - Copy any component with 1 click",
+};
+
 export default function privacyPolicyPage() {
   return (
     <>

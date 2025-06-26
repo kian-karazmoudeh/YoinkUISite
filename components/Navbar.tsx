@@ -40,36 +40,36 @@ const Navbar = () => {
             </button>
           </div>
           <div className="gap-x-12 md:flex hidden">
-            <a
+            <Link
               className="text-zinc-900 leading-[24px] text-sm block font-semibold cursor-pointer"
               href="/#features"
             >
               How it works
-            </a>
-            <a
+            </Link>
+            <Link
               className="text-zinc-900 leading-[24px] text-sm block font-semibold cursor-pointer"
               href="/#usage"
             >
               Use cases
-            </a>
-            <a
+            </Link>
+            <Link
               className="text-zinc-900 leading-[24px] text-sm block font-semibold cursor-pointer"
               href="/pricing"
             >
               Pricing
-            </a>
-            <a
+            </Link>
+            <Link
               className="text-zinc-900 leading-[24px] text-sm block font-semibold cursor-pointer"
               href="/help-center"
             >
               Help
-            </a>
-            <a
+            </Link>
+            <Link
               className="text-zinc-900 leading-[24px] text-sm block font-semibold cursor-pointer"
               href="/careers"
             >
               Careers
-            </a>
+            </Link>
           </div>
           <div className="gap-x-5 grow-[1] md:flex hidden justify-end items-center">
             <Link

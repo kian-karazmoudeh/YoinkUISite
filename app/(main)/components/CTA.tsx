@@ -7,7 +7,7 @@ const CTA = () => {
       <img
         alt="CTA-background"
         className="text-transparent z-[0] absolute object-cover size-full inset-0"
-        src="CTA-bg.png"
+        src="/landing/CTA-bg.png"
       />
       <div className="ml-8 z-[1] relative  lg:text-center">
         <span className="text-zinc-500 leading-[1.55556] tracking-[-0.45px] text-lg uppercase  lg:text-center">

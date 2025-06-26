@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 
 const Footer = () => {
@@ -24,7 +25,13 @@ const Footer = () => {
             </li>
           </ul>
           <p className="mt-4 leading-[1.42857] gap-x-1 text-sm flex items-center">
-            <img src="/yoinkUI.svg" className="size-5 mt-1 cursor-pointer" />
+            <Image
+              width={20}
+              height={20}
+              src="/logo/yoinkUI.svg"
+              alt="YoinkUI Logo"
+              className="size-5 mt-1 cursor-pointer"
+            />
             YoinkUI 2025. All Rights Reserved
           </p>
         </div>

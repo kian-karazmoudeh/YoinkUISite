@@ -23,7 +23,7 @@ const HowItWorks = () => {
             <div className="mt-[-56px] col-span-3 p-8 md:text-center lg:mt-0 lg:order-[2] lg:p-0">
               <img
                 alt="Doesn’t join meetings-screenshot"
-                src="/step 1.png"
+                src="/landing/step 1.png"
                 className="w-full max-w-[none] shadow-[rgba(0,_0,_0,_0)_0px_0px_0px_0px,_rgba(0,_0,_0,_0)_0px_0px_0px_0px,_rgba(0,_0,_0,_0)_0px_0px_0px_0px,_oklab(0.999994_0.0000455678_0.0000200868_/_0.05)_0px_0px_0px_1px,_rgba(0,_0,_0,_0)_0px_0px_0px_0px] rounded-[18px] md:text-center"
               />
             </div>
@@ -42,7 +42,7 @@ const HowItWorks = () => {
             <div className="mt-[-56px] col-span-3 p-8 md:text-center lg:mt-0 lg:order-[1] lg:p-0">
               <img
                 alt="Invisible to screen-share-screenshot"
-                src="Step 2.png"
+                src="/landing/Step 2.png"
                 className="w-full max-w-[none] bg-[#1d2025] shadow-[rgba(0,_0,_0,_0)_0px_0px_0px_0px,_rgba(0,_0,_0,_0)_0px_0px_0px_0px,_rgba(0,_0,_0,_0)_0px_0px_0px_0px,_oklab(0.999994_0.0000455678_0.0000200868_/_0.05)_0px_0px_0px_1px,_rgba(0,_0,_0,_0)_0px_0px_0px_0px] rounded-[18px] md:text-center"
               />
             </div>
@@ -62,7 +62,7 @@ const HowItWorks = () => {
             <div className="mt-[-56px] col-span-3 p-8 md:text-center lg:mt-0 lg:order-[2] lg:p-0">
               <img
                 alt="Follow your eyes-screenshot"
-                src="Step 3.png"
+                src="/landing/Step 3.png"
                 className="w-full max-w-[none] bg-[#1d2025] shadow-[rgba(0,_0,_0,_0)_0px_0px_0px_0px,_rgba(0,_0,_0,_0)_0px_0px_0px_0px,_rgba(0,_0,_0,_0)_0px_0px_0px_0px,_oklab(0.999994_0.0000455678_0.0000200868_/_0.05)_0px_0px_0px_1px,_rgba(0,_0,_0,_0)_0px_0px_0px_0px] rounded-[18px] md:text-center"
               />
             </div>

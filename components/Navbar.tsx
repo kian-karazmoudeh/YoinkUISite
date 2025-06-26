@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 
 const Navbar = () => {
@@ -10,7 +11,13 @@ const Navbar = () => {
               className="gap-x-[2px] flex items-center cursor-pointer"
               href="/"
             >
-              <img src="/yoinkUI.svg" className="size-7 mt-1 cursor-pointer" />
+              <Image
+                width={28}
+                height={28}
+                src="/logo/yoinkUI.svg"
+                alt="YoinkUI Logo"
+                className="size-7 mt-1 cursor-pointer"
+              />
 
               <span className="mt-[6px] leading-[1.55556] text-lg block font-medium cursor-pointer">
                 YoinkUI
@@ -60,12 +67,6 @@ const Navbar = () => {
             </Link>
           </div>
           <div className="gap-x-5 grow-[1] md:flex hidden justify-end items-center">
-            {/* <Link
-              className="text-zinc-900 leading-[24px] text-sm block font-semibold cursor-pointer"
-              href="https://app.cluely.com/login"
-            >
-              Log in
-            </Link> */}
             <Link
               className="text-white leading-[24px] gap-x-1 text-sm bg-black flex font-semibold cursor-pointer px-4 py-1 rounded-[2.68435e+07px]"
               href="https://app.cluely.com/signup"

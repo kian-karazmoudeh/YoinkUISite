@@ -1,4 +1,3 @@
-import Link from "next/link";
 import Squares from "./Squares";
 import AddToChrome from "@/components/AddToChromeBtn";
 import AddToEdgeBtn from "@/components/AddToEdgeBtn";

@@ -30,30 +30,6 @@ const Footer = () => {
         </div>
         <div>
           <ul className="mb-4 flex flex-wrap gap-4">
-            {/* <li className="text-left">
-              <Link
-                href="/careers"
-                className="leading-[1.42857] text-sm cursor-pointer"
-              >
-                Careers
-              </Link>
-            </li>
-            <li className="text-left">
-              <Link
-                href="/manifesto"
-                className="leading-[1.42857] text-sm cursor-pointer"
-              >
-                Manifesto
-              </Link>
-            </li> */}
-            {/* <li className="text-left">
-              <Link
-                href="/help-center"
-                className="leading-[1.42857] text-sm cursor-pointer"
-              >
-                Help Center
-              </Link>
-            </li> */}
             <li className="text-left">
               <Link
                 href="https://x.com/kiannn.k"
@@ -70,14 +46,6 @@ const Footer = () => {
                 Instagram
               </Link>
             </li>
-            {/* <li className="text-left">
-              <Link
-                href="https://github.com/cluely"
-                className="leading-[1.42857] text-sm cursor-pointer"
-              >
-                GitHub
-              </Link>
-            </li> */}
           </ul>
           {/* <div className="mt-4 text-right">
             <button className="leading-[1.42857] text-sm bg-transparent inline-flex text-center items-center">

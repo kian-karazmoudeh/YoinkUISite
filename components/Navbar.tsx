@@ -61,7 +61,7 @@ const Navbar = () => {
             </Link>
             <Link
               className="text-zinc-900 leading-[24px] text-sm block font-semibold cursor-pointer"
-              href="/pricing"
+              href="/contact-us"
             >
               Contact us
             </Link>

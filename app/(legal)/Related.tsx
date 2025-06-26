@@ -9,6 +9,7 @@ export default function Related() {
   const links = [
     { href: "/terms", label: "Terms of Service" },
     { href: "/privacy-policy", label: "Privacy Policy" },
+    { href: "/contact-us", label: "Contact us" },
   ];
 
   return (

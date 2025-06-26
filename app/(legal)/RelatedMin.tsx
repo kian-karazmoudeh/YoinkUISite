@@ -5,6 +5,7 @@ import { usePathname } from "next/navigation";
 const links = [
   { href: "/terms", label: "Terms of Service" },
   { href: "/privacy-policy", label: "Privacy Policy" },
+  { href: "/contact-us", label: "Contact us" },
 ];
 
 const RelatedMin = () => {

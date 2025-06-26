@@ -39,7 +39,7 @@ const Footer = () => {
           <ul className="mb-4 flex flex-wrap gap-4">
             <li className="text-left">
               <Link
-                href="https://x.com/kiannn.k"
+                href="https://x.com/kiannnk"
                 className="leading-[1.42857] text-sm cursor-pointer"
               >
                 Twitter

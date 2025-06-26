@@ -17,7 +17,7 @@ const HowItWorks = () => {
                 <h2 className="mb-4 text-white leading-[1.33333] tracking-[-0.6px] text-2xl font-medium">
                   Select the Component Tool
                 </h2>
-                <p className="text-zinc-300">That's one click</p>
+                <p className="text-zinc-300">That&apos;s one click</p>
               </div>
             </div>
             <div className="mt-[-56px] col-span-3 p-8 md:text-center lg:mt-0 lg:order-[2] lg:p-0">
@@ -54,7 +54,7 @@ const HowItWorks = () => {
                   Done!
                 </h2>
                 <p className="text-zinc-300">
-                  Choose where you want to save your component - it's that
+                  Choose where you want to save your component - it&apos;s that
                   simple!
                 </p>
               </div>

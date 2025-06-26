@@ -1,10 +1,12 @@
+import Link from "next/link";
+
 const Navbar = () => {
   return (
     <div className="w-full max-w-304 top-0 z-[12] flex absolute justify-between items-center [translate:0px] mx-auto inset-x-0  lg:mt-5">
       <header className="w-full relative">
         <nav className="text-stone-950 leading-[1.5] font-[Aeonik,_sans-serif] flex justify-between items-center p-2">
           <div className="mt-[-2px] ml-2 grow-[1] flex">
-            <a
+            <Link
               className="gap-x-[2px] flex items-center cursor-pointer"
               href="/"
             >
@@ -13,7 +15,7 @@ const Navbar = () => {
               <span className="mt-[6px] leading-[1.55556] text-lg block font-medium cursor-pointer">
                 YoinkUI
               </span>
-            </a>
+            </Link>
           </div>
           <div className="md:hidden">
             <button
@@ -70,13 +72,13 @@ const Navbar = () => {
             </a>
           </div>
           <div className="gap-x-5 grow-[1] md:flex hidden justify-end items-center">
-            <a
+            <Link
               className="text-zinc-900 leading-[24px] text-sm block font-semibold cursor-pointer"
               href="https://app.cluely.com/login"
             >
               Log in
-            </a>
-            <a
+            </Link>
+            <Link
               className="text-white leading-[24px] gap-x-1 text-sm bg-black flex font-semibold cursor-pointer px-2 py-1 rounded-[2.68435e+07px]"
               href="https://app.cluely.com/signup"
             >
@@ -117,7 +119,7 @@ const Navbar = () => {
                   ></path>
                 </g>
               </svg>
-            </a>
+            </Link>
           </div>
         </nav>
       </header>

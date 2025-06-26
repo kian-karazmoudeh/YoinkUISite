@@ -33,7 +33,7 @@ const Features = () => {
               Tailwind styles
             </h2>
             <p className="mt-3 text-zinc-600 leading-[20px] w-full  lg:w-110">
-              Every components is styled with Tailwind so you don't have to
+              Every components is styled with Tailwind so you don&apos;t have to
               worry about compatibility.
             </p>
           </div>

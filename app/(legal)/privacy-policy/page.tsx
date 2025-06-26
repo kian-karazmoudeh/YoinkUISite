@@ -14,7 +14,7 @@ export default function privacyPolicyPage() {
           YoinkUI (&quot;<strong>we</strong>&quot;, &quot;<strong>our</strong>
           &quot;, or &quot;<strong>us</strong>&quot;) respects your privacy and
           is committed to protecting your information. This Privacy Policy
-          describes what data we collect, how it's used, and your rights.
+          describes what data we collect, how it&apos;s used, and your rights.
         </p>
 
         <h2 className="mt-8 mb-4 text-black leading-[1.33333] text-2xl font-bold">

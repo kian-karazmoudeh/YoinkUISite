@@ -1,3 +1,5 @@
+import Link from "next/link";
+
 const Footer = () => {
   return (
     <footer className="text-white bg-black flex relative flex-col justify-between size-full  lg:h-100">
@@ -5,20 +7,20 @@ const Footer = () => {
         <div>
           <ul className="mb-2 flex flex-wrap gap-4">
             <li className="text-left">
-              <a
+              <Link
                 href="/terms"
                 className="leading-[1.42857] text-sm cursor-pointer"
               >
                 Terms &amp; policies
-              </a>
+              </Link>
             </li>
             <li className="text-left">
-              <a
+              <Link
                 href="/privacy-policy"
                 className="leading-[1.42857] text-sm cursor-pointer"
               >
                 Privacy policy
-              </a>
+              </Link>
             </li>
           </ul>
           <p className="mt-4 leading-[1.42857] gap-x-1 text-sm flex items-center">
@@ -39,52 +41,52 @@ const Footer = () => {
         <div>
           <ul className="mb-4 flex flex-wrap gap-4">
             <li className="text-left">
-              <a
+              <Link
                 href="/careers"
                 className="leading-[1.42857] text-sm cursor-pointer"
               >
                 Careers
-              </a>
+              </Link>
             </li>
             <li className="text-left">
-              <a
+              <Link
                 href="/manifesto"
                 className="leading-[1.42857] text-sm cursor-pointer"
               >
                 Manifesto
-              </a>
+              </Link>
             </li>
             <li className="text-left">
-              <a
+              <Link
                 href="/help-center"
                 className="leading-[1.42857] text-sm cursor-pointer"
               >
                 Help Center
-              </a>
+              </Link>
             </li>
             <li className="text-left">
-              <a
+              <Link
                 href="https://x.com/cluely"
                 className="leading-[1.42857] text-sm cursor-pointer"
               >
                 Twitter
-              </a>
+              </Link>
             </li>
             <li className="text-left">
-              <a
+              <Link
                 href="https://www.instagram.com/trycluely"
                 className="leading-[1.42857] text-sm cursor-pointer"
               >
                 Instagram
-              </a>
+              </Link>
             </li>
             <li className="text-left">
-              <a
+              <Link
                 href="https://github.com/cluely"
                 className="leading-[1.42857] text-sm cursor-pointer"
               >
                 GitHub
-              </a>
+              </Link>
             </li>
           </ul>
           <div className="mt-4 text-right">

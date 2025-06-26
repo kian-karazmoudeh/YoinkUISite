@@ -6,7 +6,7 @@ const TermsOfServicePage = () => {
           Terms of Service
         </h1>
       </div>
-      <div className="mt-18 max-w-3xl text-pretty px-6  lg:px-8">
+      {/* <div className="mt-18 max-w-3xl text-pretty px-6  lg:px-8">
         <p className="mb-6">Last Updated: June 25, 2025</p>
         <p className="mb-6">
           Cluely Inc. ("<strong>Company</strong>," "<strong>we</strong>
@@ -778,7 +778,7 @@ const TermsOfServicePage = () => {
             help@cluely.com
           </a>
         </p>
-      </div>
+      </div> */}
     </>
   );
 };

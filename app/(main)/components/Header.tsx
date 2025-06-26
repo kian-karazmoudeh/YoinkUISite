@@ -1,11 +1,9 @@
+import Link from "next/link";
 import Squares from "./Squares";
 
 const Header = () => {
   return (
     <div className="relative lg:border-b-[0.8px] lg:border-b-zinc-200">
-      {/* <div className="top-[50%] absolute overflow-hidden [translate:0px_-50%] [filter:blur(64px)] inset-x-0">
-        <div className="w-sm aspect-[1155_/_678] left-[50%] bg-[linear-gradient(to_right_top,_oklch(0.623_0.214_259.815)_0px,_oklch(0.546_0.245_262.881)_100%)] opacity-[0.3] relative [translate:-50%] [clip-path:polygon(74.1%_44.1%,_100%_61.6%,_97.5%_26.9%,_85.5%_0.1%,_80.7%_2%,_72.5%_32.5%,_60.2%_62.4%,_52.4%_68.1%,_47.5%_58.3%,_45.2%_34.5%,_27.5%_76.7%,_0.1%_64.9%,_17.9%_100%,_27.6%_76.8%,_76.1%_97.7%,_74.1%_44.1%)] md:w-xl lg:w-6xl"></div>
-      </div> */}
       <div className="absolute inset-0">
         <Squares
           speed={0.025}
@@ -28,7 +26,7 @@ const Header = () => {
           click.
         </p>
         <div className="mt-10 gap-y-[10px] grid justify-center items-center">
-          <a
+          <Link
             className="text-white pointer-events-auto hover:bg-[#3F6FFF] transition-all gap-x-2 bg-black shadow-[rgba(0,_0,_0,_0)_0px_0px_0px_0px,_rgba(0,_0,_0,_0)_0px_0px_0px_0px,_rgba(0,_0,_0,_0)_0px_0px_0px_0px,_rgba(0,_0,_0,_0)_0px_0px_0px_0px,_rgba(0,_0,_0,_0.05)_0px_1px_2px_0px] flex font-semibold items-center cursor-pointer px-[30px] py-3 rounded-[2.68435e+07px]"
             href="https://github.com/cluely/releases/releases/latest/download/cluely.dmg"
           >
@@ -46,8 +44,8 @@ const Header = () => {
               ></path>
             </svg>
             <span className="block cursor-pointer">Add to chrome</span>
-          </a>
-          <a
+          </Link>
+          <Link
             className="text-black group hover:text-[#3F6FFF] transition-all gap-x-2 pointer-events-auto shadow-[rgba(0,_0,_0,_0)_0px_0px_0px_0px,_rgba(0,_0,_0,_0)_0px_0px_0px_0px,_rgba(0,_0,_0,_0)_0px_0px_0px_0px,_rgba(0,_0,_0,_0)_0px_0px_0px_0px,_rgba(0,_0,_0,_0.05)_0px_1px_2px_0px] flex font-semibold items-center cursor-pointer px-[30px] py-3 rounded-[2.68435e+07px]"
             href="https://github.com/cluely/releases/releases/latest/download/cluely.dmg"
           >
@@ -66,7 +64,7 @@ const Header = () => {
               ></path>
             </svg>
             <span className="block cursor-pointer">Add to Edge</span>
-          </a>
+          </Link>
         </div>
       </div>
     </div>

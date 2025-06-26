@@ -1,3 +1,5 @@
+import Link from "next/link";
+
 const CTA = () => {
   return (
     <div className="mt-10 max-w-7xl border-[0.8px] border-zinc-200 relative mx-auto py-60  lg:mt-0">
@@ -14,7 +16,7 @@ const CTA = () => {
           Ship faster than ever.
         </h1>
         <div className="mt-10 ml-2 gap-y-[10px] grid text-center justify-start items-center  lg:ml-0 lg:justify-center">
-          <a
+          <Link
             className="text-white gap-x-2 bg-black shadow-[rgba(0,_0,_0,_0)_0px_0px_0px_0px,_rgba(0,_0,_0,_0)_0px_0px_0px_0px,_rgba(0,_0,_0,_0)_0px_0px_0px_0px,_rgba(0,_0,_0,_0)_0px_0px_0px_0px,_rgba(0,_0,_0,_0.05)_0px_1px_2px_0px] flex font-semibold items-center cursor-pointer px-[30px] py-3 rounded-[2.68435e+07px]"
             href="https://github.com/cluely/releases/releases/latest/download/cluely.dmg"
           >
@@ -31,13 +33,13 @@ const CTA = () => {
               ></path>
             </svg>
             <span className="block cursor-pointer">Download for Mac</span>
-          </a>
-          <a
+          </Link>
+          <Link
             className="text-[oklab(0.21_0.00164225_-0.00577088_/_0.6)] leading-[24px] text-sm block font-semibold underline cursor-pointer"
             href="https://github.com/cluely/releases/releases/latest/download/cluely-setup.exe"
           >
             Download for windows
-          </a>
+          </Link>
         </div>
       </div>
     </div>

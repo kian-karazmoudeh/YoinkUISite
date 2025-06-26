@@ -1,3 +1,5 @@
+import Link from "next/link";
+
 export default function privacyPolicyPage() {
   return (
     <>
@@ -9,10 +11,10 @@ export default function privacyPolicyPage() {
       <div className="mt-18 max-w-3xl text-pretty px-6  lg:px-8">
         <p className="mb-6">Last Updated: June 25, 2025</p>
         <p className="mb-6">
-          YoinkUI ("<strong>we</strong>", "<strong>our</strong>", or "
-          <strong>us</strong>") respects your privacy and is committed to
-          protecting your information. This Privacy Policy describes what data
-          we collect, how it's used, and your rights.
+          YoinkUI (&quot;<strong>we</strong>&quot;, &quot;<strong>our</strong>
+          &quot;, or &quot;<strong>us</strong>&quot;) respects your privacy and
+          is committed to protecting your information. This Privacy Policy
+          describes what data we collect, how it's used, and your rights.
         </p>
 
         <h2 className="mt-8 mb-4 text-black leading-[1.33333] text-2xl font-bold">
@@ -100,12 +102,12 @@ export default function privacyPolicyPage() {
         </h2>
         <p className="mb-6">
           If you have any questions or concerns, please contact us at:
-          <a
+          <Link
             href="mailto:kianthecreator@gmail.com"
             className="text-sky-500 cursor-pointer"
           >
             kianthecreator@gmail.com
-          </a>
+          </Link>
         </p>
       </div>
     </>

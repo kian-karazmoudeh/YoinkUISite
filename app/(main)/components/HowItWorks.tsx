@@ -1,3 +1,5 @@
+import Image from "next/image";
+
 const HowItWorks = () => {
   return (
     <div className="bg-zinc-900">
@@ -21,7 +23,11 @@ const HowItWorks = () => {
               </div>
             </div>
             <div className="mt-[-56px] col-span-3 p-8 md:text-center lg:mt-0 lg:order-[2] lg:p-0">
-              <img
+              <Image
+                width={0}
+                height={0}
+                sizes="100vw"
+                style={{ width: "100%", height: "auto" }}
                 alt="Doesn’t join meetings-screenshot"
                 src="/landing/step 1.png"
                 className="w-full max-w-[none] shadow-[rgba(0,_0,_0,_0)_0px_0px_0px_0px,_rgba(0,_0,_0,_0)_0px_0px_0px_0px,_rgba(0,_0,_0,_0)_0px_0px_0px_0px,_oklab(0.999994_0.0000455678_0.0000200868_/_0.05)_0px_0px_0px_1px,_rgba(0,_0,_0,_0)_0px_0px_0px_0px] rounded-[18px] md:text-center"
@@ -40,10 +46,14 @@ const HowItWorks = () => {
               </div>
             </div>
             <div className="mt-[-56px] col-span-3 p-8 md:text-center lg:mt-0 lg:order-[1] lg:p-0">
-              <img
+              <Image
+                width={0}
+                height={0}
+                sizes="100vw"
+                style={{ width: "100%", height: "auto" }}
                 alt="Invisible to screen-share-screenshot"
                 src="/landing/Step 2.png"
-                className="w-full max-w-[none] bg-[#1d2025] shadow-[rgba(0,_0,_0,_0)_0px_0px_0px_0px,_rgba(0,_0,_0,_0)_0px_0px_0px_0px,_rgba(0,_0,_0,_0)_0px_0px_0px_0px,_oklab(0.999994_0.0000455678_0.0000200868_/_0.05)_0px_0px_0px_1px,_rgba(0,_0,_0,_0)_0px_0px_0px_0px] rounded-[18px] md:text-center"
+                className="w-full max-w-[none] bg-[#1d2025] rounded-[18px] md:text-center"
               />
             </div>
           </div>
@@ -60,10 +70,14 @@ const HowItWorks = () => {
               </div>
             </div>
             <div className="mt-[-56px] col-span-3 p-8 md:text-center lg:mt-0 lg:order-[2] lg:p-0">
-              <img
+              <Image
+                width={0}
+                height={0}
+                sizes="100vw"
+                style={{ width: "100%", height: "auto" }}
                 alt="Follow your eyes-screenshot"
                 src="/landing/Step 3.png"
-                className="w-full max-w-[none] bg-[#1d2025] shadow-[rgba(0,_0,_0,_0)_0px_0px_0px_0px,_rgba(0,_0,_0,_0)_0px_0px_0px_0px,_rgba(0,_0,_0,_0)_0px_0px_0px_0px,_oklab(0.999994_0.0000455678_0.0000200868_/_0.05)_0px_0px_0px_1px,_rgba(0,_0,_0,_0)_0px_0px_0px_0px] rounded-[18px] md:text-center"
+                className="w-full max-w-[none] rounded-[18px] md:text-center"
               />
             </div>
           </div>

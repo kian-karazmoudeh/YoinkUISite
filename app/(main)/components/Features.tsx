@@ -1,3 +1,5 @@
+import Image from "next/image";
+
 const Features = () => {
   return (
     <div
@@ -14,7 +16,14 @@ const Features = () => {
       </div>
       <div className="mt-20 mb-16 grid  lg:mb-0 lg:grid-cols-[repeat(2,_minmax(0px,_1fr))] lg:border-y-[0.8px] lg:border-y-zinc-200">
         <div className="relative  lg:border-r-[0.8px] lg:border-r-zinc-200">
-          <img alt="YoinkUI Layout" src="/landing/yoink-layout.png" />
+          <Image
+            width={0}
+            height={0}
+            sizes="100vw"
+            alt="YoinkUI Layout"
+            src="/landing/Ready to use.png"
+            style={{ width: "auto", height: "auto" }}
+          />
           <div className="mt-[-144px] w-full bottom-16 left-10 px-8  lg:mt-0 lg:pl-0 lg:w-auto lg:absolute">
             <h2 className="leading-[1.33333] text-2xl font-medium">
               Ready-to-use components
@@ -27,7 +36,14 @@ const Features = () => {
           <div className="w-1 h-[34px] bottom-[114px] left-[-1px] bg-[#0055fe] hidden absolute  lg:block"></div>
         </div>
         <div className="relative">
-          <img alt="Tailwind" src="/landing/Tailwind.png" />
+          <Image
+            width={0}
+            height={0}
+            sizes="100vw"
+            style={{ width: "auto", height: "auto" }}
+            alt="Tailwind"
+            src="/landing/Tailwind.png"
+          />
           <div className="mt-[-144px] w-full bottom-16 left-10 px-8  lg:mt-0 lg:pl-0 lg:w-auto lg:absolute">
             <h2 className="leading-[1.33333] text-2xl font-medium">
               Tailwind styles
@@ -41,7 +57,14 @@ const Features = () => {
         </div>
       </div>
       <div className="relative  lg:border-b-[0.8px] lg:border-b-zinc-200">
-        <img src="/landing/Large-layout.png" />
+        <Image
+          width={0}
+          height={0}
+          sizes="100vw"
+          style={{ width: "auto", height: "auto" }}
+          src="/landing/Clean Code.png"
+          alt="Clean Code"
+        />
         <div className="mt-8 pl-8 w-full bottom-16 left-10  lg:mt-0 lg:pl-0 lg:w-auto lg:absolute">
           <h2 className="leading-[1.33333] text-2xl font-medium">Clean code</h2>
           <p className="mt-3 text-zinc-600 leading-[20px] w-full  lg:w-100">

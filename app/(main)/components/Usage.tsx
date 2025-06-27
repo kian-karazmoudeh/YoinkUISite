@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { useInView } from "react-intersection-observer";
 
 const Usage = () => {
@@ -15,20 +16,24 @@ const Usage = () => {
         You can even Yoink the whole page
       </h1>
       <div className="flex flex-col  lg:flex-row">
-        <div className="w-full justify-center hidden lg:flex items-center lg:w-[60%] lg:h-216 lg:top-0 lg:sticky">
+        <div className="w-full justify-center hidden lg:flex items-center lg:w-[60%] lg:h-screen lg:top-0 lg:sticky">
           <div className="flex relative justify-center items-center size-full">
             <div className="z-[10] flex absolute justify-center items-center size-full">
-              <img
+              <Image
+                width={0}
+                height={0}
+                sizes="100vw"
+                style={{ width: "auto", height: "auto" }}
                 src="/landing/Responsive step 1.png"
                 alt="Section 1 image"
-                className="max-h-full rounded-tr-[18px] rounded-br-[18px] border-r-[0.8px] object-contain border-y-[0.8px] border-zinc-200 p-3 bg-[#ECECEC]"
+                className="max-h-full rounded-r-[18px] border-r-[0.8px] object-contain border-y-[0.8px] border-zinc-200 p-3 bg-[#ECECEC]"
               />
             </div>
             <div className="z-[10] flex absolute justify-center items-center size-full">
               <img
                 src="/landing/Responsive step 2.png"
                 alt="Section 1 image"
-                className={`max-h-full transition-all rounded-tr-[18px] rounded-br-[18px] border-r-[0.8px] object-contain border-y-[0.8px] border-zinc-200 p-3 bg-[#ECECEC]`}
+                className={`max-h-full transition-all rounded-r-[18px] border-r-[0.8px] object-contain border-y-[0.8px] border-zinc-200 p-3 bg-[#ECECEC]`}
                 style={{ opacity: step2.inView ? 1 : 0 }}
               />
             </div>
@@ -36,7 +41,7 @@ const Usage = () => {
               <img
                 src="/landing/Responsive step 3.png"
                 alt="Section 1 image"
-                className={`max-h-full transition-all rounded-tr-[18px] rounded-br-[18px] border-r-[0.8px] object-contain border-y-[0.8px] border-zinc-200 p-3 bg-[#ECECEC]`}
+                className={`max-h-full transition-all rounded-r-[18px] border-r-[0.8px] object-contain border-y-[0.8px] border-zinc-200 p-3 bg-[#ECECEC]`}
                 style={{ opacity: step3.inView ? 1 : 0 }}
               />
             </div>
@@ -55,7 +60,11 @@ const Usage = () => {
                 </p>
               </div>
               <div className="mt-6 h-xs flex justify-center items-center  lg:hidden">
-                <img
+                <Image
+                  width={0}
+                  height={0}
+                  sizes="100vw"
+                  style={{ width: "auto", height: "auto" }}
                   alt="Section 1 image (mobile view)"
                   className="max-h-full object-contain p-3 bg-[#ECECEC]"
                   src="/landing/Responsive step 1.png"
@@ -81,7 +90,11 @@ const Usage = () => {
                 </p>
               </div>
               <div className="mt-6 h-xs flex justify-center items-center  lg:hidden">
-                <img
+                <Image
+                  width={0}
+                  height={0}
+                  sizes="100vw"
+                  style={{ width: "auto", height: "auto" }}
                   alt="Section 2 image (mobile view)"
                   className="max-h-full object-contain"
                   src="/landing/Responsive step 2.png"
@@ -102,7 +115,11 @@ const Usage = () => {
                 </p>
               </div>
               <div className="mt-6 h-xs flex justify-center items-center  lg:hidden">
-                <img
+                <Image
+                  width={0}
+                  height={0}
+                  sizes="100vw"
+                  style={{ width: "auto", height: "auto" }}
                   alt="Section 3 image (mobile view)"
                   className="max-h-full object-contain"
                   src="/landing/Responsive step 3.png"

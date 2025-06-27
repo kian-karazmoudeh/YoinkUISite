@@ -1,10 +1,15 @@
 import AddToChrome from "@/components/AddToChromeBtn";
 import AddToEdgeBtn from "@/components/AddToEdgeBtn";
+import Image from "next/image";
 
 const CTA = () => {
   return (
     <div className="mt-10 max-w-7xl border-[0.8px] border-zinc-200 relative mx-auto py-60  lg:mt-0">
-      <img
+      <Image
+        width={0}
+        height={0}
+        sizes="100vw"
+        style={{ width: "100%", height: "100%" }}
         alt="CTA-background"
         className="text-transparent z-[0] absolute object-cover size-full inset-0"
         src="/landing/CTA-bg.png"

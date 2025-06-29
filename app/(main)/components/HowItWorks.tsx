@@ -2,7 +2,7 @@ import Image from "next/image";
 
 const HowItWorks = () => {
   return (
-    <div className="bg-zinc-900">
+    <div className="bg-zinc-900" id="howitworks">
       <div className="pt-18 max-w-6xl mx-auto md:text-center lg:pt-26">
         <div className="max-w-xs mx-auto md:text-center lg:max-w-6xl">
           <h2 className="mt-2 text-white leading-[1.2] tracking-[-0.75px] text-3xl font-medium md:leading-[1] md:tracking-[-1.2px] md:text-5xl md:text-center md:text-balance">
@@ -30,7 +30,7 @@ const HowItWorks = () => {
                 style={{ width: "100%", height: "auto" }}
                 alt="Doesn’t join meetings-screenshot"
                 src="/landing/step 1.png"
-                className="w-full max-w-[none] shadow-[rgba(0,_0,_0,_0)_0px_0px_0px_0px,_rgba(0,_0,_0,_0)_0px_0px_0px_0px,_rgba(0,_0,_0,_0)_0px_0px_0px_0px,_oklab(0.999994_0.0000455678_0.0000200868_/_0.05)_0px_0px_0px_1px,_rgba(0,_0,_0,_0)_0px_0px_0px_0px] rounded-[18px] md:text-center"
+                className="w-full max-w-[none] rounded-[18px] md:text-center"
               />
             </div>
           </div>

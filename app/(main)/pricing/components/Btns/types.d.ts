@@ -1,0 +1,3 @@
+type BtnProps = {
+  className?: string;
+};

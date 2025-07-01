@@ -1,13 +1,13 @@
 import { type NextRequest } from "next/server";
 import { updateSession } from "./utils/supabase/middleware";
 
-const privateRoutes = ["/api"];
+const privateRoutes = ["/api/yoink"];
 
 export async function middleware(request: NextRequest) {
   const requestPath = request.nextUrl.pathname;
 
-  if (privateRoutes.includes(requestPath)) {
-    return await updateSession(request, request.url);
+  if (privateRoutes.some((route) => requestPath.startsWith(route))) {
+    return await updateSession(request, requestPath);
   }
 }
 

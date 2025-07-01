@@ -5,34 +5,42 @@ import GithubIcon from "@/components/Icons/GithubIcon";
 import GoogleIcon from "@/components/Icons/GoogleIcon";
 import Image from "next/image";
 import Link from "next/link";
-import { redirect } from "next/navigation";
+import { redirect, useSearchParams } from "next/navigation";
+import { useState } from "react";
+import ValidatorHint from "./components/ValidatorHint";
+import { Loader2 } from "lucide-react";
 
 const Authenticate = () => {
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+  const searchParams = useSearchParams();
+  const next = atob(searchParams.get("next") || btoa("/pricing"));
+
   const handleGoogleAuth = async () => {
     // logic for google auth
-    const res = await authWithGoogle();
+    setLoading(true);
+    const res = await authWithGoogle(next);
     if (res.status == "error") {
-      //   setError(res.message);
-      //   setLoading(false);
+      setError(res.message);
+      setLoading(false);
     } else if (res.status == "confirm") {
       redirect(res.message);
-      //   alert("yay");
     } else {
-      //   redirect("/");
+      redirect("/");
     }
   };
 
   const handleGithubAuth = async () => {
     // logic for google auth
-    const res = await authWithGithub();
+    setLoading(true);
+    const res = await authWithGithub(next);
     if (res.status == "error") {
-      //   setError(res.message);
-      //   setLoading(false);
+      setError(res.message);
+      setLoading(false);
     } else if (res.status == "confirm") {
       redirect(res.message);
-      //   alert("yay");
     } else {
-      //   redirect("/");
+      redirect("/");
     }
   };
 
@@ -62,27 +70,38 @@ const Authenticate = () => {
             <div className="flex flex-col-reverse">
               <div className="grid-cols-1 grid gap-2">
                 <button
+                  disabled={loading}
                   onClick={() => handleGoogleAuth()}
                   type="button"
-                  role="button"
                   className="text-black tracking-[0.16px] w-full hover:bg-[#F4F5FB] transition-all bg-white flex relative text-center font-bold justify-center items-center cursor-pointer px-8 py-3 gap-2 border-gray-200 border-[0.8px] rounded-xl"
                 >
                   <span className="left-5 flex absolute cursor-pointer">
                     <GoogleIcon />
                   </span>
-                  Continue with Google
+                  {loading ? (
+                    <Loader2 className="animate-spin text-sm text-zinc-400" />
+                  ) : (
+                    <>Continue with Google</>
+                  )}
                 </button>
                 <button
+                  disabled={loading}
                   type="button"
-                  role="button"
                   onClick={() => handleGithubAuth()}
                   className="text-black tracking-[0.16px] w-full hover:bg-[#F4F5FB] transition-all bg-white flex relative text-center font-bold justify-center items-center cursor-pointer px-8 py-3 gap-2 border-gray-200 border-[0.8px] rounded-xl"
                 >
                   <span className="left-5 flex absolute cursor-pointer">
                     <GithubIcon />
                   </span>
-                  Continue with Github
+                  {loading ? (
+                    <Loader2 className="animate-spin text-sm text-zinc-400" />
+                  ) : (
+                    <>Continue with Github</>
+                  )}
                 </button>
+                <ValidatorHint visible={error.length > 0}>
+                  {error}
+                </ValidatorHint>
               </div>
             </div>
           </div>

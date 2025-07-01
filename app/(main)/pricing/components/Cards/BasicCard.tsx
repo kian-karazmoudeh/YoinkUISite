@@ -2,6 +2,7 @@ import { ReactNode } from "react";
 import AddExtensionBtn from "../Btns/AddExtensionBtn";
 import CurrentPlanBtn from "../Btns/CurrentPlanBtn";
 import { CardProps } from "./types";
+import LoadingBtn from "../Btns/LoadingBtn";
 
 const CheckIcon = () => {
   return (
@@ -23,48 +24,23 @@ const CheckIcon = () => {
 const features: { icon: ReactNode; label: ReactNode }[] = [
   {
     icon: <CheckIcon />,
-    label: (
-      <>
-        Custom integrations
-        <span className="mt-1 h-4 text-[10px] bg-zinc-800 flex justify-center items-center px-[6px] rounded-[2.68435e+07px]">
-          Coming soon
-        </span>
-      </>
-    ),
+    label: <>5 Yoinks per month</>,
   },
   {
     icon: <CheckIcon />,
-    label: <>User provisioning &amp; role-based access</>,
+    label: <>Full page static Yoinks</>,
   },
   {
     icon: <CheckIcon />,
-    label: <>Advanced Post-call analytics</>,
+    label: <>Static Component Yoinks</>,
   },
   {
     icon: <CheckIcon />,
-    label: (
-      <>
-        Single sign-on
-        <span className="mt-1 h-4 text-[10px] bg-zinc-800 flex justify-center items-center px-[6px] rounded-[2.68435e+07px]">
-          IDP/SSO
-        </span>
-      </>
-    ),
-  },
-  {
-    icon: <CheckIcon />,
-    label: (
-      <>
-        Everything in
-        <span className="mt-1 h-4 text-[10px] bg-zinc-800 flex justify-center items-center px-[6px] rounded-[2.68435e+07px]">
-          Basic plan
-        </span>
-      </>
-    ),
+    label: <>Available on any web page</>,
   },
 ];
 
-const BasicCard = ({ session }: CardProps) => {
+const BasicCard = ({ type, session, loading }: CardProps) => {
   return (
     <div className="shadow-[_oklch(0.92_0.004_286.32)_0px_0px_0px_1px] p-[26px] rounded-lg">
       <h3 id="tier-free" className="text-zinc-900 leading-[32px] text-[40px]">
@@ -74,12 +50,20 @@ const BasicCard = ({ session }: CardProps) => {
         <span className="text-zinc-600 leading-[1.11111] tracking-[-0.9px] text-4xl block">
           $0
         </span>
-        <span className="text-zinc-600 leading-[24px] text-3xl block">/mo</span>
+        <span className="text-zinc-600 leading-[24px] text-3xl block">
+          /{type == "Monthly" ? "mo" : "yr"}
+        </span>
       </p>
       <p className="mt-16 text-zinc-800 leading-[18px] text-sm">
-        Get a taste for how Cluely works with a few responses on us.
+        For curious devs who want to test the waters.
       </p>
-      {session ? <CurrentPlanBtn /> : <AddExtensionBtn />}
+      {loading ? (
+        <LoadingBtn />
+      ) : session ? (
+        <CurrentPlanBtn />
+      ) : (
+        <AddExtensionBtn />
+      )}
       <ul className="mt-8 text-zinc-600 leading-[24px] text-sm [translate:0px]">
         {features.map((feature, idx) => (
           <li className="mb-3 gap-x-3 flex text-left" key={idx}>

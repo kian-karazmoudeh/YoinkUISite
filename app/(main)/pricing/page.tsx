@@ -2,6 +2,11 @@ import Footer from "@/components/Footer";
 import Navbar from "@/components/Navbar";
 import PricingSection from "./components/PricingSection";
 
+export const metadata = {
+  title: "Pricing | YoinkUI",
+  description: "YoinkUI - pricing and subscriptions",
+};
+
 export default function Page() {
   return (
     <div className="text-stone-950 leading-[1.5] font-[Aeonik,_sans-serif] bg-white">
@@ -15,8 +20,9 @@ export default function Page() {
             </span>
           </h1>
           <p className="mt-6 text-zinc-600 leading-[1.55556] max-w-lg text-lg text-pretty mx-auto md:leading-[32px] md:text-xl lg:mx-[0px]">
-            Whether you're using Cluely for meetings, homework, sales calls, or
-            just curious, it's always free to start.
+            Start for free, scale your workflow with Premium. Whether you're
+            prototyping ideas or building full products, YoinkUI has a plan for
+            you.
           </p>
         </div>
         <PricingSection />

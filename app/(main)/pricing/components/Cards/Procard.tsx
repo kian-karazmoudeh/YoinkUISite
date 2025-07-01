@@ -1,6 +1,7 @@
 import { ReactNode } from "react";
 import SubscribeBtn from "../Btns/SubscribeBtn";
-import { ProCardProps } from "./types";
+import { CardProps } from "./types";
+import LoadingBtn from "../Btns/LoadingBtn";
 
 const CheckIcon = () => {
   return (
@@ -37,9 +38,17 @@ const PlusIcon = () => {
 const features: { icon: ReactNode; label: ReactNode }[] = [
   {
     icon: <CheckIcon />,
+    label: <>Unlimited Yoinks</>,
+  },
+  {
+    icon: <CheckIcon />,
+    label: <>Full page Responsive Yoinks</>,
+  },
+  {
+    icon: <CheckIcon />,
     label: (
       <>
-        Custom integrations
+        Modularized code
         <span className="mt-1 h-4 text-[10px] bg-zinc-800 flex justify-center items-center px-[6px] rounded-[2.68435e+07px]">
           Coming soon
         </span>
@@ -47,38 +56,17 @@ const features: { icon: ReactNode; label: ReactNode }[] = [
     ),
   },
   {
-    icon: <CheckIcon />,
-    label: <>User provisioning &amp; role-based access</>,
-  },
-  {
-    icon: <CheckIcon />,
-    label: <>Advanced Post-call analytics</>,
-  },
-  {
-    icon: <CheckIcon />,
-    label: (
-      <>
-        Single sign-on
-        <span className="mt-1 h-4 text-[10px] bg-zinc-800 flex justify-center items-center px-[6px] rounded-[2.68435e+07px]">
-          IDP/SSO
-        </span>
-      </>
-    ),
-  },
-  {
     icon: <PlusIcon />,
-    label: (
-      <>
-        Everything in
-        <span className="mt-1 h-4 text-[10px] bg-zinc-800 flex justify-center items-center px-[6px] rounded-[2.68435e+07px]">
-          Basic plan
-        </span>
-      </>
-    ),
+    label: <>Everything in Basic plan</>,
   },
 ];
 
-const ProCard = ({ type, session }: ProCardProps) => {
+const paymentLinks: Record<"Monthly" | "Annual", string> = {
+  Monthly: "/api/stripe/subscribe/price_1RfeKRF3W42U01iFbTRrmxLo",
+  Annual: "/api/stripe/subscribe/price_1RfeKRF3W42U01iFyeGDGH6J",
+};
+
+const ProCard = ({ type, session, loading, setLoading }: CardProps) => {
   return (
     <div className="bg-zinc-900 shadow-[_oklch(0.21_0.006_285.885)_0px_0px_0px_1px] p-[26px] rounded-lg">
       <h3
@@ -91,12 +79,21 @@ const ProCard = ({ type, session }: ProCardProps) => {
         <span className="text-zinc-400 leading-[1.11111] tracking-[-0.9px] text-4xl block">
           {type == "Monthly" ? "$19" : "$149"}
         </span>
-        <span className="text-zinc-400 leading-[24px] text-3xl block">/mo</span>
+        <span className="text-zinc-400 leading-[24px] text-3xl block">
+          /{type == "Monthly" ? "mo" : "yr"}
+        </span>
       </p>
       <p className="mt-16 text-zinc-300 leading-[18px] text-sm">
-        Specifically made for teams who need full customization.
+        For serious builders who want full power, speed, and control.
       </p>
-      <SubscribeBtn />
+      {loading ? (
+        <LoadingBtn className="bg-amber-500 text-zinc-900" />
+      ) : (
+        <SubscribeBtn
+          href={paymentLinks[type]}
+          onClick={() => setLoading!(true)}
+        />
+      )}
       <ul className="mt-8 text-zinc-300 leading-[24px] text-sm [translate:0px]">
         {features.map((feature, idx) => (
           <li className="mb-3 gap-x-3 flex text-left" key={idx}>

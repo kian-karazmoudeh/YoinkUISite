@@ -48,7 +48,7 @@ export async function updateSession(request: NextRequest, redirect?: string) {
     const url = request.nextUrl.clone();
     url.pathname = "/authenticate";
     if (redirect) {
-      url.searchParams.set("redirect", redirect);
+      url.searchParams.set("next", btoa(redirect));
     }
     return NextResponse.redirect(url);
   }

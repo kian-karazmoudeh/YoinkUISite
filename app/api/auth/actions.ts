@@ -1,14 +1,15 @@
 "use server";
 
+import { DOMAIN } from "@/utils/getDomain";
 import { createClient } from "@/utils/supabase/server";
 
-export async function authWithGoogle() {
+export async function authWithGoogle(next: string = "/pricing") {
   const supabase = await createClient();
 
   const { data, error } = await supabase.auth.signInWithOAuth({
     provider: "google",
     options: {
-      redirectTo: "http://localhost:3000/api/auth/callback?next=%2Fapp",
+      redirectTo: `${DOMAIN}/api/auth/callback?next=${btoa(next)}`,
     },
   });
 
@@ -19,13 +20,13 @@ export async function authWithGoogle() {
   }
 }
 
-export async function authWithGithub() {
+export async function authWithGithub(next: string = "/pricing") {
   const supabase = await createClient();
 
   const { data, error } = await supabase.auth.signInWithOAuth({
     provider: "github",
     options: {
-      redirectTo: "http://localhost:3000/api/auth/callback?next=%2Fapp",
+      redirectTo: `${DOMAIN}/api/auth/callback?next=${btoa(next)}`,
     },
   });
 

@@ -96,7 +96,7 @@ const Navbar = () => {
             <div className="gap-x-5 grow-[1] md:flex hidden justify-end items-center">
               <Link
                 className="text-white leading-[24px] gap-x-1 text-sm bg-black flex font-semibold cursor-pointer px-4 py-1 rounded-[2.68435e+07px]"
-                href="#"
+                href="https://chromewebstore.google.com/detail/yoinkui/ihlkclcengelgcfkkmpkhgadepmgijkk"
               >
                 Add to Chrome / Edge
                 <svg

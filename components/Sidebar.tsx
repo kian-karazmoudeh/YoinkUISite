@@ -68,7 +68,7 @@ export default function Sidebar({ show, onClose, links }: SidebarProps) {
           <div className="py-6">
             <Link
               className="text-zinc-900 leading-[28px] block font-semibold cursor-pointer mx-[-12px] px-3 py-[10px] rounded-lg"
-              href="#"
+              href="https://chromewebstore.google.com/detail/yoinkui/ihlkclcengelgcfkkmpkhgadepmgijkk"
             >
               View in the Chrome Web Store
             </Link>

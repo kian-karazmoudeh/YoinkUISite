@@ -10,8 +10,6 @@ export async function POST(req: NextRequest) {
 
   const signature = (await headers()).get("stripe-signature") || "";
 
-  let data;
-  let eventType;
   let event;
 
   // verify Stripe event is legit
@@ -23,8 +21,8 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: errorMessage }, { status: 400 });
   }
 
-  data = event.data;
-  eventType = event.type;
+  const data = event.data;
+  const eventType = event.type;
 
   try {
     switch (eventType) {

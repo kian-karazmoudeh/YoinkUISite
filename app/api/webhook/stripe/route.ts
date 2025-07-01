@@ -1,11 +1,10 @@
-import { NextRequest } from "next/server";
 // import { headers } from "next/headers";
 // import Stripe from "stripe";
 
 // const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
 // const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET!;
 
-export async function POST(_req: NextRequest) {
+export async function POST() {
   // const body = await req.text();
   // const signature = (await headers()).get("stripe-signature") || "";
   // let event;

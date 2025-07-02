@@ -28,8 +28,8 @@ const HowItWorks = () => {
                 height={0}
                 sizes="100vw"
                 style={{ width: "100%", height: "auto" }}
-                alt="Doesn’t join meetings-screenshot"
-                src="/landing/step 1.png"
+                alt="Select the tool"
+                src="/landing/Step 1.png"
                 className="w-full max-w-[none] rounded-[18px] md:text-center"
               />
             </div>
@@ -51,7 +51,7 @@ const HowItWorks = () => {
                 height={0}
                 sizes="100vw"
                 style={{ width: "100%", height: "auto" }}
-                alt="Invisible to screen-share-screenshot"
+                alt="Select the component"
                 src="/landing/Step 2.png"
                 className="w-full max-w-[none] bg-[#1d2025] rounded-[18px] md:text-center"
               />
@@ -75,7 +75,7 @@ const HowItWorks = () => {
                 height={0}
                 sizes="100vw"
                 style={{ width: "100%", height: "auto" }}
-                alt="Follow your eyes-screenshot"
+                alt="Download your component"
                 src="/landing/Step 3.png"
                 className="w-full max-w-[none] rounded-[18px] md:text-center"
               />

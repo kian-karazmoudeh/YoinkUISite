@@ -39,7 +39,7 @@ const Footer = () => {
           <ul className="mb-4 flex flex-wrap gap-4">
             <li className="text-left">
               <Link
-                href="https://x.com/kiannnk"
+                href="https://x.com/YoinkUI"
                 className="leading-[1.42857] text-sm cursor-pointer"
               >
                 Twitter
@@ -54,11 +54,6 @@ const Footer = () => {
               </Link>
             </li>
           </ul>
-          {/* <div className="mt-4 text-right">
-            <button className="leading-[1.42857] text-sm bg-transparent inline-flex text-center items-center">
-              Back to top
-            </button>
-          </div> */}
         </div>
       </div>
     </footer>

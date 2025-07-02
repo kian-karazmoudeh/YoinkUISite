@@ -20,9 +20,9 @@ export default function Page() {
             </span>
           </h1>
           <p className="mt-6 text-zinc-600 leading-[1.55556] max-w-lg text-lg text-pretty mx-auto md:leading-[32px] md:text-xl lg:mx-[0px]">
-            Start for free, scale your workflow with Premium. Whether you're
-            prototyping ideas or building full products, YoinkUI has a plan for
-            you.
+            Start for free, scale your workflow with Premium. Whether
+            you&apos;re prototyping ideas or building full products, YoinkUI has
+            a plan for you.
           </p>
         </div>
         <PricingSection />

@@ -67,6 +67,7 @@ const paymentLinks: Record<"Monthly" | "Annual", string> = {
 };
 
 const ProCard = ({ type, session, loading, setLoading }: CardProps) => {
+  console.log(session);
   return (
     <div className="bg-zinc-900 shadow-[_oklch(0.21_0.006_285.885)_0px_0px_0px_1px] p-[26px] rounded-lg">
       <h3

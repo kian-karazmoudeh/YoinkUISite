@@ -1,4 +1,3 @@
-import ChromeIcon from "@/components/Icons/ChromeIcon";
 import { Loader2 } from "lucide-react";
 import Link from "next/link";
 import { twMerge } from "tailwind-merge";

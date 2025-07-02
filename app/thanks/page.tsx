@@ -16,7 +16,7 @@ const ThanksPage = () => {
         </div>
         <p className="text-zinc-700 text-center w-full">
           You now have full access to YoinkUI. <br />
-          If you have any queries don't hesitate to contact us through{" "}
+          If you have any queries don&apos;t hesitate to contact us through{" "}
           <Link
             href="mailto:kianthecreator@gmail.com"
             className="text-blue-500"

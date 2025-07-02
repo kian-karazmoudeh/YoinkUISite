@@ -4,5 +4,5 @@ type CardProps = {
   session: Session | null;
   type: "Monthly" | "Annual";
   loading: boolean;
-  setLoading?: (val?: unknown) => void;
+  setLoading?: Dispatch<SetStateAction<boolean>>;
 };

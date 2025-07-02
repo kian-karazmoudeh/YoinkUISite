@@ -30,19 +30,33 @@ const Usage = () => {
               />
             </div>
             <div className="z-[10] flex absolute justify-center items-center size-full">
-              <img
+              <Image
+                width={0}
+                height={0}
+                sizes="100vw"
                 src="/landing/Responsive step 2.png"
                 alt="Section 1 image"
                 className={`max-h-full transition-all rounded-r-[18px] border-r-[0.8px] object-contain border-y-[0.8px] border-zinc-200 p-3 bg-[#ECECEC]`}
-                style={{ opacity: step2.inView ? 1 : 0 }}
+                style={{
+                  opacity: step2.inView ? 1 : 0,
+                  width: "auto",
+                  height: "auto",
+                }}
               />
             </div>
             <div className="z-[10] flex absolute justify-center items-center size-full">
-              <img
+              <Image
+                width={0}
+                height={0}
+                sizes="100vw"
                 src="/landing/Responsive step 3.png"
                 alt="Section 1 image"
                 className={`max-h-full transition-all rounded-r-[18px] border-r-[0.8px] object-contain border-y-[0.8px] border-zinc-200 p-3 bg-[#ECECEC]`}
-                style={{ opacity: step3.inView ? 1 : 0 }}
+                style={{
+                  opacity: step3.inView ? 1 : 0,
+                  width: "auto",
+                  height: "auto",
+                }}
               />
             </div>
           </div>

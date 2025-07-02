@@ -20,6 +20,61 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Invalid token" }, { status: 401 });
   }
 
-  // Token is valid, proceed with your logic
-  return NextResponse.json({ message: "Token valid", user: data.user });
+  // get the user's membership. If they are premium, then increment yoink.
+  const { data: profile, error: profileError } = await supabase
+    .from("profiles")
+    .select("membership")
+    .eq("id", data.user.id)
+    .single();
+
+  if (profileError || !profile) {
+    return NextResponse.json({ error: "Profile not found" }, { status: 404 });
+  }
+
+  if (profile.membership == "premium") {
+    // increment yoink
+    const { error: insertError } = await supabase
+      .from("yoinks")
+      .insert([{ user_id: data.user.id }]);
+
+    if (insertError) {
+      return NextResponse.json(
+        { error: "Failed to add yoink" },
+        { status: 500 }
+      );
+    }
+  } else {
+    const startOfMonth = new Date();
+    startOfMonth.setDate(1);
+    startOfMonth.setHours(0, 0, 0, 0);
+
+    const { count, error: yoinksError } = await supabase
+      .from("yoinks")
+      .select("*", { count: "exact", head: true })
+      .eq("user_id", data.user.id)
+      .gte("created_at", startOfMonth.toISOString());
+
+    if (yoinksError) {
+      return NextResponse.json(
+        { error: "Failed to fetch yoinks" },
+        { status: 500 }
+      );
+    } else if (count && count > 4) {
+      return NextResponse.json(
+        { error: "Monthly yoink limit reached" },
+        { status: 403 }
+      );
+    } else {
+      const { error: insertError } = await supabase
+        .from("yoinks")
+        .insert([{ user_id: data.user.id }]);
+
+      if (insertError) {
+        return NextResponse.json(
+          { error: "Failed to add yoink" },
+          { status: 500 }
+        );
+      }
+    }
+  }
 }

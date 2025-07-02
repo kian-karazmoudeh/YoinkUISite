@@ -10,7 +10,7 @@ const priceIds =
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { priceId: string } }
+  { params }: { params: Promise<{ priceId: string }> }
 ) {
   const { priceId } = await params;
   if (!priceId) {

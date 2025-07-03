@@ -27,6 +27,7 @@ export async function authWithGithub(next: string = "/pricing") {
     provider: "github",
     options: {
       redirectTo: `${DOMAIN}/api/auth/callback?next=${btoa(next)}`,
+      // redirectTo: `${DOMAIN}/api/auth/callback`,
     },
   });
 

@@ -1,5 +1,4 @@
 import { NextResponse } from "next/server";
-// The client you created from the Server-Side Auth instructions
 import { createClient } from "@/utils/supabase/server";
 
 export async function GET(request: Request) {
@@ -8,7 +7,6 @@ export async function GET(request: Request) {
   // if "next" is in param, use it as the redirect URL
   let next = atob(searchParams.get("next") ?? btoa("/"));
   if (!next.startsWith("/")) {
-    console.log(next);
     // if "next" is not a relative URL, use the default
     next = "/";
   }

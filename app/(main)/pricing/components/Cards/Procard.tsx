@@ -62,8 +62,16 @@ const features: { icon: ReactNode; label: ReactNode }[] = [
 ];
 
 const paymentLinks: Record<"Monthly" | "Annual", string> = {
-  Monthly: "/api/stripe/subscribe/price_1RfeKRF3W42U01iFbTRrmxLo",
-  Annual: "/api/stripe/subscribe/price_1RfeKRF3W42U01iFyeGDGH6J",
+  Monthly: `/api/stripe/subscribe/${
+    process.env.NODE_ENV === "development"
+      ? "price_1RfeKRF3W42U01iFbTRrmxLo" // dev
+      : "price_1RgLagF3W42U01iFr3wdwkgl" // production
+  }`,
+  Annual: `/api/stripe/subscribe/${
+    process.env.NODE_ENV === "development"
+      ? "price_1RfeKRF3W42U01iFyeGDGH6J" // dev
+      : "price_1RgLbSF3W42U01iFSVKUMbGC" // production
+  }`,
 };
 
 const ProCard = ({ type, session, loading, setLoading }: CardProps) => {

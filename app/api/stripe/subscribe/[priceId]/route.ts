@@ -5,8 +5,8 @@ import { DOMAIN } from "@/utils/getDomain";
 
 const priceIds =
   process.env.NODE_ENV === "development"
-    ? ["price_1RfeKRF3W42U01iFyeGDGH6J", "price_1RfeKRF3W42U01iFbTRrmxLo"]
-    : [];
+    ? ["price_1RfeKRF3W42U01iFyeGDGH6J", "price_1RfeKRF3W42U01iFbTRrmxLo"] // testing
+    : ["price_1RgLagF3W42U01iFr3wdwkgl", "price_1RgLbSF3W42U01iFSVKUMbGC"]; // production
 
 export async function GET(
   request: NextRequest,

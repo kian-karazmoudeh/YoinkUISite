@@ -1,6 +1,5 @@
 import { ReactNode } from "react";
 import SubscribeBtn from "../Btns/SubscribeBtn";
-import { CardProps } from "./types";
 import LoadingBtn from "../Btns/LoadingBtn";
 import CurrentPlanBtn from "../Btns/CurrentPlanBtn";
 

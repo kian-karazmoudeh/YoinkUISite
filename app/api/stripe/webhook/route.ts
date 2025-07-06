@@ -37,7 +37,7 @@ export async function POST(req: NextRequest) {
 
         const clientReferenceId = sessionObject.client_reference_id;
         if (clientReferenceId) {
-          const { error, status } = await supabase
+          const { error } = await supabase
             .from("profiles")
             .update({
               membership: "premium",

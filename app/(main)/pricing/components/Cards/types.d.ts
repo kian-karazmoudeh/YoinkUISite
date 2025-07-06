@@ -1,5 +1,3 @@
-import { Session } from "@supabase/supabase-js";
-
 type CardProps = {
   userMembership: "free" | "premium" | null;
   type: "Monthly" | "Annual";

@@ -1,7 +1,6 @@
 import { ReactNode } from "react";
 import AddExtensionBtn from "../Btns/AddExtensionBtn";
 import CurrentPlanBtn from "../Btns/CurrentPlanBtn";
-import { CardProps } from "./types";
 import LoadingBtn from "../Btns/LoadingBtn";
 
 const CheckIcon = () => {

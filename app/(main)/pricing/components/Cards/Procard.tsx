@@ -2,6 +2,7 @@ import { ReactNode } from "react";
 import SubscribeBtn from "../Btns/SubscribeBtn";
 import { CardProps } from "./types";
 import LoadingBtn from "../Btns/LoadingBtn";
+import CurrentPlanBtn from "../Btns/CurrentPlanBtn";
 
 const CheckIcon = () => {
   return (
@@ -74,8 +75,8 @@ const paymentLinks: Record<"Monthly" | "Annual", string> = {
   }`,
 };
 
-const ProCard = ({ type, session, loading, setLoading }: CardProps) => {
-  console.log(session);
+const ProCard = ({ type, userMembership, loading, setLoading }: CardProps) => {
+  // console.log(session);
   return (
     <div className="bg-zinc-900 shadow-[_oklch(0.21_0.006_285.885)_0px_0px_0px_1px] p-[26px] rounded-lg">
       <h3
@@ -96,7 +97,9 @@ const ProCard = ({ type, session, loading, setLoading }: CardProps) => {
         For serious builders who want full power, speed, and control.
       </p>
       {loading ? (
-        <LoadingBtn className="bg-amber-500 text-zinc-900" />
+        <LoadingBtn className="text-zinc-900 glowing" />
+      ) : userMembership == "premium" ? (
+        <CurrentPlanBtn className="text-zinc-900 glowing" />
       ) : (
         <SubscribeBtn
           href={paymentLinks[type]}

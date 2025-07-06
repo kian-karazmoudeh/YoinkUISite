@@ -13,9 +13,9 @@ const AddExtensionBtn = ({ className = "" }: BtnProps) => {
     >
       <Link
         href="#"
-        className="text-white leading-[24px] w-full z-[10] gap-x-1 text-sm bg-blue-600 shadow-[rgba(0,_0,_0,_0)_0px_0px_0px_0px,_rgba(0,_0,_0,_0)_0px_0px_0px_0px,_rgba(0,_0,_0,_0)_0px_0px_0px_0px,_rgba(0,_0,_0,_0)_0px_0px_0px_0px,_rgba(0,_0,_0,_0.05)_0px_1px_2px_0px] flex font-semibold justify-center items-center cursor-pointer px-3 py-2 rounded-[2.68435e+07px]"
+        className="text-sky-950 leading-[24px] w-full z-[10] gap-x-1 text-sm bg-sky-100 shadow-[rgba(0,_0,_0,_0)_0px_0px_0px_0px,_rgba(0,_0,_0,_0)_0px_0px_0px_0px,_rgba(0,_0,_0,_0)_0px_0px_0px_0px,_rgba(0,_0,_0,_0)_0px_0px_0px_0px,_rgba(0,_0,_0,_0.05)_0px_1px_2px_0px] flex font-semibold justify-center items-center cursor-pointer px-3 py-2 rounded-[2.68435e+07px]"
       >
-        <ChromeIcon className="size-5" />
+        <ChromeIcon className="size-5 fill-sky-950" />
         <span className="block cursor-pointer">Add Extension</span>
       </Link>
     </button>

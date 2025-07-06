@@ -3,23 +3,43 @@
 import BasicCard from "./Cards/BasicCard";
 import ProCard from "./Cards/Procard";
 import { useEffect, useState } from "react";
-import { Session } from "@supabase/supabase-js";
 import { createClient } from "@/utils/supabase/client";
 import MembershipTypeBtn from "./Btns/MembershipTypeBtn";
 
 const PricingSection = () => {
-  const [session, setSession] = useState<Session | null>(null);
+  const [userMembership, setUserMembership] = useState<
+    "free" | "premium" | null
+  >(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [membershipType, setMembershipType] = useState<"Monthly" | "Annual">(
     "Monthly"
   );
 
   useEffect(() => {
+    setLoading(true);
     const supabase = createClient();
     supabase.auth
       .getSession()
-      .then(({ data: { session } }) => {
-        setSession(session);
+      .then(({ data: { session }, error }) => {
+        if (error) {
+          console.log("BYE", error);
+        }
+        if (session == null) {
+          setUserMembership(session);
+        } else {
+          supabase
+            .from("profiles")
+            .select("*")
+            .eq("id", session.user.id)
+            .single()
+            .then(({ data, error }) => {
+              if (error) {
+                setUserMembership(null);
+              } else {
+                setUserMembership(data.membership);
+              }
+            });
+        }
       })
       .finally(() => {
         setLoading(false);
@@ -27,7 +47,18 @@ const PricingSection = () => {
 
     const { data: listener } = supabase.auth.onAuthStateChange(
       (_event, session) => {
-        setSession(session);
+        if (session == null) {
+          setUserMembership(session);
+        } else {
+          supabase
+            .from("profiles")
+            .select("*")
+            .eq("id", session.user.id)
+            .single()
+            .then(({ data: { membership } }) => {
+              setUserMembership(membership);
+            });
+        }
       }
     );
 
@@ -37,7 +68,7 @@ const PricingSection = () => {
   }, []);
 
   return (
-    <div className="max-w-7xl mx-auto px-6  lg:px-8">
+    <div className="max-w-7xl mx-auto px-6 lg:px-8">
       <div className="mt-6 flex justify-start">
         <fieldset>
           <div
@@ -58,11 +89,15 @@ const PricingSection = () => {
           </div>
         </fieldset>
       </div>
-      <div className="mt-16 max-w-md grid-cols-[repeat(1,_minmax(0px,_1fr))] grid mx-auto gap-8  lg:max-w-[none] lg:grid-cols-[repeat(2,_minmax(0px,_1fr))] lg:mx-[0px]">
-        <BasicCard type={membershipType} session={session} loading={loading} />
+      <div className="mt-16 max-w-md grid-cols-1 grid mx-auto gap-8  lg:max-w-[none] lg:grid-cols-2 lg:mx-[0px]">
+        <BasicCard
+          type={membershipType}
+          userMembership={userMembership}
+          loading={loading}
+        />
         <ProCard
           type={membershipType}
-          session={session}
+          userMembership={userMembership}
           loading={loading}
           setLoading={setLoading}
         />

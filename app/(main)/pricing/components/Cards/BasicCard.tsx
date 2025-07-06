@@ -40,7 +40,7 @@ const features: { icon: ReactNode; label: ReactNode }[] = [
   },
 ];
 
-const BasicCard = ({ type, session, loading }: CardProps) => {
+const BasicCard = ({ type, userMembership, loading }: CardProps) => {
   return (
     <div className="shadow-[_oklch(0.92_0.004_286.32)_0px_0px_0px_1px] p-[26px] rounded-lg">
       <h3 id="tier-free" className="text-zinc-900 leading-[32px] text-[40px]">
@@ -58,9 +58,9 @@ const BasicCard = ({ type, session, loading }: CardProps) => {
         For curious devs who want to test the waters.
       </p>
       {loading ? (
-        <LoadingBtn />
-      ) : session ? (
-        <CurrentPlanBtn />
+        <LoadingBtn className="bg-sky-100 text-sky-950" />
+      ) : userMembership == "free" ? (
+        <CurrentPlanBtn className="bg-sky-100 text-sky-950" />
       ) : (
         <AddExtensionBtn />
       )}

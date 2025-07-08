@@ -10,6 +10,8 @@ export async function POST(req: NextRequest) {
   const token = authHeader?.startsWith("Bearer ") ? authHeader.slice(7) : null;
 
   if (!token) {
+    console.log("token", token);
+    console.log("headers", req.headers);
     return NextResponse.json(
       { error: "Authorization token missing" },
       { status: 400 }

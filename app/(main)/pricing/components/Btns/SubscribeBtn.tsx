@@ -7,7 +7,7 @@ const SubscribeBtn = ({ className = "", href, onClick }: SubscribeBtnProps) => {
       onClick={() => onClick()}
       href={href}
       className={twMerge(
-        "mt-[42px] text-zinc-900 leading-[24px] w-full text-sm  block text-center font-semibold cursor-pointer px-3 py-2 rounded-full glowing",
+        "mt-[42px] text-zinc-900 leading-[24px] w-full text-sm  block text-center font-semibold cursor-pointer px-3 py-2 rounded-full bg-amber-400",
         className
       )}
     >

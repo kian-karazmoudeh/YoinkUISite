@@ -65,12 +65,12 @@ const paymentLinks: Record<"Monthly" | "Annual", string> = {
   Monthly: `/api/stripe/subscribe/${
     process.env.NODE_ENV === "development"
       ? "price_1RfeKRF3W42U01iFbTRrmxLo" // dev
-      : "price_1RgLagF3W42U01iFr3wdwkgl" // production
+      : "price_1RiW9rF3W42U01iFzsB1BqWz" // production
   }`,
   Annual: `/api/stripe/subscribe/${
     process.env.NODE_ENV === "development"
       ? "price_1RfeKRF3W42U01iFyeGDGH6J" // dev
-      : "price_1RgLbSF3W42U01iFSVKUMbGC" // production
+      : "price_1RiWAGF3W42U01iFMuTsNX88" // production
   }`,
 };
 
@@ -86,7 +86,7 @@ const ProCard = ({ type, userMembership, loading, setLoading }: CardProps) => {
       </h3>
       <p className="mt-3 gap-x-1 flex items-baseline">
         <span className="text-zinc-400 leading-[1.11111] tracking-[-0.9px] text-4xl block">
-          {type == "Monthly" ? "$19" : "$149"}
+          {type == "Monthly" ? "$15" : "$95"}
         </span>
         <span className="text-zinc-400 leading-[24px] text-3xl block">
           /{type == "Monthly" ? "mo" : "yr"}
@@ -96,9 +96,9 @@ const ProCard = ({ type, userMembership, loading, setLoading }: CardProps) => {
         For serious builders who want full power, speed, and control.
       </p>
       {loading ? (
-        <LoadingBtn className="text-zinc-900 glowing" />
+        <LoadingBtn className="text-zinc-900 bg-amber-400" />
       ) : userMembership == "premium" ? (
-        <CurrentPlanBtn className="text-zinc-900 glowing" />
+        <CurrentPlanBtn className="text-zinc-900 bg-amber-400" />
       ) : (
         <SubscribeBtn
           href={paymentLinks[type]}

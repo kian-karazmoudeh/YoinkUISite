@@ -68,8 +68,8 @@ const Features = () => {
         <div className="mt-8 pl-8 w-full bottom-16 left-10  lg:mt-0 lg:pl-0 lg:w-auto lg:absolute">
           <h2 className="leading-[1.33333] text-2xl font-medium">Clean code</h2>
           <p className="mt-3 text-zinc-600 leading-[20px] w-full  lg:w-100">
-            YoinkUI gets rid of all invisble elements, unnecessary tags and only
-            gives you what really matters - the visible component.
+            YoinkUI gets rid of all invisible elements, unnecessary tags and
+            only gives you what really matters - the visible component.
           </p>
         </div>
         <div className="w-1 h-[34px] bottom-34 left-[-1px] bg-[#0055fe] hidden absolute  lg:block"></div>

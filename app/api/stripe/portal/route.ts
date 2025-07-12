@@ -37,7 +37,7 @@ export async function GET(request: NextRequest) {
     });
 
     return NextResponse.redirect(session.url || "/404");
-  } catch {
+  } catch (error) {
     return NextResponse.json(
       { error: "Internal Server Error" },
       { status: 500 }

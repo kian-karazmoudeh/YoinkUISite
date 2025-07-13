@@ -1,7 +1,10 @@
 "use client";
 
 import grapesjs, { Editor } from "grapesjs";
-import GjsEditor from "@grapesjs/react";
+import GjsEditor, { Canvas } from "@grapesjs/react";
+import Topbar from "./components/Topbar";
+import LeftSidebar from "./components/LeftSidebar";
+import RightSidebar from "./components/RightSidebar";
 
 export default function DefaultEditor() {
   const onEditor = (editor: Editor) => {
@@ -28,6 +31,17 @@ export default function DefaultEditor() {
         },
       ]}
       onEditor={onEditor}
-    />
+    >
+      <div className="grid gird-cols-2">
+        <LeftSidebar />
+        <div className="row-start-1 h-full flex flex-col">
+          <Topbar />
+          <div className="p-10 grow bg-green-500 flex flex-col">
+            <Canvas className="grow" />
+          </div>
+        </div>
+        <RightSidebar />
+      </div>
+    </GjsEditor>
   );
 }

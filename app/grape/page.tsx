@@ -7,11 +7,21 @@ import LeftSidebar from "./components/LeftSidebar";
 import RightSidebar from "./components/RightSidebar";
 import { blocks } from "./components/blocks";
 
+// Type for the component styles object
+interface ComponentStyles {
+  [uid: string]: {
+    lg: { [key: string]: string };
+    md: { [key: string]: string };
+    sm: { [key: string]: string };
+  };
+}
+
 export default function EditorPage() {
   const [editor, setEditor] = useState<Editor | null>(null);
   const editorRef = useRef<Editor>(null);
   const [selectedComponent, setSelectedComponent] = useState<any>(null);
   const [currentDevice, setCurrentDevice] = useState("Desktop");
+  const [componentStyles, setComponentStyles] = useState<ComponentStyles>({});
   const [styleValues, setStyleValues] = useState({
     width: "",
     height: "",
@@ -30,6 +40,44 @@ export default function EditorPage() {
     opacity: "100",
     boxShadow: "",
   });
+
+  // Helper function to generate UID
+  const generateUID = () => {
+    return `yoink-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+  };
+
+  // Helper function to get device key
+  const getDeviceKey = (deviceName: string) => {
+    switch (deviceName) {
+      case "Desktop":
+        return "lg";
+      case "Tablet":
+        return "md";
+      case "Mobile":
+        return "sm";
+      default:
+        return "lg";
+    }
+  };
+
+  // Helper function to update component styles in the object
+  const updateComponentStylesObject = (
+    uid: string,
+    deviceKey: "lg" | "md" | "sm",
+    property: string,
+    value: string
+  ) => {
+    setComponentStyles((prev) => ({
+      ...prev,
+      [uid]: {
+        ...prev[uid],
+        [deviceKey]: {
+          ...prev[uid]?.[deviceKey],
+          [property]: value,
+        },
+      },
+    }));
+  };
 
   useEffect(() => {
     if (!editorRef.current) {
@@ -137,6 +185,58 @@ export default function EditorPage() {
         },
       });
 
+      // Listen for component creation
+      editor.on("component:add", (component: any) => {
+        const current = component.getAttributes();
+
+        // Check if component already has a UID to prevent duplicate entries
+        if (current["data-yoink-uid"]) {
+          return; // Component already processed, skip
+        }
+
+        // Check if this is a text node - only text nodes should get UIDs
+        if (component.get("type") == "textnode") {
+          return; // Skip non-text nodes
+        }
+
+        const uid = generateUID();
+
+        // Set the UID attribute
+        component.setAttributes({
+          ...current,
+          "data-yoink-uid": uid,
+        });
+
+        // Initialize the component styles in our object
+        setComponentStyles((prev) => ({
+          ...prev,
+          [uid]: {
+            lg: {},
+            md: {},
+            sm: {},
+          },
+        }));
+
+        // Apply any existing styles from data-yoink-sm if present
+        if (current["data-yoink-sm"]) {
+          try {
+            const styles = JSON.parse(current["data-yoink-sm"]);
+            component.setStyle(styles);
+
+            // Update our styles object
+            setComponentStyles((prev) => ({
+              ...prev,
+              [uid]: {
+                ...prev[uid],
+                sm: styles,
+              },
+            }));
+          } catch (e) {
+            console.error("Error parsing existing styles:", e);
+          }
+        }
+      });
+
       // Listen for component selection
       editor.on("component:selected", (component: any) => {
         setSelectedComponent(component);
@@ -161,22 +261,13 @@ export default function EditorPage() {
             : "100",
           boxShadow: styles["box-shadow"] || "",
         });
-      });
 
-      editor.on("component:create", (component: any) => {
-        const current = component.getAttributes();
-        if (current["data-yoink-sm"]) {
-          console.log(current["data-yoink-sm"]);
-          component.setStyle(JSON.parse(current["data-yoink-sm"]));
+        // Debug: Log the component's UID and current styles object
+        const uid = component.getAttributes()["data-yoink-uid"];
+        if (uid) {
+          console.log("Selected component UID:", uid);
+          console.log("Current componentStyles object:", componentStyles);
         }
-        // console.log("current", current["data-yoink-sm"]);
-        // console.log("current json", JSON.parse(current["data-yoink-sm"]));
-
-        component.setAttributes({
-          ...current,
-          "data-yoink-md": {},
-          "data-yoink-lg": {},
-        });
       });
 
       // Listen for component deselection
@@ -200,6 +291,19 @@ export default function EditorPage() {
           opacity: "100",
           boxShadow: "",
         });
+      });
+
+      // Listen for component removal
+      editor.on("component:remove", (component: any) => {
+        const current = component.getAttributes();
+        const uid = current["data-yoink-uid"];
+        if (uid) {
+          setComponentStyles((prev) => {
+            const newStyles = { ...prev };
+            delete newStyles[uid];
+            return newStyles;
+          });
+        }
       });
 
       // Listen for device changes
@@ -249,6 +353,12 @@ export default function EditorPage() {
       // Add minimal custom CSS for GrapeJS editor layout
       const style = document.createElement("style");
       style.textContent = `
+      .gjs-cv-canvas, .gjs-cv-canvas-wrapper {
+        box-sizing: border-box !important;
+        border: none !important;
+        margin: 0 !important;
+        overflow: hidden !important;
+      }
       .gjs-cv-canvas {
         top: 0;
         width: 100%;
@@ -389,7 +499,7 @@ export default function EditorPage() {
         justify-content: center;
         align-items: flex-start;
         min-height: 100%;
-        padding: 20px;
+        /* Remove padding here, will be set dynamically */
         background: #f9fafb;
       }
     `;
@@ -412,33 +522,22 @@ export default function EditorPage() {
   const updateComponentStyle = (property: string, value: string) => {
     if (!selectedComponent) return;
 
+    // Get the component's UID
+    const uid = selectedComponent.getAttributes()["data-yoink-uid"];
+    if (!uid) return;
+
+    // Get the current device key
+    const deviceKey = getDeviceKey(currentDevice);
+
+    // Update the component's style in GrapesJS
     selectedComponent.setStyle({ [property]: value });
-    const currentAttributes = selectedComponent.getAttributes();
-    let deviceStyles;
-    if (currentDevice === "Desktop") {
-      deviceStyles = selectedComponent.getAttributes()["data-yoink-lg"];
-      deviceStyles[property] = value;
-      selectedComponent.setAttributes({
-        ...currentAttributes,
-        "data-yoink-lg": selectedComponent.getStyle(),
-      });
-    } else if (currentDevice === "Tablet") {
-      deviceStyles = selectedComponent.getAttributes()["data-yoink-md"];
-      deviceStyles[property] = value;
-      selectedComponent.setAttributes({
-        ...currentAttributes,
-        "data-yoink-md": selectedComponent.getStyle(),
-      });
-    } else {
-      deviceStyles = selectedComponent.getAttributes()["data-yoink-sm"];
-      deviceStyles[property] = value;
-      selectedComponent.setAttributes({
-        ...currentAttributes,
-        "data-yoink-sm": selectedComponent.getStyle(),
-      });
-    }
-    deviceStyles[property] = value;
+
+    // Update our separate styles object
+    updateComponentStylesObject(uid, deviceKey, property, value);
+
+    // Update the UI state
     setStyleValues((prev) => ({ ...prev, [property]: value }));
+    console.log(componentStyles);
   };
 
   // Function to handle slider changes
@@ -449,11 +548,24 @@ export default function EditorPage() {
   ) => {
     if (!selectedComponent) return;
 
+    // Get the component's UID
+    const uid = selectedComponent.getAttributes()["data-yoink-uid"];
+    if (!uid) return;
+
+    // Get the current device key
+    const deviceKey = getDeviceKey(currentDevice);
+
     const finalValue =
       displayProperty === "opacity" ? `${parseInt(value) / 100}` : `${value}`;
     const styleProperty = displayProperty || property;
 
+    // Update the component's style in GrapesJS
     selectedComponent.setStyle({ [styleProperty]: finalValue });
+
+    // Update our separate styles object
+    updateComponentStylesObject(uid, deviceKey, styleProperty, finalValue);
+
+    // Update the UI state
     setStyleValues((prev) => ({ ...prev, [property]: value }));
   };
 

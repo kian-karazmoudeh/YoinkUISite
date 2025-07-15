@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import grapesjs, { Editor } from "grapesjs";
+import grapesjs, { Component, Editor } from "grapesjs";
 import "grapesjs/dist/css/grapes.min.css";
 import LeftSidebar from "./components/LeftSidebar";
 import RightSidebar from "./components/RightSidebar";
@@ -53,55 +53,14 @@ export default function EditorPage() {
         layerManager: {
           appendTo: ".layers-container",
         },
-        deviceManager: {
-          devices: [
-            {
-              name: "Desktop",
-              width: "",
-              widthMedia: "",
-            },
-            {
-              name: "Tablet",
-              width: "768px",
-              widthMedia: "992px",
-            },
-            {
-              name: "Mobile",
-              width: "375px",
-              widthMedia: "480px",
-            },
-          ],
-        },
-        // plugins: ["gjs-preset-webpage"],
-        // pluginsOpts: {
-        //   "gjs-preset-webpage": {},
-        // },
       });
-
-      // Add custom device manager functionality
-      const deviceManager = editor.DeviceManager;
-
-      // Override the device selection method
-      const originalSelect = deviceManager.select;
-      deviceManager.select = function (device: any) {
-        const result = originalSelect.call(this, device);
-
-        // Add device class to canvas wrapper
-        const canvasWrapper = document.querySelector(".gjs-cv-canvas-wrapper");
-        if (canvasWrapper) {
-          const deviceName = device.get("name").toLowerCase();
-          canvasWrapper.className = `gjs-cv-canvas-wrapper device-${deviceName}`;
-        }
-
-        return result;
-      };
 
       // Listen for component selection
       editor.on("component:selected", (component: any) => {
         setSelectedComponent(component);
         const styles = component.getStyle();
         setStyleValues({
-          width: styles.width || "",
+          width: styles["width"] || "",
           height: styles.height || "",
           display: styles.display || "block",
           fontSize: styles["font-size"] || "16",
@@ -122,8 +81,24 @@ export default function EditorPage() {
         });
       });
 
+      editor.on("component:create", (component: any) => {
+        const current = component.getAttributes();
+        if (current["data-yoink-sm"]) {
+          console.log(current["data-yoink-sm"]);
+          component.setStyle(JSON.parse(current["data-yoink-sm"]));
+        }
+        // console.log("current", current["data-yoink-sm"]);
+        // console.log("current json", JSON.parse(current["data-yoink-sm"]));
+
+        component.setAttributes({
+          ...current,
+          "data-yoink-md": {},
+          "data-yoink-lg": {},
+        });
+      });
+
       // Listen for component deselection
-      editor.on("component:deselected", () => {
+      editor.on("component:deselected", (component: any) => {
         setSelectedComponent(null);
         setStyleValues({
           width: "",
@@ -143,13 +118,6 @@ export default function EditorPage() {
           opacity: "100",
           boxShadow: "",
         });
-      });
-
-      // Listen for device changes
-      editor.on("device:select", (device: any) => {
-        const deviceName = device.get("name");
-        console.log("Device changed to:", deviceName);
-        setCurrentDevice(deviceName);
       });
 
       // Add minimal custom CSS for GrapeJS editor layout
@@ -265,6 +233,31 @@ export default function EditorPage() {
     if (!selectedComponent) return;
 
     selectedComponent.setStyle({ [property]: value });
+    const currentAttributes = selectedComponent.getAttributes();
+    let deviceStyles;
+    if (currentDevice === "Desktop") {
+      deviceStyles = selectedComponent.getAttributes()["data-yoink-lg"];
+      deviceStyles[property] = value;
+      selectedComponent.setAttributes({
+        ...currentAttributes,
+        "data-yoink-lg": selectedComponent.getStyle(),
+      });
+    } else if (currentDevice === "Tablet") {
+      deviceStyles = selectedComponent.getAttributes()["data-yoink-md"];
+      deviceStyles[property] = value;
+      selectedComponent.setAttributes({
+        ...currentAttributes,
+        "data-yoink-md": selectedComponent.getStyle(),
+      });
+    } else {
+      deviceStyles = selectedComponent.getAttributes()["data-yoink-sm"];
+      deviceStyles[property] = value;
+      selectedComponent.setAttributes({
+        ...currentAttributes,
+        "data-yoink-sm": selectedComponent.getStyle(),
+      });
+    }
+    deviceStyles[property] = value;
     setStyleValues((prev) => ({ ...prev, [property]: value }));
   };
 
@@ -277,11 +270,82 @@ export default function EditorPage() {
     if (!selectedComponent) return;
 
     const finalValue =
-      displayProperty === "opacity" ? `${parseInt(value) / 100}` : `${value}px`;
+      displayProperty === "opacity" ? `${parseInt(value) / 100}` : `${value}`;
     const styleProperty = displayProperty || property;
 
     selectedComponent.setStyle({ [styleProperty]: finalValue });
     setStyleValues((prev) => ({ ...prev, [property]: value }));
+  };
+
+  const handleDeviceChange = (device: string) => {
+    const canvasWrapper = document.querySelector("#gjs-container");
+    if (canvasWrapper) {
+      // Iterate through all components and set their style from the corresponding data-yoink attribute
+      if (editor) {
+        // const allComponents = editor.getWrapper()!.components();
+        // const deviceAttr =
+        //   device === "Desktop"
+        //     ? "data-yoink-lg"
+        //     : device === "Tablet"
+        //     ? "data-yoink-md"
+        //     : "data-yoink-sm";
+        // allComponents.forEach((comp: any) => {
+        //   // Recursively apply to all nested components
+        //   const applyStyleFromAttr = (component: any) => {
+        //     const attrs = component.getAttributes();
+        //     if (attrs && attrs[deviceAttr]) {
+        //       try {
+        //         // If the attribute is a stringified object, parse it
+        //         let styleObj = attrs[deviceAttr];
+        //         if (typeof styleObj === "string") {
+        //           styleObj = JSON.parse(styleObj);
+        //         }
+        //         component.setStyle({ ...styleObj });
+        //       } catch (e) {
+        //         // fallback: if not JSON, try to set as is
+        //         component.setStyle({ ...attrs[deviceAttr] });
+        //       }
+        //     }
+        //     // Recursively apply to children
+        //     if (
+        //       component.components &&
+        //       typeof component.components === "function"
+        //     ) {
+        //       component
+        //         .components()
+        //         .forEach((child: any) => applyStyleFromAttr(child));
+        //     }
+        //   };
+        //   applyStyleFromAttr(comp);
+        // });
+      }
+      setCurrentDevice(device);
+      if (selectedComponent) {
+        const styles = selectedComponent.getStyle();
+        setStyleValues({
+          width: styles["width"] || "",
+          height: styles.height || "",
+          display: styles.display || "block",
+          fontSize: styles["font-size"] || "16",
+          fontWeight: styles["font-weight"] || "normal",
+          textAlign: styles["text-align"] || "left",
+          backgroundColor: styles["background-color"] || "#ffffff",
+          color: styles.color || "#000000",
+          padding: styles.padding || "",
+          margin: styles.margin || "",
+          borderWidth: styles["border-width"] || "0",
+          borderColor: styles["border-color"] || "#000000",
+          borderStyle: styles["border-style"] || "solid",
+          borderRadius: styles["border-radius"] || "0",
+          opacity: styles.opacity
+            ? Math.round(parseFloat(styles.opacity) * 100).toString()
+            : "100",
+          boxShadow: styles["box-shadow"] || "",
+        });
+      }
+      const deviceName = device.toLowerCase();
+      canvasWrapper.className = `device-${deviceName}`;
+    }
   };
 
   return (
@@ -305,10 +369,13 @@ export default function EditorPage() {
             </span>
           </div>
         </div>
-        <div className="panel__basic-actions"></div>
       </div>
       <div className="flex flex-1 h-full">
-        <LeftSidebar editor={editor} />
+        <LeftSidebar
+          editor={editor}
+          setCurrentDevice={handleDeviceChange}
+          currentDevice={currentDevice}
+        />
         <div className="flex-1 h-full">
           <div id="gjs-container" className="h-full"></div>
         </div>

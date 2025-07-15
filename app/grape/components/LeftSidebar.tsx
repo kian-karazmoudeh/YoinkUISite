@@ -1,33 +1,20 @@
 "use client";
 
 import { Editor } from "grapesjs";
-import { useEffect, useState } from "react";
 
 interface DeviceManagerProps {
   editor: Editor | null;
+  setCurrentDevice: (device: string) => void;
+  currentDevice: string;
 }
 
-export default function LeftSidebar({ editor }: DeviceManagerProps) {
-  const [currentDevice, setCurrentDevice] = useState("Desktop");
-
-  useEffect(() => {
-    if (!editor) return;
-
-    // Listen for device changes
-    const handleDeviceChange = (device: string) => {
-      setCurrentDevice(device);
-    };
-
-    editor.on("device:select", handleDeviceChange);
-
-    return () => {
-      editor.off("device:select", handleDeviceChange);
-    };
-  }, [editor]);
-
+export default function LeftSidebar({
+  editor,
+  setCurrentDevice,
+  currentDevice,
+}: DeviceManagerProps) {
   const selectDevice = (deviceName: string) => {
     if (!editor) return;
-    editor.setDevice(deviceName);
     setCurrentDevice(deviceName);
   };
 

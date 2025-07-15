@@ -1,6 +1,7 @@
 "use client";
 
 import { Editor } from "grapesjs";
+import { useEffect } from "react";
 
 interface DeviceManagerProps {
   editor: Editor | null;
@@ -17,6 +18,36 @@ export default function LeftSidebar({
     if (!editor) return;
     setCurrentDevice(deviceName);
   };
+
+  // Add keyboard shortcuts for device switching
+  useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (!editor) return;
+
+      // Check if Ctrl/Cmd is pressed
+      if (event.ctrlKey || event.metaKey) {
+        switch (event.key) {
+          case "1":
+            event.preventDefault();
+            selectDevice("Desktop");
+            break;
+          case "2":
+            event.preventDefault();
+            selectDevice("Tablet");
+            break;
+          case "3":
+            event.preventDefault();
+            selectDevice("Mobile");
+            break;
+        }
+      }
+    };
+
+    document.addEventListener("keydown", handleKeyDown);
+    return () => {
+      document.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [editor]);
 
   return (
     <div className="w-64 bg-gray-50 border-r border-gray-200 overflow-y-auto flex flex-col">
@@ -47,6 +78,7 @@ export default function LeftSidebar({
               />
             </svg>
             Desktop
+            <span className="ml-auto text-xs opacity-60">Ctrl+1</span>
           </button>
           <button
             onClick={() => selectDevice("Tablet")}
@@ -65,6 +97,7 @@ export default function LeftSidebar({
               <path d="M7 3a1 1 0 000 2h6a1 1 0 100-2H7zM4 7a1 1 0 011-1h10a1 1 0 110 2H5a1 1 0 01-1-1zM2 11a2 2 0 012-2h12a2 2 0 012 2v4a2 2 0 01-2 2H4a2 2 0 01-2-2v-4z" />
             </svg>
             Tablet
+            <span className="ml-auto text-xs opacity-60">Ctrl+2</span>
           </button>
           <button
             onClick={() => selectDevice("Mobile")}
@@ -83,6 +116,7 @@ export default function LeftSidebar({
               <path d="M7 2a2 2 0 00-2 2v12a2 2 0 002 2h6a2 2 0 002-2V4a2 2 0 00-2-2H7zM7 4h6v12H7V4z" />
             </svg>
             Mobile
+            <span className="ml-auto text-xs opacity-60">Ctrl+3</span>
           </button>
         </div>
       </div>

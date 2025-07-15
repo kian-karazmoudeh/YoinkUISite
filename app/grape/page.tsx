@@ -42,6 +42,31 @@ export default function EditorPage() {
         panels: {
           defaults: [
             {
+              id: "device-manager-panel",
+              el: ".device-manager-panel",
+              buttons: [
+                {
+                  id: "device-desktop",
+                  label: "Desktop",
+                  command: "set-device-desktop",
+                  active: true,
+                  togglable: false,
+                },
+                {
+                  id: "device-tablet",
+                  label: "Tablet",
+                  command: "set-device-tablet",
+                  togglable: false,
+                },
+                {
+                  id: "device-mobile",
+                  label: "Mobile",
+                  command: "set-device-mobile",
+                  togglable: false,
+                },
+              ],
+            },
+            {
               buttons: [],
             },
           ],
@@ -52,6 +77,63 @@ export default function EditorPage() {
         },
         layerManager: {
           appendTo: ".layers-container",
+        },
+        // Add Device Manager configuration
+        deviceManager: {
+          devices: [
+            {
+              name: "Desktop",
+              width: "", // Full width
+              widthMedia: "1200px",
+            },
+            {
+              name: "Tablet",
+              width: "768px",
+              widthMedia: "768px",
+            },
+            {
+              name: "Mobile",
+              width: "375px",
+              widthMedia: "375px",
+            },
+          ],
+        },
+      });
+
+      // Add device switching commands
+      editor.Commands.add("set-device-desktop", {
+        run: () => {
+          const deviceManager = editor.DeviceManager;
+          const desktopDevice = deviceManager
+            .getAll()
+            .find((device: any) => device.get("name") === "Desktop");
+          if (desktopDevice) {
+            deviceManager.select(desktopDevice);
+          }
+        },
+      });
+
+      editor.Commands.add("set-device-tablet", {
+        run: () => {
+          const deviceManager = editor.DeviceManager;
+          const tabletDevice = deviceManager
+            .getAll()
+            .find((device: any) => device.get("name") === "Tablet");
+          if (tabletDevice) {
+            deviceManager.select(tabletDevice);
+          }
+        },
+      });
+
+      editor.Commands.add("set-device-mobile", {
+        run: () => {
+          const deviceManager = editor.DeviceManager;
+          const mobileDevice = deviceManager
+            .getAll()
+            .find((device: any) => device.get("name") === "Mobile");
+          if (mobileDevice) {
+            deviceManager.select(mobileDevice);
+          }
         },
       });
 
@@ -120,6 +202,50 @@ export default function EditorPage() {
         });
       });
 
+      // Listen for device changes
+      editor.on("device:select", (device: any) => {
+        const deviceName = device.get("name");
+        setCurrentDevice(deviceName);
+
+        // Update panel button states
+        const panel = editor.Panels.getPanel("device-manager-panel");
+        if (panel) {
+          const buttons = panel.get("buttons");
+          if (buttons) {
+            buttons.each((btn: any) => {
+              btn.set(
+                "active",
+                btn.get("id") === `device-${deviceName.toLowerCase()}`
+              );
+            });
+          }
+        }
+
+        if (selectedComponent) {
+          const styles = selectedComponent.getStyle();
+          setStyleValues({
+            width: styles["width"] || "",
+            height: styles.height || "",
+            display: styles.display || "block",
+            fontSize: styles["font-size"] || "16",
+            fontWeight: styles["font-weight"] || "normal",
+            textAlign: styles["text-align"] || "left",
+            backgroundColor: styles["background-color"] || "#ffffff",
+            color: styles.color || "#000000",
+            padding: styles.padding || "",
+            margin: styles.margin || "",
+            borderWidth: styles["border-width"] || "0",
+            borderColor: styles["border-color"] || "#000000",
+            borderStyle: styles["border-style"] || "solid",
+            borderRadius: styles["border-radius"] || "0",
+            opacity: styles.opacity
+              ? Math.round(parseFloat(styles.opacity) * 100).toString()
+              : "100",
+            boxShadow: styles["box-shadow"] || "",
+          });
+        }
+      });
+
       // Add minimal custom CSS for GrapeJS editor layout
       const style = document.createElement("style");
       style.textContent = `
@@ -181,26 +307,80 @@ export default function EditorPage() {
         transition: all 0.3s ease;
       }
       
-      /* Device preview indicators */
-      .device-desktop .gjs-cv-canvas {
-        max-width: 100%;
-        margin: 0 auto;
+      /* Hide default device manager panel */
+      .gjs-pn-devices {
+        display: none !important;
       }
       
-      .device-tablet .gjs-cv-canvas {
-        max-width: 768px;
-        margin: 0 auto;
-        border: 2px solid #e5e7eb;
-        border-radius: 8px;
-        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+      /* Custom device manager styles */
+      .device-manager {
+        display: flex;
+        gap: 8px;
+        align-items: center;
       }
       
-      .device-mobile .gjs-cv-canvas {
-        max-width: 375px;
-        margin: 0 auto;
-        border: 2px solid #e5e7eb;
-        border-radius: 12px;
-        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+      .device-btn {
+        display: flex;
+        align-items: center;
+        gap: 4px;
+        padding: 6px 12px;
+        border: 1px solid #d1d5db;
+        border-radius: 4px;
+        background: white;
+        cursor: pointer;
+        transition: all 0.2s;
+        font-size: 12px;
+        font-weight: 500;
+      }
+      
+      .device-btn:hover {
+        background: #f9fafb;
+      }
+      
+      .device-btn.active {
+        background: #3b82f6;
+        color: white;
+        border-color: #3b82f6;
+      }
+      
+      .device-btn svg {
+        width: 14px;
+        height: 14px;
+      }
+      
+      /* GrapeJS Device Manager Panel Styles */
+      .device-manager-panel {
+        display: flex;
+        gap: 8px;
+        align-items: center;
+      }
+      
+      .device-manager-panel .gjs-pn-btn {
+        background: #4b5563;
+        color: white;
+        border: 1px solid #6b7280;
+        border-radius: 4px;
+        padding: 6px 12px;
+        font-size: 12px;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.2s;
+        min-width: 60px;
+        text-align: center;
+      }
+      
+      .device-manager-panel .gjs-pn-btn:hover {
+        background: #6b7280;
+      }
+      
+      .device-manager-panel .gjs-pn-btn.gjs-pn-active {
+        background: #3b82f6;
+        border-color: #3b82f6;
+      }
+      
+      /* Device preview styles */
+      .gjs-cv-canvas {
+        transition: all 0.3s ease;
       }
       
       /* Responsive canvas wrapper */
@@ -277,49 +457,20 @@ export default function EditorPage() {
     setStyleValues((prev) => ({ ...prev, [property]: value }));
   };
 
-  const handleDeviceChange = (device: string) => {
-    const canvasWrapper = document.querySelector("#gjs-container");
-    if (canvasWrapper) {
-      // Iterate through all components and set their style from the corresponding data-yoink attribute
-      if (editor) {
-        // const allComponents = editor.getWrapper()!.components();
-        // const deviceAttr =
-        //   device === "Desktop"
-        //     ? "data-yoink-lg"
-        //     : device === "Tablet"
-        //     ? "data-yoink-md"
-        //     : "data-yoink-sm";
-        // allComponents.forEach((comp: any) => {
-        //   // Recursively apply to all nested components
-        //   const applyStyleFromAttr = (component: any) => {
-        //     const attrs = component.getAttributes();
-        //     if (attrs && attrs[deviceAttr]) {
-        //       try {
-        //         // If the attribute is a stringified object, parse it
-        //         let styleObj = attrs[deviceAttr];
-        //         if (typeof styleObj === "string") {
-        //           styleObj = JSON.parse(styleObj);
-        //         }
-        //         component.setStyle({ ...styleObj });
-        //       } catch (e) {
-        //         // fallback: if not JSON, try to set as is
-        //         component.setStyle({ ...attrs[deviceAttr] });
-        //       }
-        //     }
-        //     // Recursively apply to children
-        //     if (
-        //       component.components &&
-        //       typeof component.components === "function"
-        //     ) {
-        //       component
-        //         .components()
-        //         .forEach((child: any) => applyStyleFromAttr(child));
-        //     }
-        //   };
-        //   applyStyleFromAttr(comp);
-        // });
-      }
-      setCurrentDevice(device);
+  // Function to handle device changes using GrapeJS device manager
+  const handleDeviceChange = (deviceName: string) => {
+    if (!editor) return;
+
+    const deviceManager = editor.DeviceManager;
+    const devices = deviceManager.getAll();
+    const targetDevice = devices.find(
+      (device: any) => device.get("name") === deviceName
+    );
+
+    if (targetDevice) {
+      deviceManager.select(targetDevice);
+      setCurrentDevice(deviceName);
+
       if (selectedComponent) {
         const styles = selectedComponent.getStyle();
         setStyleValues({
@@ -343,8 +494,6 @@ export default function EditorPage() {
           boxShadow: styles["box-shadow"] || "",
         });
       }
-      const deviceName = device.toLowerCase();
-      canvasWrapper.className = `device-${deviceName}`;
     }
   };
 
@@ -369,6 +518,8 @@ export default function EditorPage() {
             </span>
           </div>
         </div>
+        {/* Device Manager Panel */}
+        <div className="device-manager-panel"></div>
       </div>
       <div className="flex flex-1 h-full">
         <LeftSidebar

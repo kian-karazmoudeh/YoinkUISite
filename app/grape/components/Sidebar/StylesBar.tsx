@@ -234,30 +234,106 @@ export default function StylesBar({
   }, []);
 
   return (
-    <div className="overflow-y-auto">
-      <div className="p-4">
-        {selectedComponent ? (
-          <div className="space-y-6">
-            {categoryOrder.map(
-              (cat) =>
-                categorized[cat] && (
-                  <div className="space-y-3" key={cat}>
-                    <h3 className="text-lg font-semibold text-gray-900">
-                      {cat}
-                    </h3>
-                    {categorized[cat].map((cssProp) => {
-                      const config = propertyConfig[cssProp] || {};
-                      const value = (styleValues as any)[cssProp] ?? "";
-                      // Input rendering logic
-                      if (config.type === "color") {
+    <div className="flex-1 p-4 overflow-hidden flex flex-col h-full min-h-0">
+      <div
+        className="overflow-y-auto"
+        style={{
+          scrollbarWidth: "thin",
+          scrollbarColor: "#26272B #18191A",
+        }}
+      >
+        <div className="p-4">
+          {selectedComponent ? (
+            <div className="space-y-6">
+              {categoryOrder.map(
+                (cat) =>
+                  categorized[cat] && (
+                    <div className="space-y-3" key={cat}>
+                      <h3 className="text-lg font-semibold text-gray-900">
+                        {cat}
+                      </h3>
+                      {categorized[cat].map((cssProp) => {
+                        const config = propertyConfig[cssProp] || {};
+                        const value = (styleValues as any)[cssProp] ?? "";
+                        // Input rendering logic
+                        if (config.type === "color") {
+                          return (
+                            <div key={cssProp}>
+                              <label className="block text-sm font-medium text-gray-700 mb-1">
+                                {getLabel(cssProp)}
+                              </label>
+                              <input
+                                type="color"
+                                className="w-full h-10 border border-gray-300 rounded-md cursor-pointer"
+                                value={value}
+                                onChange={(e) =>
+                                  updateComponentStyle(cssProp, e.target.value)
+                                }
+                              />
+                            </div>
+                          );
+                        }
+                        if (config.type === "range") {
+                          return (
+                            <div key={cssProp}>
+                              <label className="block text-sm font-medium text-gray-700 mb-1">
+                                {getLabel(cssProp)}
+                              </label>
+                              <div className="space-y-2">
+                                <input
+                                  type="range"
+                                  className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer"
+                                  min={config.min}
+                                  max={config.max}
+                                  value={value}
+                                  onChange={(e) =>
+                                    handleSliderChange(
+                                      cssProp,
+                                      e.target.value,
+                                      config.displayProperty || cssProp
+                                    )
+                                  }
+                                />
+                                <div className="text-xs text-gray-500 text-center">
+                                  {value}
+                                  {cssProp === "opacity" ? "%" : "px"}
+                                </div>
+                              </div>
+                            </div>
+                          );
+                        }
+                        if (config.type === "select") {
+                          return (
+                            <div key={cssProp}>
+                              <label className="block text-sm font-medium text-gray-700 mb-1">
+                                {getLabel(cssProp)}
+                              </label>
+                              <select
+                                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                value={value}
+                                onChange={(e) =>
+                                  updateComponentStyle(cssProp, e.target.value)
+                                }
+                              >
+                                {config.options?.map((opt) => (
+                                  <option value={opt} key={opt}>
+                                    {opt}
+                                  </option>
+                                ))}
+                              </select>
+                            </div>
+                          );
+                        }
+                        // Default to text input
                         return (
                           <div key={cssProp}>
                             <label className="block text-sm font-medium text-gray-700 mb-1">
                               {getLabel(cssProp)}
                             </label>
                             <input
-                              type="color"
-                              className="w-full h-10 border border-gray-300 rounded-md cursor-pointer"
+                              type="text"
+                              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                              placeholder={config.placeholder}
                               value={value}
                               onChange={(e) =>
                                 updateComponentStyle(cssProp, e.target.value)
@@ -265,85 +341,17 @@ export default function StylesBar({
                             />
                           </div>
                         );
-                      }
-                      if (config.type === "range") {
-                        return (
-                          <div key={cssProp}>
-                            <label className="block text-sm font-medium text-gray-700 mb-1">
-                              {getLabel(cssProp)}
-                            </label>
-                            <div className="space-y-2">
-                              <input
-                                type="range"
-                                className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer"
-                                min={config.min}
-                                max={config.max}
-                                value={value}
-                                onChange={(e) =>
-                                  handleSliderChange(
-                                    cssProp,
-                                    e.target.value,
-                                    config.displayProperty || cssProp
-                                  )
-                                }
-                              />
-                              <div className="text-xs text-gray-500 text-center">
-                                {value}
-                                {cssProp === "opacity" ? "%" : "px"}
-                              </div>
-                            </div>
-                          </div>
-                        );
-                      }
-                      if (config.type === "select") {
-                        return (
-                          <div key={cssProp}>
-                            <label className="block text-sm font-medium text-gray-700 mb-1">
-                              {getLabel(cssProp)}
-                            </label>
-                            <select
-                              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                              value={value}
-                              onChange={(e) =>
-                                updateComponentStyle(cssProp, e.target.value)
-                              }
-                            >
-                              {config.options?.map((opt) => (
-                                <option value={opt} key={opt}>
-                                  {opt}
-                                </option>
-                              ))}
-                            </select>
-                          </div>
-                        );
-                      }
-                      // Default to text input
-                      return (
-                        <div key={cssProp}>
-                          <label className="block text-sm font-medium text-gray-700 mb-1">
-                            {getLabel(cssProp)}
-                          </label>
-                          <input
-                            type="text"
-                            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                            placeholder={config.placeholder}
-                            value={value}
-                            onChange={(e) =>
-                              updateComponentStyle(cssProp, e.target.value)
-                            }
-                          />
-                        </div>
-                      );
-                    })}
-                  </div>
-                )
-            )}
-          </div>
-        ) : (
-          <div className="text-center text-gray-500 italic py-8">
-            Select a component to edit its styles
-          </div>
-        )}
+                      })}
+                    </div>
+                  )
+              )}
+            </div>
+          ) : (
+            <div className="text-center text-gray-500 italic py-8">
+              Select a component to edit its styles
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );

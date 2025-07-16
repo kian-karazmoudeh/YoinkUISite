@@ -10,6 +10,7 @@ export const getEditorConfig = () => ({
   },
   blockManager: {
     blocks: blocks,
+    appendTo: false,
   },
   layerManager: {
     appendTo: ".layers-container",

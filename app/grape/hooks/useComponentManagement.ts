@@ -88,10 +88,6 @@ export const useComponentManagement = ({
           deviceName,
           setStyleValues
         );
-
-        // Debug: Log the component's UID and current styles object
-        console.log("Selected component UID:", uid);
-        console.log("Current componentStyles object:", componentStyles);
       }
     };
 

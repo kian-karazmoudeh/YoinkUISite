@@ -1,6 +1,6 @@
 "use client";
 
-import { cssProperties } from "../types/cssProperties";
+import { cssProperties } from "../../types/cssProperties";
 import { useMemo } from "react";
 
 interface StyleValues {
@@ -24,7 +24,7 @@ interface StyleValues {
 
 interface RightSidebarProps {
   selectedComponent: any;
-  styleValues: import("../types").StyleValues;
+  styleValues: import("../../types").StyleValues;
   updateComponentStyle: (property: string, value: string) => void;
   handleSliderChange: (
     property: string,
@@ -216,7 +216,7 @@ function getLabel(prop: string) {
   );
 }
 
-export default function RightSidebar({
+export default function StylesBar({
   selectedComponent,
   styleValues,
   updateComponentStyle,
@@ -234,7 +234,7 @@ export default function RightSidebar({
   }, []);
 
   return (
-    <div className="w-80 bg-gray-50 border-l border-gray-200 overflow-y-auto">
+    <div className="overflow-y-auto">
       <div className="p-4">
         {selectedComponent ? (
           <div className="space-y-6">

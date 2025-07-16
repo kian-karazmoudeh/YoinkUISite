@@ -3,20 +3,175 @@
 import { Editor } from "grapesjs";
 import { useEffect } from "react";
 
+// Type for the component styles object
+interface ComponentStyles {
+  [uid: string]: {
+    lg: { [key: string]: string };
+    md: { [key: string]: string };
+    sm: { [key: string]: string };
+  };
+}
+
 interface DeviceManagerProps {
   editor: Editor | null;
-  setCurrentDevice: (device: string) => void;
+  setCurrentDevice: (device: "Desktop" | "Tablet" | "Mobile") => void;
   currentDevice: string;
+  componentStyles: ComponentStyles;
 }
 
 export default function LeftSidebar({
   editor,
   setCurrentDevice,
   currentDevice,
+  componentStyles,
 }: DeviceManagerProps) {
-  const selectDevice = (deviceName: string) => {
+  const selectDevice = (deviceName: "Desktop" | "Tablet" | "Mobile") => {
     if (!editor) return;
     setCurrentDevice(deviceName);
+  };
+
+  // Function to apply responsive styles to cloned components
+  const applyResponsiveStyles = () => {
+    if (!editor) return [];
+
+    // Get all components in the editor
+    const components = editor.getComponents();
+
+    // Clone and apply styles to components
+    const clonedComponents = components.map((component: any) => {
+      // Clone the component
+      const clonedComponent = component.clone();
+      const uid = clonedComponent.getAttributes()["data-yoink-uid"];
+
+      if (uid && componentStyles[uid]) {
+        const styles = componentStyles[uid];
+
+        // Always apply SM styles as base
+        if (styles.sm && Object.keys(styles.sm).length > 0) {
+          clonedComponent.setAttributes({
+            ...clonedComponent.getAttributes(),
+            "data-yoink-sm": JSON.stringify(styles.sm),
+          });
+        }
+
+        // For MD, start with SM base and merge in MD differences
+        if (styles.md && Object.keys(styles.md).length > 0) {
+          const smStyles = styles.sm || {};
+          const mdStyles = { ...smStyles, ...styles.md };
+
+          clonedComponent.setAttributes({
+            ...clonedComponent.getAttributes(),
+            "data-yoink-md": JSON.stringify(mdStyles),
+          });
+        }
+
+        // For LG, start with SM base and merge in LG differences
+        if (styles.lg && Object.keys(styles.lg).length > 0) {
+          const smStyles = styles.sm || {};
+          const lgStyles = { ...smStyles, ...styles.lg };
+
+          clonedComponent.setAttributes({
+            ...clonedComponent.getAttributes(),
+            "data-yoink-lg": JSON.stringify(lgStyles),
+          });
+        }
+      }
+
+      return clonedComponent;
+    });
+
+    return clonedComponents;
+  };
+
+  // Export functions
+  const exportHTML = () => {
+    if (!editor) return;
+
+    // Get cloned components with responsive styles
+    const clonedComponents = applyResponsiveStyles();
+
+    // Create a temporary editor or work with the cloned components
+    // For now, we'll need to temporarily replace components and then restore them
+    const originalComponents = editor.getComponents();
+
+    // Temporarily replace components with cloned ones
+    editor.setComponents(clonedComponents);
+
+    const html = editor.getHtml();
+    const css = editor.getCss();
+    const fullHTML = `<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Exported from YoinkUI</title>
+    <style>
+${css}
+    </style>
+</head>
+<body>
+${html}
+</body>
+</html>`;
+
+    // Restore original components
+    editor.setComponents(originalComponents);
+
+    const blob = new Blob([fullHTML], { type: "text/html" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "yoinkui-export.html";
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  };
+
+  const exportCSS = () => {
+    if (!editor) return;
+
+    // Get cloned components with responsive styles
+    const clonedComponents = applyResponsiveStyles();
+
+    // Temporarily replace components with cloned ones
+    const originalComponents = editor.getComponents();
+    editor.setComponents(clonedComponents);
+
+    const css = editor.getCss() || "";
+
+    // Restore original components
+    editor.setComponents(originalComponents);
+
+    const blob = new Blob([css], { type: "text/css" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "yoinkui-styles.css";
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  };
+
+  const exportJSON = () => {
+    if (!editor) return;
+
+    // Get cloned components with responsive styles
+    const clonedComponents = applyResponsiveStyles();
+
+    const json = clonedComponents.map((component: any) => component.toJSON());
+    const blob = new Blob([JSON.stringify(json, null, 2)], {
+      type: "application/json",
+    });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "yoinkui-components.json";
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
   };
 
   // Add keyboard shortcuts for device switching
@@ -39,6 +194,10 @@ export default function LeftSidebar({
             event.preventDefault();
             selectDevice("Mobile");
             break;
+          case "e":
+            event.preventDefault();
+            exportHTML();
+            break;
         }
       }
     };
@@ -50,81 +209,12 @@ export default function LeftSidebar({
   }, [editor]);
 
   return (
-    <div className="w-64 bg-gray-50 border-r border-gray-200 overflow-y-auto flex flex-col">
-      {/* Device Manager */}
-      <div className="p-4 border-b border-gray-200">
-        <h3 className="text-sm font-semibold text-gray-700 mb-3">
-          Device Preview
-        </h3>
-        <div className="flex flex-col space-y-2">
-          <button
-            onClick={() => selectDevice("Desktop")}
-            title="Desktop (Ctrl+1)"
-            className={`flex items-center justify-center px-3 py-2 text-xs font-medium rounded-md transition-colors ${
-              currentDevice === "Desktop"
-                ? "bg-blue-500 text-white"
-                : "bg-white text-gray-700 hover:bg-gray-100 border border-gray-300"
-            }`}
-          >
-            <svg
-              className="w-4 h-4 mr-2"
-              fill="currentColor"
-              viewBox="0 0 20 20"
-            >
-              <path
-                fillRule="evenodd"
-                d="M3 4a1 1 0 011-1h12a1 1 0 011 1v2a1 1 0 01-1 1H4a1 1 0 01-1-1V4zM3 10a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H4a1 1 0 01-1-1v-6zM14 9a1 1 0 00-1 1v6a1 1 0 001 1h2a1 1 0 001-1v-6a1 1 0 00-1-1h-2z"
-                clipRule="evenodd"
-              />
-            </svg>
-            Desktop
-            <span className="ml-auto text-xs opacity-60">Ctrl+1</span>
-          </button>
-          <button
-            onClick={() => selectDevice("Tablet")}
-            title="Tablet (Ctrl+2)"
-            className={`flex items-center justify-center px-3 py-2 text-xs font-medium rounded-md transition-colors ${
-              currentDevice === "Tablet"
-                ? "bg-blue-500 text-white"
-                : "bg-white text-gray-700 hover:bg-gray-100 border border-gray-300"
-            }`}
-          >
-            <svg
-              className="w-4 h-4 mr-2"
-              fill="currentColor"
-              viewBox="0 0 20 20"
-            >
-              <path d="M7 3a1 1 0 000 2h6a1 1 0 100-2H7zM4 7a1 1 0 011-1h10a1 1 0 110 2H5a1 1 0 01-1-1zM2 11a2 2 0 012-2h12a2 2 0 012 2v4a2 2 0 01-2 2H4a2 2 0 01-2-2v-4z" />
-            </svg>
-            Tablet
-            <span className="ml-auto text-xs opacity-60">Ctrl+2</span>
-          </button>
-          <button
-            onClick={() => selectDevice("Mobile")}
-            title="Mobile (Ctrl+3)"
-            className={`flex items-center justify-center px-3 py-2 text-xs font-medium rounded-md transition-colors ${
-              currentDevice === "Mobile"
-                ? "bg-blue-500 text-white"
-                : "bg-white text-gray-700 hover:bg-gray-100 border border-gray-300"
-            }`}
-          >
-            <svg
-              className="w-4 h-4 mr-2"
-              fill="currentColor"
-              viewBox="0 0 20 20"
-            >
-              <path d="M7 2a2 2 0 00-2 2v12a2 2 0 002 2h6a2 2 0 002-2V4a2 2 0 00-2-2H7zM7 4h6v12H7V4z" />
-            </svg>
-            Mobile
-            <span className="ml-auto text-xs opacity-60">Ctrl+3</span>
-          </button>
-        </div>
-      </div>
-
+    <div className="w-80 h-full bg-[#18191A] border border-[#26272B] overflow-y-auto flex flex-col rounded-md min-h-0">
       {/* Blocks Manager */}
-      <div className="flex-1 p-4">
+
+      <div className="flex-1 p-4 overflow-hidden flex flex-col">
         <h3 className="text-sm font-semibold text-gray-700 mb-3">Components</h3>
-        <div id="blocks" className="space-y-3"></div>
+        <div id="blocks" className="flex-1 overflow-y-auto"></div>
       </div>
     </div>
   );

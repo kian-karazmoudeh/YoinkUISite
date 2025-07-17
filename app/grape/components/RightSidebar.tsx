@@ -2,6 +2,7 @@
 
 import { cssProperties } from "../types/cssProperties";
 import { useMemo } from "react";
+import { ColorPicker } from "@/components/ui/color-picker";
 
 interface StyleValues {
   width: string;
@@ -252,16 +253,12 @@ export default function RightSidebar({
                       if (config.type === "color") {
                         return (
                           <div key={cssProp}>
-                            <label className="block text-sm font-medium text-gray-700 mb-1">
-                              {getLabel(cssProp)}
-                            </label>
-                            <input
-                              type="color"
-                              className="w-full h-10 border border-gray-300 rounded-md cursor-pointer"
+                            <ColorPicker
                               value={value}
-                              onChange={(e) =>
-                                updateComponentStyle(cssProp, e.target.value)
+                              onChange={(color) =>
+                                updateComponentStyle(cssProp, color)
                               }
+                              label={getLabel(cssProp)}
                             />
                           </div>
                         );

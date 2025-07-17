@@ -1,26 +1,10 @@
 "use client";
 
+import { Input } from "@/components/ui/input";
 import { cssProperties } from "../../types/cssProperties";
 import { useMemo } from "react";
-
-interface StyleValues {
-  width: string;
-  height: string;
-  display: string;
-  fontSize: string;
-  fontWeight: string;
-  textAlign: string;
-  backgroundColor: string;
-  color: string;
-  padding: string;
-  margin: string;
-  borderWidth: string;
-  borderColor: string;
-  borderStyle: string;
-  borderRadius: string;
-  opacity: string;
-  boxShadow: string;
-}
+import { Label } from "@/components/ui/label";
+import { ColorPicker } from "@/components/ui/color-picker";
 
 interface RightSidebarProps {
   selectedComponent: any;
@@ -259,16 +243,12 @@ export default function StylesBar({
                         if (config.type === "color") {
                           return (
                             <div key={cssProp}>
-                              <label className="block text-sm font-medium text-gray-700 mb-1">
-                                {getLabel(cssProp)}
-                              </label>
-                              <input
-                                type="color"
-                                className="w-full h-10 border border-gray-300 rounded-md cursor-pointer"
+                              <ColorPicker
                                 value={value}
-                                onChange={(e) =>
-                                  updateComponentStyle(cssProp, e.target.value)
+                                onChange={(color) =>
+                                  updateComponentStyle(cssProp, color)
                                 }
+                                label={getLabel(cssProp)}
                               />
                             </div>
                           );
@@ -276,13 +256,12 @@ export default function StylesBar({
                         if (config.type === "range") {
                           return (
                             <div key={cssProp}>
-                              <label className="block text-sm font-medium text-gray-700 mb-1">
+                              <Label className="block text-sm font-medium text-zinc-50 mb-1">
                                 {getLabel(cssProp)}
-                              </label>
+                              </Label>
                               <div className="space-y-2">
-                                <input
+                                <Input
                                   type="range"
-                                  className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer"
                                   min={config.min}
                                   max={config.max}
                                   value={value}
@@ -305,9 +284,9 @@ export default function StylesBar({
                         if (config.type === "select") {
                           return (
                             <div key={cssProp}>
-                              <label className="block text-sm font-medium text-gray-700 mb-1">
+                              <Label className="block text-sm font-medium text-zinc-50 mb-1">
                                 {getLabel(cssProp)}
-                              </label>
+                              </Label>
                               <select
                                 className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                                 value={value}
@@ -327,13 +306,13 @@ export default function StylesBar({
                         // Default to text input
                         return (
                           <div key={cssProp}>
-                            <label className="block text-sm font-medium text-gray-700 mb-1">
+                            <Label className="block text-sm font-medium text-zinc-50 mb-1">
                               {getLabel(cssProp)}
-                            </label>
-                            <input
+                            </Label>
+                            <Input
                               type="text"
-                              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                               placeholder={config.placeholder}
+                              className="bg-[#151515] border border-[#363736] text-zinc-50"
                               value={value}
                               onChange={(e) =>
                                 updateComponentStyle(cssProp, e.target.value)

@@ -20,7 +20,7 @@ export const getEditorConfig = () => ({
       {
         name: "Desktop",
         width: "100%", // Full width
-        widthMedia: "1024px",
+        widthMedia: "",
       },
       {
         name: "Tablet",

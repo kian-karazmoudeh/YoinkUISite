@@ -13,40 +13,6 @@
   height: 100%;
 }
 
-.gjs-block {
-  width: 100%;
-  height: auto;
-  min-height: auto;
-  margin: 0;
-  padding: 10px;
-  border: 1px solid #d1d5db;
-  border-radius: 6px;
-  cursor: pointer;
-  transition: all 0.2s;
-}
-
-.gjs-block:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-}
-
-.gjs-block-label {
-  font-size: 12px;
-  text-align: center;
-  margin-top: 5px;
-  color: white;
-}
-
-.gjs-block-category {
-  font-weight: bold;
-  margin-bottom: 10px;
-  padding: 5px;
-  box-sizing: border-box;
-  border-radius: 4px;
-  font-size: 14px;
-  color: #ffffff;
-}
-
 .block-preview {
   pointer-events: none;
 }

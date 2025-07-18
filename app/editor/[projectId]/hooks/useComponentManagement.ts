@@ -11,6 +11,8 @@ interface UseComponentManagementProps {
   setComponentStyles: React.Dispatch<React.SetStateAction<ComponentStyles>>;
   componentStyles: ComponentStyles;
   deviceName: DeviceName;
+  setActiveTab: (tab: string) => void;
+  defaultStyles: Record<string, string> | undefined;
 }
 
 export const useComponentManagement = ({
@@ -20,6 +22,8 @@ export const useComponentManagement = ({
   setComponentStyles,
   componentStyles,
   deviceName,
+  setActiveTab,
+  defaultStyles,
 }: UseComponentManagementProps) => {
   useEffect(() => {
     if (!editor) return;
@@ -75,18 +79,26 @@ export const useComponentManagement = ({
           console.error("Error parsing existing styles:", e);
         }
       }
+
+      // Automatically select the component after it's added
+      // I used setTimeout(() => { editor.select(component); }, 0) to ensure the selection happens after the current execution cycle is complete. This prevents any potential timing issues where the component might not be fully initialized when we try to select it.
+      setTimeout(() => {
+        editor.select(component);
+      }, 0);
     };
 
     // Listen for component selection
     const handleComponentSelected = (component: any) => {
       setSelectedComponent(component);
+      setActiveTab("styles");
       const uid = component.getAttributes()["data-yoink-uid"];
       if (uid) {
         changeStyleStateHandler(
           component,
           componentStyles,
           deviceName,
-          setStyleValues
+          setStyleValues,
+          defaultStyles
         );
       }
     };
@@ -95,6 +107,7 @@ export const useComponentManagement = ({
     const handleComponentDeselected = () => {
       setSelectedComponent(null);
       setStyleValues(getDefaultStyleValues());
+      setActiveTab("blocks");
     };
 
     // Listen for component removal
@@ -129,5 +142,7 @@ export const useComponentManagement = ({
     setStyleValues,
     setComponentStyles,
     componentStyles,
+    deviceName,
+    setActiveTab,
   ]);
 };

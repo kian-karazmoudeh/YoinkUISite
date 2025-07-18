@@ -9,6 +9,8 @@ type SidebarProps = {
   updateComponentStyle: (property: string, value: string) => void;
   handleSliderChange: (property: string, value: string) => void;
   editor: Editor;
+  activeTab: string;
+  setActiveTab: (tab: string) => void;
 };
 
 const Sidebar = ({
@@ -17,17 +19,19 @@ const Sidebar = ({
   updateComponentStyle,
   handleSliderChange,
   editor,
+  activeTab,
+  setActiveTab,
 }: SidebarProps) => {
   return (
     <div className="w-80 h-full bg-[#18191A] border border-[#26272B] overflow-y-auto flex flex-col rounded-md min-h-0 p-3">
       <Tabs
-        defaultValue="blocks"
+        value={activeTab}
+        onValueChange={setActiveTab}
         className="flex-1 flex flex-col h-full min-h-0"
       >
         <TabsList className="mb-2 bg-[#262728] w-full">
           <TabsTrigger value="blocks">Blocks</TabsTrigger>
           <TabsTrigger value="styles">Styles</TabsTrigger>
-          <TabsTrigger value="layers">Layers</TabsTrigger>
         </TabsList>
         <TabsContent value="blocks" className="flex-1 h-full min-h-0">
           <Blocks editor={editor} />
@@ -39,9 +43,6 @@ const Sidebar = ({
             updateComponentStyle={updateComponentStyle}
             handleSliderChange={handleSliderChange}
           />
-        </TabsContent>
-        <TabsContent value="layers" className="flex-1 h-full min-h-0">
-          <div>hello</div>
         </TabsContent>
       </Tabs>
     </div>

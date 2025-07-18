@@ -11,6 +11,7 @@ interface UseDeviceManagementProps {
   selectedComponent: any;
   setStyleValues: (values: StyleValues) => void;
   componentStyles: { [uid: string]: { lg: any; md: any; sm: any; base: any } };
+  defaultStyles: Record<string, string> | undefined;
 }
 
 export const useDeviceManagement = ({
@@ -20,6 +21,7 @@ export const useDeviceManagement = ({
   selectedComponent,
   setStyleValues,
   componentStyles,
+  defaultStyles,
 }: UseDeviceManagementProps) => {
   useEffect(() => {
     if (!editor) return;
@@ -48,7 +50,8 @@ export const useDeviceManagement = ({
           selectedComponent,
           componentStyles,
           deviceName,
-          setStyleValues
+          setStyleValues,
+          defaultStyles
         );
       }
     };
@@ -88,7 +91,8 @@ export const useDeviceManagement = ({
           selectedComponent,
           componentStyles,
           deviceName,
-          setStyleValues
+          setStyleValues,
+          defaultStyles
         );
       }
     }

@@ -9,7 +9,7 @@ import { ComponentStyles, StyleValues, DeviceName } from "./types";
 import { getDefaultStyleValues } from "./utils/helpers";
 import Navbar from "./components/Navbar";
 import Sidebar from "./components/Sidebar";
-import { getBaseDefaultStyles } from "@/utils/defaultStyles/base/localstore";
+import { getBaseDefaultStyles } from "./utils/defaultStyles/base";
 import { objectToUniversalCss } from "./utils/objectToUniversalCss";
 import { User } from "@supabase/supabase-js";
 import { createClient } from "@/utils/supabase/client";
@@ -140,6 +140,7 @@ export default function EditorPage() {
   return (
     <>
       <Navbar
+        yoinkName={yoinkName}
         yoinkId={projectId as string}
         user={user}
         currentDevice={currentDevice}
@@ -159,12 +160,6 @@ export default function EditorPage() {
             />
           )}
           <div className="flex-1 h-full rounded-md overflow-hidden relative">
-            {/* <button
-              className="absolute top-10 right-10 z-[999999] bg-red-500 text-white p-2 rounded-md"
-              onClick={() => console.log(baseDefaultStyles)}
-            >
-              Default Styles
-            </button> */}
             <div id="gjs-container" className="h-full"></div>
           </div>
         </div>

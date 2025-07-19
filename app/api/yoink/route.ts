@@ -63,7 +63,7 @@ export async function POST(req: NextRequest) {
     const fileName = `${data.user.id}/${Date.now()}-${Math.random()
       .toString(36)
       .substring(7)}.txt`;
-    const { data: uploadData, error: uploadError } = await supabase.storage
+    const { error: uploadError } = await supabase.storage
       .from("yoink-content")
       .upload(fileName, content, {
         contentType: "text/plain",
@@ -163,5 +163,5 @@ export async function POST(req: NextRequest) {
     }
   }
 
-  return NextResponse.json({ success: true, yoink_id });
+  return NextResponse.json({ yoink_id });
 }

@@ -4,43 +4,38 @@ import Image from "next/image";
 import { DeviceName } from "../../types";
 import Devices from "./Devices";
 import ExportBtn from "./ExportBtn";
-import { useEffect, useState } from "react";
-import { createClient } from "@/utils/supabase/client";
 import { User } from "@supabase/supabase-js";
+import { Skeleton } from "@/components/ui/skeleton";
+import FileName from "./FileName";
 
 type EditorNavbarProps = {
+  user: User | null;
   currentDevice: DeviceName;
   setCurrentDevice: (device: DeviceName) => void;
+  yoinkId: string;
+  yoinkName: string | null;
 };
 
-const Navbar = ({ currentDevice, setCurrentDevice }: EditorNavbarProps) => {
-  const [user, setUser] = useState<User | null>(null);
-  const supabase = createClient();
+const LoadingUser = () => {
+  return (
+    <div className="flex min-w-0 items-center gap-2 opacity-50">
+      <div className="block cursor-pointer">
+        <span className="relative flex size-[22px] shrink-0 cursor-pointer overflow-hidden rounded-full shadow-[_#27272a_0px_0px_0px_1px]">
+          <Skeleton className="size-full" />
+        </span>
+      </div>
+      <Skeleton className="w-15 h-2" />
+    </div>
+  );
+};
 
-  useEffect(() => {
-    // Fetch user on mount
-    const getUser = async () => {
-      const { data } = await supabase.auth.getUser();
-
-      if (data.user) {
-        setUser(data.user);
-      }
-    };
-
-    getUser();
-
-    // Optional: listen for auth changes (login/logout)
-    const { data: listener } = supabase.auth.onAuthStateChange(
-      (_event, session) => {
-        setUser(session?.user ?? null);
-      }
-    );
-
-    return () => {
-      listener.subscription.unsubscribe();
-    };
-  }, []);
-
+const Navbar = ({
+  user,
+  currentDevice,
+  setCurrentDevice,
+  yoinkId,
+  yoinkName,
+}: EditorNavbarProps) => {
   return (
     <div className="flex items-center justify-between">
       <div className="flex items-center gap-2">
@@ -75,24 +70,27 @@ const Navbar = ({ currentDevice, setCurrentDevice }: EditorNavbarProps) => {
               className="inline fill-zinc-800 stroke-[1px]"
             ></path>
           </svg>
-          <div className="flex min-w-0 items-center gap-2">
-            <a className="block cursor-pointer" href="/shugar">
-              <span className="relative flex size-[22px] shrink-0 cursor-pointer overflow-hidden rounded-full shadow-[_#27272a_0px_0px_0px_1px]">
-                <img
-                  className="aspect-[1_/_1] size-full cursor-pointer"
-                  alt="tigran tumasov"
-                  src={
-                    user
-                      ? user.user_metadata.avatar_url
-                      : "https://placehold.co/460x460"
-                  }
-                />
-              </span>
-            </a>
-            <p className="text-sm font-medium text-nowrap whitespace-nowrap">
-              {user ? user.user_metadata.name : "Anonymous"}
-            </p>
-          </div>
+          {!user ? (
+            <LoadingUser />
+          ) : (
+            <div className="flex min-w-0 items-center gap-2">
+              <div className="block cursor-pointer">
+                <span className="relative flex size-[22px] shrink-0 cursor-pointer overflow-hidden rounded-full shadow-[_#27272a_0px_0px_0px_1px]">
+                  <img
+                    className="aspect-[1_/_1] size-full cursor-pointer"
+                    alt="tigran tumasov"
+                    src={
+                      user.user_metadata.avatar_url ||
+                      "https://placehold.co/460x460"
+                    }
+                  />
+                </span>
+              </div>
+              <p className="text-sm font-medium text-nowrap whitespace-nowrap">
+                {user.user_metadata.name || "Anonymous"}
+              </p>
+            </div>
+          )}
         </div>
         <div className="flex items-center gap-2">
           <svg
@@ -109,11 +107,7 @@ const Navbar = ({ currentDevice, setCurrentDevice }: EditorNavbarProps) => {
               className="inline fill-zinc-800 stroke-[1px]"
             ></path>
           </svg>
-          <div className="flex items-center gap-1 rounded-md px-2 py-1">
-            <p className="text-sm font-medium text-nowrap whitespace-nowrap">
-              Untitled
-            </p>
-          </div>
+          <FileName yoinkId={yoinkId} fileName={yoinkName || "Untitled"} />
         </div>
       </div>
       <div className="flex items-center gap-1 flex-1">

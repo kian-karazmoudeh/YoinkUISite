@@ -19,6 +19,7 @@ export default function EditorPage() {
   const { projectId } = useParams();
   const [user, setUser] = useState<User | null>(null);
   const supabase = createClient();
+  const [yoinkName, setYoinkName] = useState<string | null>(null);
   const [yoinkContent, setYoinkContent] = useState<string | null>(null);
 
   const [selectedComponent, setSelectedComponent] = useState<any>(null);
@@ -53,7 +54,7 @@ export default function EditorPage() {
         // 1. Get the yoink row for this user + project
         const { data: yoinks, error: yoinkError } = await supabase
           .from("yoinks")
-          .select("content_url")
+          .select("content_url, name")
           .eq("user_id", currentUser.id)
           .eq("id", projectId) // make sure you filter by project
           .single(); // assuming one yoink per project
@@ -84,21 +85,10 @@ export default function EditorPage() {
 
         // 4. Save into state
         setYoinkContent(textContent);
+        setYoinkName(yoinks.name);
       } catch (err) {
         console.error("Unexpected error:", err);
       }
-    };
-
-    // Optional: listen for auth changes (login/logout)
-    const { data: listener } = supabase.auth.onAuthStateChange(
-      (_event, session) => {
-        setUser(session?.user ?? null);
-        setYoinkContent(null);
-      }
-    );
-
-    return () => {
-      listener.subscription.unsubscribe();
     };
   }, []);
 
@@ -150,6 +140,8 @@ export default function EditorPage() {
   return (
     <>
       <Navbar
+        yoinkId={projectId as string}
+        user={user}
         currentDevice={currentDevice}
         setCurrentDevice={handleDeviceChange}
       />

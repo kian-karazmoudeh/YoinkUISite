@@ -12,36 +12,77 @@ const DashboardHomePage = () => {
   const [yoinkFiles, setYoinkFiles] = useState<YoinkFile[]>([]);
   const [yoinkFilesLoading, setYoinkFilesLoading] = useState(true);
   const [user, setUser] = useState<User | null>(null);
+  const [currentPage, setCurrentPage] = useState(0);
+  const [hasMore, setHasMore] = useState(true);
+  const [loadingMore, setLoadingMore] = useState(false);
   const supabase = createClient();
+
+  const fetchYoinkFiles = async (
+    currentUser: User,
+    page: number = 0,
+    append: boolean = false
+  ) => {
+    const pageSize = 25;
+    const from = page * pageSize;
+    const to = from + pageSize - 1;
+
+    console.log(`Fetching page ${page} from ${from} to ${to}`);
+
+    const { data, error } = await supabase
+      .from("yoinks")
+      .select("*")
+      .eq("user_id", currentUser.id)
+      .neq("content_url", null)
+      .range(from, to)
+      .order("updated_at", { ascending: false });
+
+    if (error) {
+      console.error(error.message);
+      return;
+    }
+
+    if (data) {
+      if (append) {
+        setYoinkFiles((prev) => [...prev, ...data]);
+      } else {
+        setYoinkFiles(data);
+      }
+
+      // Check if we have more data
+      setHasMore(data.length === pageSize);
+    }
+
+    if (page === 0) {
+      setYoinkFilesLoading(false);
+    } else {
+      setLoadingMore(false);
+    }
+  };
+
+  const loadMore = async () => {
+    if (!user || loadingMore || !hasMore) return;
+
+    setLoadingMore(true);
+    const nextPage = currentPage + 1;
+    setCurrentPage(nextPage);
+    await fetchYoinkFiles(user, nextPage, true);
+  };
 
   useEffect(() => {
     const getUser = async () => {
       const { data } = await supabase.auth.getUser();
       if (data.user) {
         setUser(data.user);
-        return data.user; // return the user
+        return data.user;
       }
       return null;
     };
 
     getUser().then((fetchedUser) => {
       if (fetchedUser) {
-        fetchYoinkFiles(fetchedUser);
+        fetchYoinkFiles(fetchedUser, 0, false);
       }
     });
-
-    // Make fetchYoinkFiles accept a user
-    const fetchYoinkFiles = async (currentUser: User) => {
-      console.log(currentUser);
-      const { data, error } = await supabase
-        .from("yoinks")
-        .select("*")
-        .eq("user_id", currentUser.id)
-        .neq("content_url", null);
-      if (error) console.error(error.message);
-      if (data) setYoinkFiles(data);
-      setYoinkFilesLoading(false);
-    };
   }, []);
 
   return (
@@ -80,15 +121,28 @@ const DashboardHomePage = () => {
                             <YoinkFile key={yoinkFile.id} {...yoinkFile} />
                           ))
                         )}
+                        {loadingMore && (
+                          <>
+                            <YoinkFileSkeleton />
+                            <YoinkFileSkeleton />
+                            <YoinkFileSkeleton />
+                          </>
+                        )}
                       </div>
                     </div>
-                    <div className="flex justify-center items-center py-7">
-                      <button className="leading-[1.42857] h-8 text-sm bg-neutral-900 shrink-0 flex relative text-center text-nowrap font-medium whitespace-nowrap justify-center items-center cursor-pointer px-3 gap-[6px] border-white/12 border-[0.8px] rounded-lg">
-                        <div className="flex justify-center items-center cursor-pointer gap-2">
-                          Load More
-                        </div>
-                      </button>
-                    </div>
+                    {!yoinkFilesLoading && hasMore && (
+                      <div className="flex justify-center items-center py-7">
+                        <button
+                          onClick={loadMore}
+                          disabled={loadingMore}
+                          className="leading-[1.42857] h-8 text-sm bg-neutral-900 shrink-0 flex relative text-center text-nowrap font-medium whitespace-nowrap justify-center items-center cursor-pointer px-3 gap-[6px] border-white/12 border-[0.8px] rounded-lg disabled:opacity-50 disabled:cursor-not-allowed"
+                        >
+                          <div className="flex justify-center items-center cursor-pointer gap-2">
+                            {loadingMore ? "Loading..." : "Load More"}
+                          </div>
+                        </button>
+                      </div>
+                    )}
                   </div>
                 </div>
               </div>

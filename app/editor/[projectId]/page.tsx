@@ -11,7 +11,16 @@ import Navbar from "./components/Navbar";
 import Sidebar from "./components/Sidebar";
 import { getBaseDefaultStyles } from "@/utils/defaultStyles/base/localstore";
 import { objectToUniversalCss } from "./utils/objectToUniversalCss";
+import { User } from "@supabase/supabase-js";
+import { createClient } from "@/utils/supabase/client";
+import { useParams } from "next/navigation";
+
 export default function EditorPage() {
+  const { projectId } = useParams();
+  const [user, setUser] = useState<User | null>(null);
+  const supabase = createClient();
+  const [yoinkContent, setYoinkContent] = useState<string | null>(null);
+
   const [selectedComponent, setSelectedComponent] = useState<any>(null);
   const [currentDevice, setCurrentDevice] = useState<DeviceName>("Desktop");
   const [componentStyles, setComponentStyles] = useState<ComponentStyles>({});
@@ -22,8 +31,79 @@ export default function EditorPage() {
   const [baseDefaultStyles, setBaseDefaultStyles] = useState<
     Record<string, Record<string, string>> | undefined
   >(undefined);
-  // Custom hooks
-  const { editor } = useEditor();
+
+  useEffect(() => {
+    const getUser = async () => {
+      const { data } = await supabase.auth.getUser();
+      if (data.user) {
+        setUser(data.user);
+        return data.user; // return the user
+      }
+      return null;
+    };
+
+    getUser().then((fetchedUser) => {
+      if (fetchedUser) {
+        fetchYoinkContent(fetchedUser, projectId as string);
+      }
+    });
+
+    const fetchYoinkContent = async (currentUser: User, projectId: string) => {
+      try {
+        // 1. Get the yoink row for this user + project
+        const { data: yoinks, error: yoinkError } = await supabase
+          .from("yoinks")
+          .select("content_url")
+          .eq("user_id", currentUser.id)
+          .eq("id", projectId) // make sure you filter by project
+          .single(); // assuming one yoink per project
+
+        if (yoinkError || !yoinks) {
+          console.error("Error fetching yoink:", yoinkError?.message);
+          return;
+        }
+
+        const contentUrl = yoinks.content_url; // e.g. "some-folder/file.txt"
+        if (!contentUrl) {
+          console.error("No content_url found for this yoink");
+          return;
+        }
+
+        // 2. Download the file from yoink-content bucket
+        const { data: fileData, error: downloadError } = await supabase.storage
+          .from("yoink-content")
+          .download(contentUrl);
+
+        if (downloadError || !fileData) {
+          console.error("Error downloading file:", downloadError?.message);
+          return;
+        }
+
+        // 3. Read the file as text
+        const textContent = await fileData.text();
+
+        // 4. Save into state
+        setYoinkContent(textContent);
+      } catch (err) {
+        console.error("Unexpected error:", err);
+      }
+    };
+
+    // Optional: listen for auth changes (login/logout)
+    const { data: listener } = supabase.auth.onAuthStateChange(
+      (_event, session) => {
+        setUser(session?.user ?? null);
+        setYoinkContent(null);
+      }
+    );
+
+    return () => {
+      listener.subscription.unsubscribe();
+    };
+  }, []);
+
+  // Custom hooks - must be called before any conditional returns
+  const { editor } = useEditor({ content: yoinkContent || "" });
 
   const { handleDeviceChange } = useDeviceManagement({
     editor,

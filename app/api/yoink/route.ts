@@ -9,6 +9,8 @@ export async function POST(req: NextRequest) {
   const authHeader = req.headers.get("Authorization");
   const token = authHeader?.startsWith("Bearer ") ? authHeader.slice(7) : null;
 
+  let yoink_id;
+
   if (!token) {
     return NextResponse.json(
       { error: "Authorization token missing" },
@@ -23,6 +25,28 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Invalid token" }, { status: 401 });
   }
 
+  // Parse request body to get the text content
+  let body;
+  try {
+    body = await req.json();
+  } catch (error) {
+    return NextResponse.json(
+      { error: "Invalid JSON in request body" },
+      { status: 400 }
+    );
+  }
+
+  console.log(body);
+
+  const { content } = body;
+
+  if (!content || typeof content !== "string") {
+    return NextResponse.json(
+      { error: "Text content is required" },
+      { status: 400 }
+    );
+  }
+
   // get the user's membership. If they are premium, then increment yoink.
   const { data: profile, error: profileError } = await supabase
     .from("profiles")
@@ -35,12 +59,41 @@ export async function POST(req: NextRequest) {
   }
 
   if (profile.membership == "premium") {
+    // Upload text to Supabase storage bucket
+    const fileName = `${data.user.id}/${Date.now()}-${Math.random()
+      .toString(36)
+      .substring(7)}.txt`;
+    const { data: uploadData, error: uploadError } = await supabase.storage
+      .from("yoink-content")
+      .upload(fileName, content, {
+        contentType: "text/plain",
+        upsert: false,
+      });
+
+    if (uploadError) {
+      console.log(uploadError);
+      return NextResponse.json(
+        { error: "Failed to upload text to storage" },
+        { status: 500 }
+      );
+    }
+
     // increment yoink
-    const { error: insertError } = await supabase
+    const { data: newYoink, error: insertError } = await supabase
       .from("yoinks")
-      .insert([{ user_id: data.user.id }]);
+      .insert([
+        {
+          user_id: data.user.id,
+          content_url: fileName,
+        },
+      ])
+      .select()
+      .single();
+
+    yoink_id = newYoink.id;
 
     if (insertError) {
+      console.log(insertError);
       return NextResponse.json(
         { error: "Failed to add yoink" },
         { status: 500 }
@@ -68,11 +121,40 @@ export async function POST(req: NextRequest) {
         { status: 403 }
       );
     } else {
-      const { error: insertError } = await supabase
+      // Upload text to Supabase storage bucket
+      const fileName = `${data.user.id}/${Date.now()}-${Math.random()
+        .toString(36)
+        .substring(7)}.txt`;
+      const { error: uploadError } = await supabase.storage
+        .from("yoink-content")
+        .upload(fileName, content, {
+          contentType: "text/plain",
+          upsert: false,
+        });
+
+      if (uploadError) {
+        console.log(uploadError);
+        return NextResponse.json(
+          { error: "Failed to upload text to storage" },
+          { status: 500 }
+        );
+      }
+
+      const { data: newYoink, error: insertError } = await supabase
         .from("yoinks")
-        .insert([{ user_id: data.user.id }]);
+        .insert([
+          {
+            user_id: data.user.id,
+            content_url: fileName,
+          },
+        ])
+        .select()
+        .single();
+
+      yoink_id = newYoink.id;
 
       if (insertError) {
+        console.log(insertError);
         return NextResponse.json(
           { error: "Failed to add yoink" },
           { status: 500 }
@@ -81,5 +163,5 @@ export async function POST(req: NextRequest) {
     }
   }
 
-  return NextResponse.json({});
+  return NextResponse.json({ success: true, yoink_id });
 }

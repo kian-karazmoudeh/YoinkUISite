@@ -1,6 +1,6 @@
 import { blocks } from "../components/blocks";
 
-export const getEditorConfig = () => ({
+export const getEditorConfig = ({ content }: { content: string }) => ({
   container: "#gjs-container",
   height: "100%",
   width: "auto",
@@ -10,11 +10,13 @@ export const getEditorConfig = () => ({
   },
   blockManager: {
     blocks: blocks,
-    appendTo: false,
+    appendTo: undefined,
   },
   layerManager: {
     appendTo: ".layers-container",
   },
+  // Don't initialize with content - we'll load it after editor is ready
+  components: "",
   deviceManager: {
     devices: [
       {

@@ -1,27 +1,16 @@
-import { Editor } from "grapesjs";
 import Blocks from "./Blocks";
 import StylesBar from "./StylesBar";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
+import { useEditorStore } from "../../store/editorStore";
+import { useShallow } from "zustand/react/shallow";
 
-type SidebarProps = {
-  selectedComponent: any;
-  styleValues: any;
-  updateComponentStyle: (property: string, value: string) => void;
-  handleSliderChange: (property: string, value: string) => void;
-  editor: Editor;
-  activeTab: string;
-  setActiveTab: (tab: string) => void;
-};
-
-const Sidebar = ({
-  selectedComponent,
-  styleValues,
-  updateComponentStyle,
-  handleSliderChange,
-  editor,
-  activeTab,
-  setActiveTab,
-}: SidebarProps) => {
+const Sidebar = () => {
+  const { activeTab, setActiveTab } = useEditorStore(
+    useShallow((state) => ({
+      activeTab: state.activeTab,
+      setActiveTab: state.setActiveTab,
+    }))
+  );
   return (
     <div className="w-80 h-full bg-[#18191A] border border-[#26272B] overflow-y-auto flex flex-col rounded-md min-h-0 p-3">
       <Tabs
@@ -34,15 +23,10 @@ const Sidebar = ({
           <TabsTrigger value="styles">Styles</TabsTrigger>
         </TabsList>
         <TabsContent value="blocks" className="flex-1 h-full min-h-0">
-          <Blocks editor={editor} />
+          <Blocks />
         </TabsContent>
         <TabsContent value="styles" className="flex-1 h-full min-h-0">
-          <StylesBar
-            selectedComponent={selectedComponent}
-            styleValues={styleValues}
-            updateComponentStyle={updateComponentStyle}
-            handleSliderChange={handleSliderChange}
-          />
+          <StylesBar />
         </TabsContent>
       </Tabs>
     </div>

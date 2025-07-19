@@ -2,16 +2,24 @@
 
 import { useRef } from "react";
 import { Block, Editor } from "grapesjs";
+import { useEditorStore } from "../../store/editorStore";
+import { useShallow } from "zustand/react/shallow";
 
-const Blocks = ({ editor }: { editor: Editor }) => {
+const Blocks = () => {
+  const { editor } = useEditorStore(
+    useShallow((state) => ({
+      editor: state.editor,
+    }))
+  );
   const blocksRef = useRef<HTMLDivElement>(null);
 
   const startDrag = (block: Block, e: React.DragEvent<HTMLDivElement>) => {
+    if (!editor) return;
     editor.BlockManager.startDrag(block, e.nativeEvent);
   };
 
   // Group blocks by category
-  const blocks = editor.BlockManager.getAll();
+  let blocks = editor?.BlockManager.getAll() || [];
   const categories: { [key: string]: Block[] } = {};
   blocks.forEach((block: Block) => {
     const categoryRaw = block.get("category");

@@ -10,8 +10,6 @@ import FileName from "./FileName";
 
 type EditorNavbarProps = {
   user: User | null;
-  currentDevice: DeviceName;
-  setCurrentDevice: (device: DeviceName) => void;
   yoinkId: string;
   yoinkName: string | null;
 };
@@ -29,13 +27,7 @@ const LoadingUser = () => {
   );
 };
 
-const Navbar = ({
-  user,
-  currentDevice,
-  setCurrentDevice,
-  yoinkId,
-  yoinkName,
-}: EditorNavbarProps) => {
+const Navbar = ({ user, yoinkId, yoinkName }: EditorNavbarProps) => {
   return (
     <div className="flex items-center justify-between">
       <div className="flex items-center gap-2">
@@ -111,10 +103,7 @@ const Navbar = ({
         </div>
       </div>
       <div className="flex items-center gap-1 flex-1">
-        <Devices
-          currentDevice={currentDevice}
-          setCurrentDevice={setCurrentDevice}
-        />
+        <Devices />
 
         <ExportBtn />
       </div>

@@ -18,6 +18,8 @@ import {
   SelectItem,
 } from "@/components/ui/select";
 import { twMerge } from "tailwind-merge";
+import { useShallow } from "zustand/react/shallow";
+import { useEditorStore } from "../../store/editorStore";
 
 const LEFT_CELL_CLASSES = "inline-block w-1/2 pr-1";
 const RIGHT_CELL_CLASSES = "inline-block w-1/2 pl-1";
@@ -427,12 +429,20 @@ function shouldShowShorthand(prop: string, styleValues: any): boolean {
   return allLonghandsMatch(prop, styleValues);
 }
 
-export default function StylesBar({
-  selectedComponent,
-  styleValues,
-  updateComponentStyle,
-  handleSliderChange,
-}: RightSidebarProps) {
+export default function StylesBar() {
+  const {
+    selectedComponent,
+    styleValues,
+    updateComponentStyle,
+    handleSliderChange,
+  } = useEditorStore(
+    useShallow((state) => ({
+      selectedComponent: state.selectedComponent,
+      styleValues: state.styleValues,
+      updateComponentStyle: state.updateComponentStyle,
+      handleSliderChange: state.handleSliderChange,
+    }))
+  );
   // Group properties by category
   const categorized = useMemo(() => {
     const groups: { [cat: string]: string[] } = {};

@@ -1,15 +1,9 @@
 "use client";
 
 import { useEffect, useState, useRef } from "react";
-import { useEditor } from "./hooks/useEditor";
-import { useComponentManagement } from "./hooks/useComponentManagement";
-import { useDeviceManagement } from "./hooks/useDeviceManagement";
-import { useStyleManagement } from "./hooks/useStyleManagement";
-import { ComponentStyles, StyleValues, DeviceName } from "./types";
-import { getDefaultStyleValues } from "./utils/helpers";
+import { useEditorStore } from "./store";
 import Navbar from "./components/Navbar";
 import Sidebar from "./components/Sidebar";
-
 import { objectToUniversalCss } from "./utils/objectToUniversalCss";
 import { User } from "@supabase/supabase-js";
 import { createClient } from "@/utils/supabase/client";
@@ -22,33 +16,31 @@ export default function EditorPage() {
   const supabase = createClient();
   const [yoinkName, setYoinkName] = useState<string | null>(null);
   const [yoinkContent, setYoinkContent] = useState<string | null>(null);
-
-  const [selectedComponent, setSelectedComponent] = useState<any>(null);
-  const [currentDevice, setCurrentDevice] = useState<DeviceName>("Desktop");
-  const [componentStyles, setComponentStyles] = useState<ComponentStyles>({});
-  const [styleValues, setStyleValues] = useState<StyleValues>(
-    getDefaultStyleValues()
-  );
-  const [activeTab, setActiveTab] = useState<string>("blocks");
   const [baseDefaultStyles, setBaseDefaultStyles] = useState<
     Record<string, Record<string, string>> | undefined
   >(undefined);
 
+  // Zustand store
+  const {
+    editor,
+    isEditorReady,
+    initializeEditor,
+    destroyEditor,
+    setDefaultStyles,
+  } = useEditorStore();
+
+  const baseStyleInjected = useRef(false);
+
+  // Main initialization effect - handles user auth, content fetching, and editor setup
   useEffect(() => {
     const getUser = async () => {
       const { data } = await supabase.auth.getUser();
       if (data.user) {
         setUser(data.user);
-        return data.user; // return the user
+        return data.user;
       }
       return null;
     };
-
-    getUser().then((fetchedUser) => {
-      if (fetchedUser) {
-        fetchYoinkContent(fetchedUser, projectId as string);
-      }
-    });
 
     const fetchYoinkContent = async (currentUser: User, projectId: string) => {
       try {
@@ -57,15 +49,15 @@ export default function EditorPage() {
           .from("yoinks")
           .select("content_url, name")
           .eq("user_id", currentUser.id)
-          .eq("id", projectId) // make sure you filter by project
-          .single(); // assuming one yoink per project
+          .eq("id", projectId)
+          .single();
 
         if (yoinkError || !yoinks) {
           console.error("Error fetching yoink:", yoinkError?.message);
           return;
         }
 
-        const contentUrl = yoinks.content_url; // e.g. "some-folder/file.txt"
+        const contentUrl = yoinks.content_url;
         if (!contentUrl) {
           console.error("No content_url found for this yoink");
           return;
@@ -91,75 +83,59 @@ export default function EditorPage() {
         console.error("Unexpected error:", err);
       }
     };
-  }, []);
 
-  // Custom hooks - must be called before any conditional returns
-  const { editor } = useEditor({ content: yoinkContent || "" });
+    // Initialize user and fetch content
+    getUser().then((fetchedUser) => {
+      if (fetchedUser) {
+        fetchYoinkContent(fetchedUser, projectId as string);
+      }
+    });
 
-  const { handleDeviceChange } = useDeviceManagement({
-    editor,
-    currentDevice,
-    setCurrentDevice,
-    selectedComponent,
-    setStyleValues,
-    componentStyles,
-    defaultStyles: baseDefaultStyles ? baseDefaultStyles["div"] : undefined,
-  });
+    // Load base default styles
+    getBaseDefaultStyles({ setBaseDefaultStyles });
 
-  const { updateComponentStyle, handleSliderChange } = useStyleManagement({
-    selectedComponent,
-    currentDevice,
-    componentStyles,
-    setComponentStyles,
-    setStyleValues,
-  });
+    // Cleanup on unmount
+    return () => {
+      destroyEditor();
+    };
+  }, [projectId, supabase, destroyEditor]);
 
-  // Component management hook
-  useComponentManagement({
-    editor,
-    setSelectedComponent,
-    setStyleValues,
-    setComponentStyles,
-    componentStyles,
-    deviceName: currentDevice,
-    setActiveTab, // Pass the setActiveTab function
-    defaultStyles: baseDefaultStyles ? baseDefaultStyles["div"] : undefined,
-  });
-
-  const baseStyleInjected = useRef(false);
-
+  // Editor and styles management effect
   useEffect(() => {
-    if (!baseDefaultStyles) {
-      getBaseDefaultStyles({ setBaseDefaultStyles });
-    } else if (editor && !baseStyleInjected.current) {
-      const cssString = objectToUniversalCss(baseDefaultStyles["div"]);
-      editor.addStyle(cssString);
-      baseStyleInjected.current = true; // Mark as injected
+    // Initialize editor when content is available
+    if (yoinkContent && !isEditorReady) {
+      initializeEditor(yoinkContent);
     }
-  }, [editor, baseDefaultStyles]);
+
+    // Set default styles in store when base styles are loaded
+    if (baseDefaultStyles && baseDefaultStyles["div"]) {
+      setDefaultStyles(baseDefaultStyles["div"]);
+    }
+
+    // Inject base styles into editor
+    if (editor && !baseStyleInjected.current) {
+      const { defaultStyles } = useEditorStore.getState();
+      if (defaultStyles) {
+        const cssString = objectToUniversalCss(defaultStyles);
+        editor.addStyle(cssString);
+        baseStyleInjected.current = true;
+      }
+    }
+  }, [
+    yoinkContent,
+    isEditorReady,
+    initializeEditor,
+    baseDefaultStyles,
+    setDefaultStyles,
+    editor,
+  ]);
 
   return (
     <>
-      <Navbar
-        yoinkName={yoinkName}
-        yoinkId={projectId as string}
-        user={user}
-        currentDevice={currentDevice}
-        setCurrentDevice={handleDeviceChange}
-      />
+      <Navbar yoinkName={yoinkName} yoinkId={projectId as string} user={user} />
       <div className="flex h-full min-h-0">
         <div className="flex h-full flex-1 gap-4 min-h-0">
-          {editor && (
-            <Sidebar
-              selectedComponent={selectedComponent}
-              styleValues={styleValues}
-              updateComponentStyle={updateComponentStyle}
-              handleSliderChange={handleSliderChange}
-              editor={editor}
-              activeTab={activeTab}
-              setActiveTab={setActiveTab}
-            />
-          )}
+          {editor && <Sidebar />}
           <div className="flex-1 h-full rounded-md overflow-hidden relative">
             <div id="gjs-container" className="h-full"></div>
           </div>

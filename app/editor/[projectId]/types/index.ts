@@ -1,5 +1,5 @@
 // Type for the component styles object
-export interface ComponentStyles {
+export interface StylesHashTable {
   [uid: string]: {
     base: { [key: string]: string };
     sm: { [key: string]: string };

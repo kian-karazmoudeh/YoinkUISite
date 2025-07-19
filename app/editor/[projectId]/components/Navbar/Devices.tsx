@@ -1,12 +1,15 @@
 import { LaptopMinimal, Monitor, Smartphone } from "lucide-react";
 import { DeviceName } from "../../types";
+import { useEditorStore } from "../../store/editorStore";
+import { useShallow } from "zustand/react/shallow";
 
-type DevicesProps = {
-  currentDevice: DeviceName;
-  setCurrentDevice: (device: DeviceName) => void;
-};
-
-const Devices = ({ currentDevice, setCurrentDevice }: DevicesProps) => {
+const Devices = () => {
+  const { currentDevice, handleDeviceChange } = useEditorStore(
+    useShallow((state) => ({
+      currentDevice: state.currentDevice,
+      handleDeviceChange: state.handleDeviceChange,
+    }))
+  );
   return (
     <div className="relative flex h-8 rounded-lg mx-auto bg-zinc-900 p-[2px]">
       <div
@@ -24,7 +27,7 @@ const Devices = ({ currentDevice, setCurrentDevice }: DevicesProps) => {
       ></div>
       <button
         className="relative flex cursor-pointer items-center justify-center bg-transparent px-2 text-center"
-        onClick={() => setCurrentDevice("Desktop")}
+        onClick={() => handleDeviceChange("Desktop")}
         style={{
           color: currentDevice === "Desktop" ? "inherit" : "#8f8f99",
         }}
@@ -34,7 +37,7 @@ const Devices = ({ currentDevice, setCurrentDevice }: DevicesProps) => {
       </button>
       <button
         className="relative flex cursor-pointer items-center justify-center bg-transparent px-2 text-center"
-        onClick={() => setCurrentDevice("Tablet")}
+        onClick={() => handleDeviceChange("Tablet")}
         style={{
           color: currentDevice === "Tablet" ? "inherit" : "#8f8f99",
         }}
@@ -44,7 +47,7 @@ const Devices = ({ currentDevice, setCurrentDevice }: DevicesProps) => {
       </button>
       <button
         className="relative flex cursor-pointer items-center justify-center bg-transparent px-2 text-center text-[#8f8f99]"
-        onClick={() => setCurrentDevice("Mobile")}
+        onClick={() => handleDeviceChange("Mobile")}
         style={{
           color: currentDevice === "Mobile" ? "inherit" : "#8f8f99",
         }}

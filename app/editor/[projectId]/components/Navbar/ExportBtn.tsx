@@ -11,39 +11,9 @@ const ExportBtn = () => {
   // TODO: Replace with actual editor instance
   //   const editor = (window as any).yoinkEditor || null;
 
-  //   const handleExport = async (value: string) => {
-  //     if (!editor) return;
-  //     const html = editor.getHtml ? editor.getHtml() : "";
-  //     const css = editor.getCss ? editor.getCss() : "";
-  //     const fullHTML = `<!DOCTYPE html>\n<html lang=\"en\">\n<head>\n<meta charset=\"UTF-8\">\n<meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n<title>Exported from YoinkUI</title>\n<style>\n${css}\n</style>\n</head>\n<body>\n${html}\n</body>\n</html>`;
-  //     if (value === "download-html") {
-  //       const blob = new Blob([fullHTML], { type: "text/html" });
-  //       const url = URL.createObjectURL(blob);
-  //       const a = document.createElement("a");
-  //       a.href = url;
-  //       a.download = "yoinkui-export.html";
-  //       document.body.appendChild(a);
-  //       a.click();
-  //       document.body.removeChild(a);
-  //       URL.revokeObjectURL(url);
-  //     } else if (value === "download-jsx") {
-  //       // Placeholder: just download HTML as .jsx
-  //       const blob = new Blob([html], { type: "text/plain" });
-  //       const url = URL.createObjectURL(blob);
-  //       const a = document.createElement("a");
-  //       a.href = url;
-  //       a.download = "yoinkui-export.jsx";
-  //       document.body.appendChild(a);
-  //       a.click();
-  //       document.body.removeChild(a);
-  //       URL.revokeObjectURL(url);
-  //     } else if (value === "copy-html") {
-  //       await navigator.clipboard.writeText(fullHTML);
-  //     } else if (value === "copy-jsx") {
-  //       // Placeholder: just copy HTML
-  //       await navigator.clipboard.writeText(html);
-  //     }
-  //   };
+  const handleExport = async (value: string) => {
+    console.log("Exporting", value);
+  };
 
   return (
     <DropdownMenu>
@@ -56,7 +26,9 @@ const ExportBtn = () => {
         <DropdownMenuItem onSelect={() => {}}>
           Download as HTML
         </DropdownMenuItem>
-        <DropdownMenuItem onSelect={() => {}}>Download as JSX</DropdownMenuItem>
+        <DropdownMenuItem onSelect={() => handleExport("download-jsx")}>
+          Download as JSX
+        </DropdownMenuItem>
         <DropdownMenuItem onSelect={() => {}}>Copy as HTML</DropdownMenuItem>
         <DropdownMenuItem onSelect={() => {}}>Copy as JSX</DropdownMenuItem>
       </DropdownMenuContent>

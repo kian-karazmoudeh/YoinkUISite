@@ -9,11 +9,12 @@ import { ComponentStyles, StyleValues, DeviceName } from "./types";
 import { getDefaultStyleValues } from "./utils/helpers";
 import Navbar from "./components/Navbar";
 import Sidebar from "./components/Sidebar";
-import { getBaseDefaultStyles } from "./utils/defaultStyles/base";
+
 import { objectToUniversalCss } from "./utils/objectToUniversalCss";
 import { User } from "@supabase/supabase-js";
 import { createClient } from "@/utils/supabase/client";
 import { useParams } from "next/navigation";
+import { getBaseDefaultStyles } from "./utils/defaultStyles/base";
 
 export default function EditorPage() {
   const { projectId } = useParams();

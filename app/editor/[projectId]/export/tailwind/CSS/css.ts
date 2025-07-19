@@ -13,7 +13,6 @@ import { simplifySVGSpecific } from "../simplify/dom/svgSpecific";
 import { simplifyClasses } from "../simplify/classes";
 import { simplifyBorderPatterns } from "../simplify/classes/border";
 import { getTailwindDefaultStyles } from "../../../utils/defaultStyles/tailwind.ts";
-// import { getDefaultStyles } from "../utils/defaultStyles/getDefaultStyles";
 
 function cssToTailwind(cssJson: Record<string, string>) {
   let tailwindClasses: string[] = [];
@@ -102,7 +101,7 @@ function removeInheritedStyles(
 
 export function addCSSAttributesRecursivelyResponsive(
   node: HTMLElement,
-  viewport: "sm" | "md" | "lg"
+  viewport: "base" | "md" | "lg"
 ) {
   if (
     node.nodeType === Node.ELEMENT_NODE &&
@@ -131,8 +130,8 @@ export function addCSSAttributesRecursivelyComponent(node: HTMLElement) {
     !(node instanceof HTMLTrackElement)
   ) {
     const cssString = cssToJsonString(node);
-    node.setAttribute(`data-yoink-sm`, cssString);
-    setVisibilityRootAttr(node, "sm");
+    node.setAttribute(`data-yoink-base`, cssString);
+    setVisibilityRootAttr(node, "base");
     setVisibilityTerminateAttrComponent(node);
   }
 
@@ -181,7 +180,7 @@ export function convertNodeToTailwindLgRecurse(node: HTMLElement) {
 
 export function convertNodeToTailwindMdRecurse(node: HTMLElement) {
   const mdData = node.getAttribute("data-yoink-md");
-  const smData = node.getAttribute("data-yoink-sm");
+  const smData = node.getAttribute("data-yoink-base");
 
   if (smData && mdData) {
     let mdStyles: Record<string, string>;
@@ -222,11 +221,11 @@ export function convertNodeToTailwindMdRecurse(node: HTMLElement) {
   }
 }
 
-export async function convertNodeToTailwindSmRecurse(
+export async function convertNodeToTailwindBaseRecurse(
   node: HTMLElement,
   inherited = {}
 ) {
-  const smData = node.getAttribute("data-yoink-sm");
+  const smData = node.getAttribute("data-yoink-base");
 
   if (smData) {
     let smStyles: Record<string, string>;
@@ -260,12 +259,12 @@ export async function convertNodeToTailwindSmRecurse(
 
     // Recurse on children
     for (const child of Array.from(node.children)) {
-      convertNodeToTailwindSmRecurse(child as HTMLElement, smStyles);
+      convertNodeToTailwindBaseRecurse(child as HTMLElement, smStyles);
     }
   } else {
     // Recurse on children
     for (const child of Array.from(node.children)) {
-      convertNodeToTailwindSmRecurse(child as HTMLElement, inherited);
+      convertNodeToTailwindBaseRecurse(child as HTMLElement, inherited);
     }
   }
 }

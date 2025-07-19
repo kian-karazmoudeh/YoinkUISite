@@ -161,7 +161,7 @@ function isThereAVisibleChild(
 
 export function setVisibilityRootAttr(
   node: HTMLElement,
-  viewport: "sm" | "md" | "lg"
+  viewport: "base" | "md" | "lg"
 ) {
   let visibleRoot: boolean = isElementInisibleRoot(node);
 

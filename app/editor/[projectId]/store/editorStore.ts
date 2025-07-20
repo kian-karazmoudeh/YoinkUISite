@@ -167,6 +167,7 @@ export const useEditorStore = create<EditorStore>((set, get) => ({
   setupEventListeners: (editor: Editor) => {
     // Component add event
     editor.on("component:add", (component: any) => {
+      console.log(get().stylesHashTable);
       get().addComponent(component);
     });
 
@@ -216,7 +217,7 @@ export const useEditorStore = create<EditorStore>((set, get) => ({
   addComponent: (component: any) => {
     const current = component.getAttributes();
 
-    // Check if component already has a UID to prevent duplicate entries
+    // // Check if component already has a UID to prevent duplicate entries
     if (current["data-yoink-uid"]) {
       return; // Component already processed, skip
     }
@@ -269,12 +270,12 @@ export const useEditorStore = create<EditorStore>((set, get) => ({
     }
 
     // Automatically select the component after it's added
-    setTimeout(() => {
-      const { editor } = get();
-      if (editor) {
-        editor.select(component);
-      }
-    }, 0);
+    // setTimeout(() => {
+    //   const { editor } = get();
+    //   if (editor) {
+    //     editor.select(component);
+    //   }
+    // }, 0);
   },
 
   removeComponent: (component: any) => {

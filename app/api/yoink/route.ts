@@ -36,15 +36,10 @@ export async function POST(req: NextRequest) {
     );
   }
 
-  console.log(body);
+  let name = body.name;
 
-  const { content } = body;
-
-  if (!content || typeof content !== "string") {
-    return NextResponse.json(
-      { error: "Text content is required" },
-      { status: 400 }
-    );
+  if (!name || typeof name !== "string") {
+    name = "Untitled";
   }
 
   // get the user's membership. If they are premium, then increment yoink.
@@ -59,34 +54,10 @@ export async function POST(req: NextRequest) {
   }
 
   if (profile.membership == "premium") {
-    // Upload text to Supabase storage bucket
-    const fileName = `${data.user.id}/${Date.now()}-${Math.random()
-      .toString(36)
-      .substring(7)}.txt`;
-    const { error: uploadError } = await supabase.storage
-      .from("yoink-content")
-      .upload(fileName, content, {
-        contentType: "text/plain",
-        upsert: false,
-      });
-
-    if (uploadError) {
-      console.log(uploadError);
-      return NextResponse.json(
-        { error: "Failed to upload text to storage" },
-        { status: 500 }
-      );
-    }
-
     // increment yoink
     const { data: newYoink, error: insertError } = await supabase
       .from("yoinks")
-      .insert([
-        {
-          user_id: data.user.id,
-          content_url: fileName,
-        },
-      ])
+      .insert([{ user_id: data.user.id }])
       .select()
       .single();
 
@@ -121,40 +92,15 @@ export async function POST(req: NextRequest) {
         { status: 403 }
       );
     } else {
-      // Upload text to Supabase storage bucket
-      const fileName = `${data.user.id}/${Date.now()}-${Math.random()
-        .toString(36)
-        .substring(7)}.txt`;
-      const { error: uploadError } = await supabase.storage
-        .from("yoink-content")
-        .upload(fileName, content, {
-          contentType: "text/plain",
-          upsert: false,
-        });
-
-      if (uploadError) {
-        console.log(uploadError);
-        return NextResponse.json(
-          { error: "Failed to upload text to storage" },
-          { status: 500 }
-        );
-      }
-
       const { data: newYoink, error: insertError } = await supabase
         .from("yoinks")
-        .insert([
-          {
-            user_id: data.user.id,
-            content_url: fileName,
-          },
-        ])
+        .insert([{ user_id: data.user.id }])
         .select()
         .single();
 
       yoink_id = newYoink.id;
 
       if (insertError) {
-        console.log(insertError);
         return NextResponse.json(
           { error: "Failed to add yoink" },
           { status: 500 }

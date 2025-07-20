@@ -1,5 +1,5 @@
 import { create } from "zustand";
-import { Editor } from "grapesjs";
+import { Component, Editor } from "grapesjs";
 import grapesjs from "grapesjs";
 import "grapesjs/dist/css/grapes.min.css";
 import { getEditorConfig } from "../config/editorConfig";
@@ -214,7 +214,7 @@ export const useEditorStore = create<EditorStore>((set, get) => ({
     }
   },
 
-  addComponent: (component: any) => {
+  addComponent: (component: Component) => {
     const current = component.getAttributes();
 
     // // Check if component already has a UID to prevent duplicate entries
@@ -410,6 +410,8 @@ export const useEditorStore = create<EditorStore>((set, get) => ({
     const { selectedComponent, currentDevice, updateStyleHashTable } = get();
 
     if (!selectedComponent) return;
+
+    console.log(get().editor?.Css.getComponentRules(selectedComponent));
 
     // Get the component's UID
     const uid = selectedComponent.getAttributes()["data-yoink-uid"];

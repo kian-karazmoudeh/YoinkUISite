@@ -57,6 +57,12 @@ interface EditorActions {
     value: string,
     displayProperty?: string
   ) => void;
+  updateStyleHashTable: (
+    uid: string,
+    deviceKey: DeviceKey,
+    property: string,
+    value: string
+  ) => void;
 
   // UI state
   setActiveTab: (tab: string) => void;
@@ -349,21 +355,12 @@ export const useEditorStore = create<EditorStore>((set, get) => ({
     set({ styleValues: values });
   },
 
-  updateComponentStyle: (property: string, value: string) => {
-    const { selectedComponent, currentDevice, stylesHashTable } = get();
-
-    if (!selectedComponent) return;
-
-    // Get the component's UID
-    const uid = selectedComponent.getAttributes()["data-yoink-uid"];
-    if (!uid) return;
-
-    // Get the current device key
-    const deviceKey = getDeviceKey(currentDevice);
-
-    // Update the component's style in GrapesJS
-    selectedComponent.setStyle({ [property]: value });
-
+  updateStyleHashTable: (
+    uid: string,
+    deviceKey: DeviceKey,
+    property: string,
+    value: string
+  ) => {
     // Update our separate styles object
     set((state) => {
       const updated = { ...state.stylesHashTable };
@@ -406,6 +403,24 @@ export const useEditorStore = create<EditorStore>((set, get) => ({
 
       return { stylesHashTable: updated };
     });
+  },
+
+  updateComponentStyle: (property: string, value: string) => {
+    const { selectedComponent, currentDevice, updateStyleHashTable } = get();
+
+    if (!selectedComponent) return;
+
+    // Get the component's UID
+    const uid = selectedComponent.getAttributes()["data-yoink-uid"];
+    if (!uid) return;
+
+    // Get the current device key
+    const deviceKey = getDeviceKey(currentDevice);
+
+    // Update the component's style in GrapesJS
+    selectedComponent.setStyle({ [property]: value });
+
+    updateStyleHashTable(uid, deviceKey, property, value);
 
     // Update the UI state
     set((state) => ({
@@ -418,7 +433,7 @@ export const useEditorStore = create<EditorStore>((set, get) => ({
     value: string,
     displayProperty?: string
   ) => {
-    const { selectedComponent, currentDevice, stylesHashTable } = get();
+    const { selectedComponent, currentDevice, updateStyleHashTable } = get();
 
     if (!selectedComponent) return;
 
@@ -430,77 +445,14 @@ export const useEditorStore = create<EditorStore>((set, get) => ({
     const deviceKey = getDeviceKey(currentDevice);
 
     const finalValue =
-      displayProperty === "opacity" ? `${parseInt(value) / 100}` : `${value}`;
+      displayProperty === "opacity" ? `${parseInt(value) / 100}` : `${value}px`;
     const styleProperty = displayProperty || property;
 
     // Update the component's style in GrapesJS
     selectedComponent.setStyle({ [styleProperty]: finalValue });
 
     // Update our separate styles object (same logic as updateComponentStyle)
-    set((state) => {
-      const updated = { ...state.stylesHashTable };
-      if (!updated[uid]) return state;
-
-      const hasProp = (dev: DeviceKey) =>
-        !!updated[uid][dev]?.hasOwnProperty(styleProperty);
-
-      if (deviceKey === "lg") {
-        const smHas = hasProp("sm");
-        const mdHas = hasProp("md");
-        if (!smHas && !mdHas) {
-          updated[uid]["sm"] = {
-            ...updated[uid]["sm"],
-            [styleProperty]: finalValue,
-          };
-          updated[uid]["md"] = {
-            ...updated[uid]["md"],
-            [styleProperty]: finalValue,
-          };
-          updated[uid]["lg"] = {
-            ...updated[uid]["lg"],
-            [styleProperty]: finalValue,
-          };
-        } else if (smHas && !mdHas) {
-          updated[uid]["md"] = {
-            ...updated[uid]["md"],
-            [styleProperty]: finalValue,
-          };
-          updated[uid]["lg"] = {
-            ...updated[uid]["lg"],
-            [styleProperty]: finalValue,
-          };
-        } else {
-          updated[uid]["lg"] = {
-            ...updated[uid]["lg"],
-            [styleProperty]: finalValue,
-          };
-        }
-      } else if (deviceKey === "md") {
-        const smHas = hasProp("sm");
-        if (!smHas) {
-          updated[uid]["sm"] = {
-            ...updated[uid]["sm"],
-            [styleProperty]: finalValue,
-          };
-          updated[uid]["md"] = {
-            ...updated[uid]["md"],
-            [styleProperty]: finalValue,
-          };
-        } else {
-          updated[uid]["md"] = {
-            ...updated[uid]["md"],
-            [styleProperty]: finalValue,
-          };
-        }
-      } else if (deviceKey === "sm") {
-        updated[uid]["sm"] = {
-          ...updated[uid]["sm"],
-          [styleProperty]: finalValue,
-        };
-      }
-
-      return { stylesHashTable: updated };
-    });
+    updateStyleHashTable(uid, deviceKey, property, finalValue);
 
     // Update the UI state
     set((state) => ({

@@ -5,6 +5,8 @@ import { HexColorPicker, RgbaColorPicker } from "react-colorful";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { cn } from "@/lib/utils";
+import { useEditorStore } from "@/app/editor/[projectId]/store";
+import { useShallow } from "zustand/react/shallow";
 
 interface ColorPickerProps {
   value: string;
@@ -92,13 +94,19 @@ export function ColorPicker({
   const [inputValue, setInputValue] = useState(value);
   const popoverRef = useRef<HTMLDivElement>(null);
 
+  const { selectedComponent } = useEditorStore(
+    useShallow((state) => ({
+      selectedComponent: state.selectedComponent,
+    }))
+  );
+
   const parsedColor = parseColor(value);
 
   useEffect(() => {
     setColorType(parsedColor.type);
     setColorValue(parsedColor.value);
     setInputValue(value);
-  }, []);
+  }, [selectedComponent]);
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {

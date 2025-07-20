@@ -1,39 +1,20 @@
 "use client";
 
-import { Input } from "@/components/ui/input";
-import { cssProperties } from "../../types/cssProperties";
+import { cssProperties } from "../../../types/cssProperties";
 import { useMemo } from "react";
 import { Label } from "@/components/ui/label";
-import { ColorPicker } from "@/components/ui/color-picker";
 import {
   DropdownMenu,
   DropdownMenuTrigger,
   DropdownMenuContent,
 } from "@/components/ui/dropdown-menu";
-import { Slider } from "@/components/ui/slider";
-import {
-  Select,
-  SelectTrigger,
-  SelectContent,
-  SelectItem,
-} from "@/components/ui/select";
 import { twMerge } from "tailwind-merge";
 import { useShallow } from "zustand/react/shallow";
-import { useEditorStore } from "../../store/editorStore";
+import { useEditorStore } from "../../../store/editorStore";
+import { RenderComponent } from "./RenderComponent";
 
 const LEFT_CELL_CLASSES = "inline-block w-1/2 pr-1";
 const RIGHT_CELL_CLASSES = "inline-block w-1/2 pl-1";
-
-interface RightSidebarProps {
-  selectedComponent: any;
-  styleValues: import("../../types").StyleValues;
-  updateComponentStyle: (property: string, value: string) => void;
-  handleSliderChange: (
-    property: string,
-    value: string,
-    displayProperty?: string
-  ) => void;
-}
 
 interface PropertyConfigType {
   [key: string]: {
@@ -55,6 +36,12 @@ interface PropertyConfigType {
 
 // Helper: categorize properties and define input types
 const propertyConfig: PropertyConfigType = {
+  display: {
+    label: "Display",
+    type: "select",
+    options: ["block", "inline", "flex", "grid", "none"],
+    category: "Layout",
+  },
   width: {
     label: "Width",
     type: "text",
@@ -94,12 +81,6 @@ const propertyConfig: PropertyConfigType = {
     type: "text",
     category: "Layout",
     containerClassName: RIGHT_CELL_CLASSES,
-  },
-  display: {
-    label: "Display",
-    type: "select",
-    options: ["block", "inline", "flex", "grid", "none"],
-    category: "Layout",
   },
   position: {
     label: "Position",
@@ -446,7 +427,8 @@ export default function StylesBar() {
   // Group properties by category
   const categorized = useMemo(() => {
     const groups: { [cat: string]: string[] } = {};
-    cssProperties.forEach((prop) => {
+    // Use properties from propertyConfig instead of cssProperties to ensure all configured properties are included
+    Object.keys(propertyConfig).forEach((prop) => {
       const cat = getCategory(prop);
       if (!groups[cat]) groups[cat] = [];
       groups[cat].push(prop);
@@ -494,32 +476,26 @@ export default function StylesBar() {
                                   config.containerClassName
                                 )}
                               >
-                                <Label className="block text-sm font-medium text-zinc-50 mb-1">
-                                  {getLabel(cssProp)}
-                                </Label>
-                                <Input
-                                  type="text"
-                                  placeholder={config.placeholder}
-                                  className={config.inputClassName || ""}
+                                <RenderComponent
+                                  cssProp={cssProp}
+                                  config={config}
                                   value={getLonghandValues(
                                     cssProp,
                                     styleValues
                                   )}
-                                  onChange={(e) => {
+                                  styleValues={styleValues}
+                                  updateComponentStyle={(_prop, val) => {
                                     // When shorthand changes, update all longhands
                                     Object.keys(config.longhands!).forEach(
                                       (longhand) => {
-                                        updateComponentStyle(
-                                          longhand,
-                                          e.target.value
-                                        );
+                                        updateComponentStyle(longhand, val);
                                       }
                                     );
-                                    updateComponentStyle(
-                                      cssProp,
-                                      e.target.value
-                                    );
                                   }}
+                                  handleSliderChange={handleSliderChange}
+                                  getLabel={getLabel}
+                                  containerClassName="flex-1"
+                                  labelClassName="block text-sm font-medium text-zinc-50 mb-1 flex-shrink-0"
                                 />
                                 <DropdownMenu>
                                   <DropdownMenuTrigger asChild>
@@ -531,31 +507,26 @@ export default function StylesBar() {
                                       ...
                                     </button>
                                   </DropdownMenuTrigger>
-                                  <DropdownMenuContent className="p-2 min-w-[200px]">
+                                  <DropdownMenuContent className="p-5 min-w-[200px]">
                                     {Object.entries(config.longhands).map(
                                       ([longhand, longhandConfig]) => {
                                         const longhandValue =
                                           (styleValues as any)[longhand] ?? "";
                                         return (
                                           <div key={longhand} className="mb-2">
-                                            <Label className="block text-xs font-medium text-zinc-50 mb-1">
-                                              {getLabel(longhand)}
-                                            </Label>
-                                            <Input
-                                              type="text"
-                                              placeholder={
-                                                longhandConfig.placeholder
-                                              }
-                                              className={
-                                                config.inputClassName || ""
-                                              }
+                                            <RenderComponent
+                                              cssProp={longhand}
+                                              config={longhandConfig}
                                               value={longhandValue}
-                                              onChange={(e) =>
-                                                updateComponentStyle(
-                                                  longhand,
-                                                  e.target.value
-                                                )
+                                              styleValues={styleValues}
+                                              updateComponentStyle={
+                                                updateComponentStyle
                                               }
+                                              handleSliderChange={
+                                                handleSliderChange
+                                              }
+                                              getLabel={getLabel}
+                                              labelClassName="block text-xs font-medium text-zinc-50 mb-1"
                                             />
                                           </div>
                                         );
@@ -572,23 +543,16 @@ export default function StylesBar() {
                                 const longhandValue =
                                   (styleValues as any)[longhand] ?? "";
                                 return (
-                                  <div key={longhand}>
-                                    <Label className="block text-sm font-medium text-zinc-50 mb-1">
-                                      {getLabel(longhand)}
-                                    </Label>
-                                    <Input
-                                      type="text"
-                                      placeholder={longhandConfig.placeholder}
-                                      value={longhandValue}
-                                      className={config.inputClassName || ""}
-                                      onChange={(e) =>
-                                        updateComponentStyle(
-                                          longhand,
-                                          e.target.value
-                                        )
-                                      }
-                                    />
-                                  </div>
+                                  <RenderComponent
+                                    key={longhand}
+                                    cssProp={longhand}
+                                    config={longhandConfig}
+                                    value={longhandValue}
+                                    styleValues={styleValues}
+                                    updateComponentStyle={updateComponentStyle}
+                                    handleSliderChange={handleSliderChange}
+                                    getLabel={getLabel}
+                                  />
                                 );
                               }
                             );
@@ -605,98 +569,18 @@ export default function StylesBar() {
                           }
                         }
 
-                        // Input rendering logic
-                        if (config.type === "color") {
-                          return (
-                            <div
-                              key={cssProp}
-                              className={config.containerClassName || " "}
-                            >
-                              <ColorPicker
-                                value={value}
-                                onChange={(color) =>
-                                  updateComponentStyle(cssProp, color)
-                                }
-                                label={getLabel(cssProp)}
-                              />
-                            </div>
-                          );
-                        }
-                        if (config.type === "range") {
-                          return (
-                            <div key={cssProp}>
-                              <Label className="block text-sm font-medium text-zinc-50 mb-1">
-                                {getLabel(cssProp)}
-                              </Label>
-                              <div className="space-y-2">
-                                <Slider
-                                  min={config.min}
-                                  max={config.max}
-                                  value={[Number(value) || 0]}
-                                  onValueChange={([val]) =>
-                                    handleSliderChange(
-                                      cssProp,
-                                      String(val),
-                                      config.displayProperty || cssProp
-                                    )
-                                  }
-                                />
-                                <div className="text-xs text-gray-500 text-center">
-                                  {value}
-                                  {cssProp === "opacity" ? "%" : "px"}
-                                </div>
-                              </div>
-                            </div>
-                          );
-                        }
-                        if (config.type === "select") {
-                          return (
-                            <div key={cssProp}>
-                              <Label
-                                className={twMerge(
-                                  "block text-sm font-medium text-zinc-50 mb-1",
-                                  config.containerClassName
-                                )}
-                              >
-                                {getLabel(cssProp)}
-                              </Label>
-                              <Select
-                                value={value}
-                                onValueChange={(val) =>
-                                  updateComponentStyle(cssProp, val)
-                                }
-                              >
-                                <SelectTrigger className="w-full" />
-                                <SelectContent>
-                                  {config.options?.map((opt) => (
-                                    <SelectItem value={opt} key={opt}>
-                                      {opt}
-                                    </SelectItem>
-                                  ))}
-                                </SelectContent>
-                              </Select>
-                            </div>
-                          );
-                        }
-                        // Default to text input
+                        // Use RenderComponent for all input types
                         return (
-                          <div
+                          <RenderComponent
                             key={cssProp}
-                            className={config.containerClassName || ""}
-                          >
-                            <Label className="block text-sm font-medium text-zinc-50 mb-1">
-                              {getLabel(cssProp)}
-                            </Label>
-                            <Input
-                              type="text"
-                              placeholder={config.placeholder}
-                              className={config.inputClassName || ""}
-                              value={value}
-                              onChange={(e) =>
-                                updateComponentStyle(cssProp, e.target.value)
-                              }
-                            />
-                          </div>
+                            cssProp={cssProp}
+                            config={config}
+                            value={value}
+                            styleValues={styleValues}
+                            updateComponentStyle={updateComponentStyle}
+                            handleSliderChange={handleSliderChange}
+                            getLabel={getLabel}
+                          />
                         );
                       })}
                     </div>

@@ -1,17 +1,11 @@
 import { create } from "zustand";
-import { Component, Editor } from "grapesjs";
+import { Component, Device, Editor } from "grapesjs";
 import grapesjs from "grapesjs";
 import "grapesjs/dist/css/grapes.min.css";
 import { getEditorConfig } from "../config/editorConfig";
 import "../styles/editor.css";
-import { StylesHashTable, DeviceKey, DeviceName, StyleValues } from "../types";
-import {
-  generateUID,
-  getDeviceKey,
-  getDefaultStyleValues,
-  parseStyleValues,
-} from "../utils/helpers";
-import { changeStyleStateHandler } from "../utils/changeStyleStateHandler";
+import { DeviceName, StyleValues } from "../types";
+import { getDefaultStyleValues, parseStyleValues } from "../utils/helpers";
 
 interface EditorState {
   // Editor instance
@@ -20,8 +14,7 @@ interface EditorState {
   contentLoaded: boolean;
 
   // Component management
-  selectedComponent: any;
-  stylesHashTable: StylesHashTable;
+  selectedComponent: Component | null;
 
   // Device management
   currentDevice: DeviceName;
@@ -41,9 +34,8 @@ interface EditorActions {
   setupEventListeners: (editor: Editor) => void;
 
   // Component management
-  setSelectedComponent: (component: any) => void;
-  addComponent: (component: any) => void;
-  removeComponent: (component: any) => void;
+  setSelectedComponent: (component: Component) => void;
+  addComponent: (component: Component) => void;
 
   // Device management
   setCurrentDevice: (device: DeviceName) => void;
@@ -51,17 +43,12 @@ interface EditorActions {
 
   // Style management
   setStyleValues: (values: StyleValues) => void;
+  changeStyleState: () => void;
   updateComponentStyle: (property: string, value: string) => void;
   handleSliderChange: (
     property: string,
     value: string,
     displayProperty?: string
-  ) => void;
-  updateStyleHashTable: (
-    uid: string,
-    deviceKey: DeviceKey,
-    property: string,
-    value: string
   ) => void;
 
   // UI state
@@ -77,7 +64,6 @@ export const useEditorStore = create<EditorStore>((set, get) => ({
   isEditorReady: false,
   contentLoaded: false,
   selectedComponent: null,
-  stylesHashTable: {},
   currentDevice: "Desktop",
   styleValues: getDefaultStyleValues(),
   activeTab: "blocks",
@@ -166,13 +152,12 @@ export const useEditorStore = create<EditorStore>((set, get) => ({
   // Event listeners setup
   setupEventListeners: (editor: Editor) => {
     // Component add event
-    editor.on("component:add", (component: any) => {
-      console.log(get().stylesHashTable);
+    editor.on("component:add", (component: Component) => {
       get().addComponent(component);
     });
 
     // Component selection events
-    editor.on("component:selected", (component: any) => {
+    editor.on("component:selected", (component: Component) => {
       get().setSelectedComponent(component);
     });
 
@@ -185,85 +170,32 @@ export const useEditorStore = create<EditorStore>((set, get) => ({
     });
 
     // Component removal event
-    editor.on("component:remove", (component: any) => {
-      get().removeComponent(component);
-    });
+    // editor.on("component:remove", (component: any) => {
+    //   get().removeComponent(component);
+    // });
 
     // Device selection event
-    editor.on("device:select", (device: any) => {
+    editor.on("device:select", (device: Device) => {
       const deviceName = device.get("name") as DeviceName;
       get().setCurrentDevice(deviceName);
     });
   },
 
   // Component management
-  setSelectedComponent: (component: any) => {
+  setSelectedComponent: (component: Component) => {
     set({ selectedComponent: component, activeTab: "styles" });
 
-    const { stylesHashTable, currentDevice, defaultStyles } = get();
-    const uid = component.getAttributes()["data-yoink-uid"];
-
-    if (uid) {
-      changeStyleStateHandler(
-        component,
-        stylesHashTable,
-        currentDevice,
-        (values: StyleValues) => set({ styleValues: values }),
-        defaultStyles
-      );
-    }
+    get().changeStyleState();
   },
 
   addComponent: (component: Component) => {
     const current = component.getAttributes();
-
-    // // Check if component already has a UID to prevent duplicate entries
-    if (current["data-yoink-uid"]) {
-      return; // Component already processed, skip
-    }
-
-    // Check if this is a text node - only text nodes should get UIDs
-    if (component.get("type") == "textnode") {
-      return; // Skip non-text nodes
-    }
-
-    const uid = generateUID();
-
-    // Set the UID attribute
-    component.setAttributes({
-      ...current,
-      "data-yoink-uid": uid,
-    });
-
-    // Initialize the component styles in our object
-    set((state) => ({
-      stylesHashTable: {
-        ...state.stylesHashTable,
-        [uid]: {
-          base: {},
-          sm: {},
-          md: {},
-          lg: {},
-        },
-      },
-    }));
 
     // Apply any existing styles from data-yoink-base if present
     if (current["data-yoink-base"]) {
       try {
         const styles = JSON.parse(current["data-yoink-base"]);
         component.setStyle(styles);
-
-        // Update our styles object
-        set((state) => ({
-          stylesHashTable: {
-            ...state.stylesHashTable,
-            [uid]: {
-              ...state.stylesHashTable[uid],
-              base: styles,
-            },
-          },
-        }));
       } catch (e) {
         console.error("Error parsing existing styles:", e);
       }
@@ -278,24 +210,11 @@ export const useEditorStore = create<EditorStore>((set, get) => ({
     // }, 0);
   },
 
-  removeComponent: (component: any) => {
-    const current = component.getAttributes();
-    const uid = current["data-yoink-uid"];
-
-    if (uid) {
-      set((state) => {
-        const newStyles = { ...state.stylesHashTable };
-        delete newStyles[uid];
-        return { stylesHashTable: newStyles };
-      });
-    }
-  },
-
   // Device management
   setCurrentDevice: (device: DeviceName) => {
     set({ currentDevice: device });
 
-    const { editor, selectedComponent, stylesHashTable, defaultStyles } = get();
+    const { editor, selectedComponent, defaultStyles } = get();
 
     // Update panel button states
     if (editor) {
@@ -314,18 +233,12 @@ export const useEditorStore = create<EditorStore>((set, get) => ({
     }
 
     if (selectedComponent) {
-      changeStyleStateHandler(
-        selectedComponent,
-        stylesHashTable,
-        device,
-        (values: StyleValues) => set({ styleValues: values }),
-        defaultStyles
-      );
+      get().changeStyleState();
     }
   },
 
   handleDeviceChange: (deviceName: DeviceName) => {
-    const { editor, selectedComponent, stylesHashTable, defaultStyles } = get();
+    const { editor, selectedComponent } = get();
 
     if (!editor) return;
 
@@ -340,13 +253,7 @@ export const useEditorStore = create<EditorStore>((set, get) => ({
       set({ currentDevice: deviceName });
 
       if (selectedComponent) {
-        changeStyleStateHandler(
-          selectedComponent,
-          stylesHashTable,
-          deviceName,
-          (values: StyleValues) => set({ styleValues: values }),
-          defaultStyles
-        );
+        get().changeStyleState();
       }
     }
   },
@@ -356,79 +263,54 @@ export const useEditorStore = create<EditorStore>((set, get) => ({
     set({ styleValues: values });
   },
 
-  updateStyleHashTable: (
-    uid: string,
-    deviceKey: DeviceKey,
-    property: string,
-    value: string
-  ) => {
-    // Update our separate styles object
-    set((state) => {
-      const updated = { ...state.stylesHashTable };
-      if (!updated[uid]) return state;
+  changeStyleState: () => {
+    const {
+      editor,
+      selectedComponent,
+      defaultStyles,
+      currentDevice,
+      setStyleValues,
+    } = get();
+    if (!selectedComponent) return;
 
-      // Helper to check if a property exists for a device
-      const hasProp = (dev: DeviceKey) =>
-        !!updated[uid][dev]?.hasOwnProperty(property);
-
-      if (deviceKey === "lg") {
-        const smHas = hasProp("sm");
-        const mdHas = hasProp("md");
-        if (!smHas && !mdHas) {
-          // Both md and sm don't have it: add to all
-          updated[uid]["sm"] = { ...updated[uid]["sm"], [property]: value };
-          updated[uid]["md"] = { ...updated[uid]["md"], [property]: value };
-          updated[uid]["lg"] = { ...updated[uid]["lg"], [property]: value };
-        } else if (smHas && !mdHas) {
-          // Only md doesn't have it: add to md and lg
-          updated[uid]["md"] = { ...updated[uid]["md"], [property]: value };
-          updated[uid]["lg"] = { ...updated[uid]["lg"], [property]: value };
+    const styles = editor?.Css.getComponentRules(selectedComponent);
+    if (styles) {
+      let baseStyles = {};
+      let viewportStyles = {};
+      let currentStyles = {};
+      for (const rule of styles) {
+        if (rule.getDevice().getName() != currentDevice) {
+          viewportStyles = { ...viewportStyles, ...rule.getStyle() };
         } else {
-          // Both have it: add to lg only
-          updated[uid]["lg"] = { ...updated[uid]["lg"], [property]: value };
+          currentStyles = { ...currentStyles, ...rule.getStyle() };
         }
-      } else if (deviceKey === "md") {
-        const smHas = hasProp("sm");
-        if (!smHas) {
-          // If sm doesn't have it, add to both sm and md
-          updated[uid]["sm"] = { ...updated[uid]["sm"], [property]: value };
-          updated[uid]["md"] = { ...updated[uid]["md"], [property]: value };
-        } else {
-          // sm has: add to md only
-          updated[uid]["md"] = { ...updated[uid]["md"], [property]: value };
-        }
-      } else if (deviceKey === "sm") {
-        // Just add to sm
-        updated[uid]["sm"] = { ...updated[uid]["sm"], [property]: value };
       }
+      viewportStyles = { ...viewportStyles, ...currentStyles };
 
-      return { stylesHashTable: updated };
-    });
+      if (defaultStyles) {
+        setStyleValues(
+          parseStyleValues({
+            ...defaultStyles,
+            ...baseStyles,
+            ...viewportStyles,
+          })
+        );
+      } else {
+        setStyleValues(parseStyleValues({ ...baseStyles, ...viewportStyles }));
+      }
+    }
   },
 
   updateComponentStyle: (property: string, value: string) => {
-    const { selectedComponent, currentDevice, updateStyleHashTable } = get();
+    const { selectedComponent } = get();
 
     if (!selectedComponent) return;
-
-    console.log(get().editor?.Css.getComponentRules(selectedComponent));
-
-    // Get the component's UID
-    const uid = selectedComponent.getAttributes()["data-yoink-uid"];
-    if (!uid) return;
-
-    // Get the current device key
-    const deviceKey = getDeviceKey(currentDevice);
 
     // Update the component's style in GrapesJS
     selectedComponent.setStyle({ [property]: value });
 
-    updateStyleHashTable(uid, deviceKey, property, value);
-
-    // Update the UI state
-    set((state) => ({
-      styleValues: { ...state.styleValues, [property]: value },
-    }));
+    // update the style state
+    get().changeStyleState();
   },
 
   handleSliderChange: (
@@ -436,16 +318,9 @@ export const useEditorStore = create<EditorStore>((set, get) => ({
     value: string,
     displayProperty?: string
   ) => {
-    const { selectedComponent, currentDevice, updateStyleHashTable } = get();
+    const { selectedComponent } = get();
 
     if (!selectedComponent) return;
-
-    // Get the component's UID
-    const uid = selectedComponent.getAttributes()["data-yoink-uid"];
-    if (!uid) return;
-
-    // Get the current device key
-    const deviceKey = getDeviceKey(currentDevice);
 
     const finalValue =
       displayProperty === "opacity" ? `${parseInt(value) / 100}` : `${value}px`;
@@ -454,13 +329,8 @@ export const useEditorStore = create<EditorStore>((set, get) => ({
     // Update the component's style in GrapesJS
     selectedComponent.setStyle({ [styleProperty]: finalValue });
 
-    // Update our separate styles object (same logic as updateComponentStyle)
-    updateStyleHashTable(uid, deviceKey, property, finalValue);
-
-    // Update the UI state
-    set((state) => ({
-      styleValues: { ...state.styleValues, [property]: value },
-    }));
+    // update the style state
+    get().changeStyleState();
   },
 
   // UI state

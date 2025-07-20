@@ -72,7 +72,7 @@ export function RenderComponent({
 
   if (config.type === "range") {
     return (
-      <div>
+      <div className={finalContainerClassName}>
         <Label className={labelClassName}>{getLabel(cssProp)}</Label>
         <div className="space-y-2">
           <Slider
@@ -98,10 +98,8 @@ export function RenderComponent({
 
   if (config.type === "select") {
     return (
-      <div>
-        <Label className={twMerge(labelClassName, config.containerClassName)}>
-          {getLabel(cssProp)}
-        </Label>
+      <div className={finalContainerClassName}>
+        <Label className={labelClassName}>{getLabel(cssProp)}</Label>
         <Select
           value={value}
           onValueChange={(val) => updateComponentStyle(cssProp, val)}

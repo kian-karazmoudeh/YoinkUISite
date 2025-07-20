@@ -11,7 +11,6 @@ const Blocks = () => {
       editor: state.editor,
     }))
   );
-  const blocksRef = useRef<HTMLDivElement>(null);
 
   const startDrag = (block: Block, e: React.DragEvent<HTMLDivElement>) => {
     if (!editor) return;

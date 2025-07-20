@@ -1,8 +1,6 @@
 "use client";
 
-import { cssProperties } from "../../../types/cssProperties";
 import { useMemo } from "react";
-import { Label } from "@/components/ui/label";
 import {
   DropdownMenu,
   DropdownMenuTrigger,
@@ -12,6 +10,7 @@ import { twMerge } from "tailwind-merge";
 import { useShallow } from "zustand/react/shallow";
 import { useEditorStore } from "../../../store/editorStore";
 import { RenderComponent } from "./RenderComponent";
+import { ChevronDownIcon } from "lucide-react";
 
 const LEFT_CELL_CLASSES = "inline-block w-1/2 pr-1";
 const RIGHT_CELL_CLASSES = "inline-block w-1/2 pl-1";
@@ -412,18 +411,25 @@ function shouldShowShorthand(prop: string, styleValues: any): boolean {
 
 export default function StylesBar() {
   const {
+    editor,
     selectedComponent,
     styleValues,
     updateComponentStyle,
     handleSliderChange,
   } = useEditorStore(
     useShallow((state) => ({
+      editor: state.editor,
       selectedComponent: state.selectedComponent,
       styleValues: state.styleValues,
       updateComponentStyle: state.updateComponentStyle,
       handleSliderChange: state.handleSliderChange,
     }))
   );
+
+  const sectors = editor?.StyleManager.getSectors() || [];
+
+  console.log(sectors);
+
   // Group properties by category
   const categorized = useMemo(() => {
     const groups: { [cat: string]: string[] } = {};
@@ -472,7 +478,7 @@ export default function StylesBar() {
                               <div
                                 key={cssProp}
                                 className={twMerge(
-                                  "flex items-center gap-2",
+                                  "flex items-start gap-2",
                                   config.containerClassName
                                 )}
                               >
@@ -499,13 +505,13 @@ export default function StylesBar() {
                                 />
                                 <DropdownMenu>
                                   <DropdownMenuTrigger asChild>
-                                    <button
+                                    <ChevronDownIcon className="size-4 shrink-0 text-zinc-50 hover:bg-zinc-700 rounded-md cursor-pointer" />
+                                    {/* <button
                                       type="button"
-                                      className="ml-1 px-2 py-1 rounded bg-zinc-700 text-zinc-100 hover:bg-zinc-600 focus:outline-none"
+                                      className="size-6 rounded bg-zinc-700 text-zinc-100 hover:bg-zinc-600 focus:outline-none shrink-0"
                                       title="Show individual sides"
                                     >
-                                      ...
-                                    </button>
+                                    </button> */}
                                   </DropdownMenuTrigger>
                                   <DropdownMenuContent className="p-5 min-w-[200px]">
                                     {Object.entries(config.longhands).map(

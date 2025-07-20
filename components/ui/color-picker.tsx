@@ -94,9 +94,10 @@ export function ColorPicker({
   const [inputValue, setInputValue] = useState(value);
   const popoverRef = useRef<HTMLDivElement>(null);
 
-  const { selectedComponent } = useEditorStore(
+  const { selectedComponent, currentDevice } = useEditorStore(
     useShallow((state) => ({
       selectedComponent: state.selectedComponent,
+      currentDevice: state.currentDevice,
     }))
   );
 
@@ -106,7 +107,7 @@ export function ColorPicker({
     setColorType(parsedColor.type);
     setColorValue(parsedColor.value);
     setInputValue(value);
-  }, [selectedComponent]);
+  }, [selectedComponent, currentDevice]);
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {

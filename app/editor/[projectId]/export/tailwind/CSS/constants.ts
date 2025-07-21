@@ -140,8 +140,8 @@ export const directMappings: { [key: string]: { [subkey: string]: string } } = {
     "no-repeat": "no-repeat",
   },
   "box-sizing": {
-    border: "box-border",
-    content: "box-content",
+    "border-box": "box-border",
+    "content-box": "box-content",
   },
   "mix-blend-mode": {
     normal: "mix-blend-normal",

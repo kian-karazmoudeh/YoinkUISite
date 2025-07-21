@@ -1,21 +1,13 @@
+import { useEditorStore } from "../../../store";
 import { tags } from "./tags";
 
-import { Dispatch, SetStateAction } from "react";
-
-type BaseDefaultStylesProps = {
-  setBaseDefaultStyles: Dispatch<
-    SetStateAction<Record<string, Record<string, string>> | undefined>
-  >;
-};
-
-export function getBaseDefaultStyles({
-  setBaseDefaultStyles,
-}: BaseDefaultStylesProps) {
+export function initBaseDefaultStyles() {
+  const { setDefaultBaseStyles } = useEditorStore.getState();
   const stored = localStorage.getItem("baseDefaultStyles");
   if (stored) {
     try {
       const parsed = JSON.parse(stored);
-      setBaseDefaultStyles(parsed);
+      setDefaultBaseStyles(parsed);
     } catch (e) {
       console.error("Error parsing base default styles", e);
     }
@@ -30,7 +22,7 @@ export function getBaseDefaultStyles({
             "baseDefaultStyles",
             JSON.stringify(defaultStyles)
           );
-          setBaseDefaultStyles(defaultStyles);
+          setDefaultBaseStyles(defaultStyles);
         }
       }
     );

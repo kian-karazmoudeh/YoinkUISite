@@ -1,4 +1,4 @@
-import { getRemSize } from "@/utils/measurement/getRemSize";
+import { getRemSize } from "../../export/tailwind/utils/measurement/getRemSize";
 import { safeRequestIdleCallback } from "./safeRequestIdleCallback";
 
 // Get all defaults styles for a given tag

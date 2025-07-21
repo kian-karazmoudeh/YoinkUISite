@@ -1,9 +1,59 @@
 import { DeviceKey, DeviceName } from "../types";
-import { cssProperties } from "../types/cssProperties";
 
-// Helper function to generate UID
-export const generateUID = (): string => {
-  return `yoink-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+// Helper function to validate CSS values
+export const isValidCssValue = (value: string): boolean => {
+  if (!value || value.trim() === "") return false;
+
+  const trimmedValue = value.trim();
+
+  // Check for common CSS keywords
+  const cssKeywords = ["auto", "none"];
+
+  if (cssKeywords.includes(trimmedValue.toLowerCase())) {
+    return true;
+  }
+
+  // Check for numbers with units (px, em, rem, %, vh, vw, etc.)
+  const unitRegex =
+    /^-?\d*\.?\d+(px|em|rem|%|vh|vw|vmin|vmax|pt|pc|in|cm|mm|ex|ch|fr|deg|rad|grad|turn|s|ms|hz|khz)?$/i;
+  if (unitRegex.test(trimmedValue)) {
+    return true;
+  }
+
+  // Check for color values (hex, rgb, rgba, hsl, hsla, named colors)
+  const colorRegex =
+    /^(#([0-9A-F]{3}){1,2}|rgb\(\s*\d+\s*,\s*\d+\s*,\s*\d+\s*\)|rgba\(\s*\d+\s*,\s*\d+\s*,\s*\d+\s*,\s*[\d.]+\s*\)|hsl\(\s*\d+\s*,\s*\d+%\s*,\s*\d+%\s*\)|hsla\(\s*\d+\s*,\s*\d+%\s*,\s*\d+%\s*,\s*[\d.]+\s*\)|transparent|currentColor)$/i;
+  if (colorRegex.test(trimmedValue)) {
+    return true;
+  }
+
+  // Check for calc() expressions
+  if (trimmedValue.startsWith("calc(") && trimmedValue.endsWith(")")) {
+    return true;
+  }
+
+  // Check for var() expressions
+  if (trimmedValue.startsWith("var(") && trimmedValue.endsWith(")")) {
+    return true;
+  }
+
+  // Check for url() expressions
+  if (trimmedValue.startsWith("url(") && trimmedValue.endsWith(")")) {
+    return true;
+  }
+
+  // Check for linear-gradient, radial-gradient, etc.
+  if (trimmedValue.includes("gradient(")) {
+    return true;
+  }
+
+  // Check for simple numbers (without units)
+  const numberRegex = /^-?\d*\.?\d+$/;
+  if (numberRegex.test(trimmedValue)) {
+    return true;
+  }
+
+  return false;
 };
 
 // Helper function to get device key

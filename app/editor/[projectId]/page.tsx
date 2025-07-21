@@ -8,7 +8,8 @@ import { objectToUniversalCss } from "./utils/objectToUniversalCss";
 import { User } from "@supabase/supabase-js";
 import { createClient } from "@/utils/supabase/client";
 import { useParams } from "next/navigation";
-import { getBaseDefaultStyles } from "./utils/defaultStyles/base";
+import { initBaseDefaultStyles } from "./utils/defaultStyles/base";
+import { initTailwindDefaultStyles } from "./utils/defaultStyles/tailwind.ts";
 
 export default function EditorPage() {
   const { projectId } = useParams();
@@ -16,17 +17,14 @@ export default function EditorPage() {
   const supabase = createClient();
   const [yoinkName, setYoinkName] = useState<string | null>(null);
   const [yoinkContent, setYoinkContent] = useState<string | null>(null);
-  const [baseDefaultStyles, setBaseDefaultStyles] = useState<
-    Record<string, Record<string, string>> | undefined
-  >(undefined);
 
   // Zustand store
   const {
     editor,
     isEditorReady,
+    defaultBaseStyles,
     initializeEditor,
     destroyEditor,
-    setDefaultStyles,
   } = useEditorStore();
 
   const baseStyleInjected = useRef(false);
@@ -92,7 +90,10 @@ export default function EditorPage() {
     });
 
     // Load base default styles
-    getBaseDefaultStyles({ setBaseDefaultStyles });
+    initBaseDefaultStyles();
+
+    // Load tailwind default styles
+    initTailwindDefaultStyles();
 
     // Cleanup on unmount
     return () => {
@@ -107,16 +108,10 @@ export default function EditorPage() {
       initializeEditor(yoinkContent);
     }
 
-    // Set default styles in store when base styles are loaded
-    if (baseDefaultStyles && baseDefaultStyles["div"]) {
-      setDefaultStyles(baseDefaultStyles["div"]);
-    }
-
     // Inject base styles into editor
     if (editor && !baseStyleInjected.current) {
-      const { defaultStyles } = useEditorStore.getState();
-      if (defaultStyles) {
-        const cssString = objectToUniversalCss(defaultStyles);
+      if (defaultBaseStyles) {
+        const cssString = objectToUniversalCss(defaultBaseStyles["div"]);
         editor.addStyle(cssString);
         baseStyleInjected.current = true;
       }
@@ -125,8 +120,7 @@ export default function EditorPage() {
     yoinkContent,
     isEditorReady,
     initializeEditor,
-    baseDefaultStyles,
-    setDefaultStyles,
+    defaultBaseStyles,
     editor,
   ]);
 

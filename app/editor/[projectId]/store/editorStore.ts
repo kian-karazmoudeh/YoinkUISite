@@ -24,7 +24,8 @@ interface EditorState {
   activeTab: string;
 
   // Default styles
-  defaultStyles: Record<string, string> | undefined;
+  defaultBaseStyles: Record<string, Record<string, string>> | undefined;
+  defaultTailwindStyles: Record<string, Record<string, string>> | undefined;
 }
 
 interface EditorActions {
@@ -53,7 +54,12 @@ interface EditorActions {
 
   // UI state
   setActiveTab: (tab: string) => void;
-  setDefaultStyles: (styles: Record<string, string> | undefined) => void;
+  setDefaultBaseStyles: (
+    styles: Record<string, Record<string, string>> | undefined
+  ) => void;
+  setDefaultTailwindStyles: (
+    styles: Record<string, Record<string, string>> | undefined
+  ) => void;
 }
 
 type EditorStore = EditorState & EditorActions;
@@ -67,8 +73,8 @@ export const useEditorStore = create<EditorStore>((set, get) => ({
   currentDevice: "Desktop",
   styleValues: getDefaultStyleValues(),
   activeTab: "blocks",
-  defaultStyles: undefined,
-
+  defaultBaseStyles: undefined,
+  defaultTailwindStyles: undefined,
   // Editor initialization
   initializeEditor: (content: string) => {
     const container = document.getElementById("gjs-container");
@@ -214,7 +220,11 @@ export const useEditorStore = create<EditorStore>((set, get) => ({
   setCurrentDevice: (device: DeviceName) => {
     set({ currentDevice: device });
 
-    const { editor, selectedComponent, defaultStyles } = get();
+    const {
+      editor,
+      selectedComponent,
+      defaultBaseStyles: defaultStyles,
+    } = get();
 
     // Update panel button states
     if (editor) {
@@ -267,7 +277,7 @@ export const useEditorStore = create<EditorStore>((set, get) => ({
     const {
       editor,
       selectedComponent,
-      defaultStyles,
+      defaultBaseStyles: defaultStyles,
       currentDevice,
       setStyleValues,
     } = get();
@@ -307,7 +317,9 @@ export const useEditorStore = create<EditorStore>((set, get) => ({
     if (!selectedComponent) return;
 
     // Update the component's style in GrapesJS
-    selectedComponent.setStyle({ [property]: value });
+    if (value != "") {
+      selectedComponent.setStyle({ [property]: value });
+    }
 
     // update the style state
     get().changeStyleState();
@@ -338,7 +350,15 @@ export const useEditorStore = create<EditorStore>((set, get) => ({
     set({ activeTab: tab });
   },
 
-  setDefaultStyles: (styles: Record<string, string> | undefined) => {
-    set({ defaultStyles: styles });
+  setDefaultBaseStyles: (
+    styles: Record<string, Record<string, string>> | undefined
+  ) => {
+    set({ defaultBaseStyles: styles });
+  },
+
+  setDefaultTailwindStyles: (
+    styles: Record<string, Record<string, string>> | undefined
+  ) => {
+    set({ defaultTailwindStyles: styles });
   },
 }));

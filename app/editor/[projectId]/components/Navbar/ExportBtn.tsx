@@ -6,13 +6,14 @@ import {
   DropdownMenuItem,
 } from "@/components/ui/dropdown-menu";
 import { Upload } from "lucide-react";
+import { mapResponsivePage } from "../../export/tailwind";
 
 const ExportBtn = () => {
   // TODO: Replace with actual editor instance
   //   const editor = (window as any).yoinkEditor || null;
 
-  const handleExport = async (value: string) => {
-    console.log("Exporting", value);
+  const handleExport = async () => {
+    mapResponsivePage();
   };
 
   return (
@@ -23,14 +24,18 @@ const ExportBtn = () => {
         </button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
-        <DropdownMenuItem onSelect={() => {}}>
+        <DropdownMenuItem onSelect={() => handleExport()}>
           Download as HTML
         </DropdownMenuItem>
-        <DropdownMenuItem onSelect={() => handleExport("download-jsx")}>
+        <DropdownMenuItem onSelect={() => handleExport()}>
           Download as JSX
         </DropdownMenuItem>
-        <DropdownMenuItem onSelect={() => {}}>Copy as HTML</DropdownMenuItem>
-        <DropdownMenuItem onSelect={() => {}}>Copy as JSX</DropdownMenuItem>
+        <DropdownMenuItem onSelect={() => handleExport()}>
+          Copy as HTML
+        </DropdownMenuItem>
+        <DropdownMenuItem onSelect={() => handleExport()}>
+          Copy as JSX
+        </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
   );

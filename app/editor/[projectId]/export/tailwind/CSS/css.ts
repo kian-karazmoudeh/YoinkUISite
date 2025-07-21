@@ -4,15 +4,16 @@ import {
   propsToArbitraryMap,
   unmappableProps,
 } from "./constants";
-import {
-  setVisibilityRootAttr,
-  setVisibilityTerminateAttrComponent,
-  setVisibilityTerminateAttrResponsive,
-} from "../../shared/elementVisibility";
 import { simplifySVGSpecific } from "../simplify/dom/svgSpecific";
 import { simplifyClasses } from "../simplify/classes";
 import { simplifyBorderPatterns } from "../simplify/classes/border";
-import { getTailwindDefaultStyles } from "../../../utils/defaultStyles/tailwind.ts";
+import {
+  getDefaultTailwindStyles,
+  initTailwindDefaultStyles,
+} from "../../../utils/defaultStyles/tailwind.ts";
+import { Component } from "grapesjs";
+import { DeviceName } from "../../../types";
+import { useEditorStore } from "../../../store";
 
 function cssToTailwind(cssJson: Record<string, string>) {
   let tailwindClasses: string[] = [];
@@ -45,38 +46,66 @@ function cssToTailwind(cssJson: Record<string, string>) {
   return tailwindClasses;
 }
 
-export function cssToJsonString(el: HTMLElement) {
-  const styleMap = el.computedStyleMap();
-  // const computedStyle = window.getComputedStyle(el);
-  const cssObject: { [key: string]: string } = {};
+// export function cssToJsonString(el: HTMLElement) {
+//   const styleMap = el.computedStyleMap();
+//   // const computedStyle = window.getComputedStyle(el);
+//   const cssObject: { [key: string]: string } = {};
 
-  // props to arbitrary
-  for (const [cssProp, _] of Object.entries(propsToArbitraryMap)) {
-    const value = styleMap.get(cssProp)?.toString();
+//   // props to arbitrary
+//   for (const [cssProp, _] of Object.entries(propsToArbitraryMap)) {
+//     const value = styleMap.get(cssProp)?.toString();
 
-    if (value) {
-      cssObject[cssProp] = value;
+//     if (value) {
+//       cssObject[cssProp] = value;
+//     }
+//   }
+
+//   // direct mappings
+//   for (const [prop, map] of Object.entries(directMappings)) {
+//     const val = styleMap.get(prop)?.toString().trim();
+
+//     if (val && map[val]) {
+//       cssObject[prop] = val;
+//     }
+//   }
+
+//   for (const cssProp of unmappableProps) {
+//     const value = styleMap.get(cssProp)?.toString();
+
+//     if (value) {
+//       cssObject[cssProp] = value;
+//     }
+//   }
+
+//   return JSON.stringify(cssObject);
+// }
+
+function getCssObject(component: Component, device: DeviceName) {
+  const { editor, defaultBaseStyles } = useEditorStore.getState();
+  const styles = editor?.Css.getComponentRules(component);
+  if (styles) {
+    let baseStyles = {};
+    let viewportStyles = {};
+    let currentStyles = {};
+    for (const rule of styles) {
+      if (rule.getDevice().getName() != device) {
+        viewportStyles = { ...viewportStyles, ...rule.getStyle() };
+      } else {
+        currentStyles = { ...currentStyles, ...rule.getStyle() };
+      }
+    }
+    viewportStyles = { ...viewportStyles, ...currentStyles };
+
+    if (defaultBaseStyles && defaultBaseStyles["div"]) {
+      return {
+        ...defaultBaseStyles["div"],
+        ...baseStyles,
+        ...viewportStyles,
+      };
+    } else {
+      return { ...baseStyles, ...viewportStyles };
     }
   }
-
-  // direct mappings
-  for (const [prop, map] of Object.entries(directMappings)) {
-    const val = styleMap.get(prop)?.toString().trim();
-
-    if (val && map[val]) {
-      cssObject[prop] = val;
-    }
-  }
-
-  for (const cssProp of unmappableProps) {
-    const value = styleMap.get(cssProp)?.toString();
-
-    if (value) {
-      cssObject[cssProp] = value;
-    }
-  }
-
-  return JSON.stringify(cssObject);
 }
 
 function removeInheritedStyles(
@@ -100,49 +129,60 @@ function removeInheritedStyles(
 }
 
 export function addCSSAttributesRecursivelyResponsive(
-  node: HTMLElement,
-  viewport: "base" | "md" | "lg"
+  node: Component,
+  device: DeviceName
 ) {
   if (
-    node.nodeType === Node.ELEMENT_NODE &&
-    !(node instanceof HTMLBRElement) &&
-    !(node instanceof HTMLPictureElement) &&
-    !(node instanceof HTMLSourceElement) &&
-    !(node instanceof HTMLTrackElement)
+    node.getEl() &&
+    node.getEl()?.nodeType === Node.ELEMENT_NODE &&
+    !(node.getEl() instanceof HTMLBRElement) &&
+    !(node.getEl() instanceof HTMLPictureElement) &&
+    !(node.getEl() instanceof HTMLSourceElement) &&
+    !(node.getEl() instanceof HTMLTrackElement)
   ) {
-    const cssString = cssToJsonString(node);
-    node.setAttribute(`data-yoink-${viewport}`, cssString);
-    setVisibilityRootAttr(node, viewport);
-    setVisibilityTerminateAttrResponsive(node);
+    const viewport =
+      device === "Desktop" ? "lg" : device === "Tablet" ? "md" : "sm";
+    const cssString = JSON.stringify(getCssObject(node, device));
+    node.addAttributes({ [`data-yoink-${viewport}`]: cssString });
   }
 
-  node.childNodes.forEach((child) =>
-    addCSSAttributesRecursivelyResponsive(child as HTMLElement, viewport)
-  );
+  // console.log(node.getAttributes());
+
+  node
+    .components()
+    .forEach((child: Component) =>
+      addCSSAttributesRecursivelyResponsive(child, device)
+    );
+
+  // return node;
 }
 
-export function addCSSAttributesRecursivelyComponent(node: HTMLElement) {
-  if (
-    node.nodeType === Node.ELEMENT_NODE &&
-    !(node instanceof HTMLBRElement) &&
-    !(node instanceof HTMLPictureElement) &&
-    !(node instanceof HTMLSourceElement) &&
-    !(node instanceof HTMLTrackElement)
-  ) {
-    const cssString = cssToJsonString(node);
-    node.setAttribute(`data-yoink-base`, cssString);
-    setVisibilityRootAttr(node, "base");
-    setVisibilityTerminateAttrComponent(node);
+// export function addCSSAttributesRecursivelyComponent(node: HTMLElement) {
+//   if (
+//     node.nodeType === Node.ELEMENT_NODE &&
+//     !(node instanceof HTMLBRElement) &&
+//     !(node instanceof HTMLPictureElement) &&
+//     !(node instanceof HTMLSourceElement) &&
+//     !(node instanceof HTMLTrackElement)
+//   ) {
+//     const cssString = cssToJsonString(node);
+//     node.setAttribute(`data-yoink-base`, cssString);
+//     // setVisibilityRootAttr(node, "base");
+//     // setVisibilityTerminateAttrComponent(node);
+//   }
+
+//   node.childNodes.forEach((child) =>
+//     addCSSAttributesRecursivelyComponent(child as HTMLElement)
+//   );
+// }
+
+export function convertNodeToTailwindLgRecurse(node: Component) {
+  if (node.getType() == "textnode") {
+    return;
   }
-
-  node.childNodes.forEach((child) =>
-    addCSSAttributesRecursivelyComponent(child as HTMLElement)
-  );
-}
-
-export function convertNodeToTailwindLgRecurse(node: HTMLElement) {
-  const lgData = node.getAttribute("data-yoink-lg");
-  const mdData = node.getAttribute("data-yoink-md");
+  // const el = node.getEl()!;
+  const lgData = node.getAttributes()["data-yoink-lg"];
+  const mdData = node.getAttributes()["data-yoink-md"];
 
   if (lgData && mdData) {
     let lgStyles: Record<string, string>;
@@ -162,27 +202,31 @@ export function convertNodeToTailwindLgRecurse(node: HTMLElement) {
     lgTailwindClasses = lgTailwindClasses.filter(
       (cls) => !mdTailwindClasses.includes(cls)
     );
-    lgTailwindClasses = simplifySVGSpecific(node, lgTailwindClasses);
+    // lgTailwindClasses = simplifySVGSpecific(el, lgTailwindClasses);
     lgTailwindClasses = simplifyClasses(lgTailwindClasses);
 
     lgTailwindClasses = lgTailwindClasses
       .filter((cls) => cls.length > 0)
       .map((cls) => `lg:${cls}`);
 
-    node.setAttribute("data-yoink-classes", lgTailwindClasses.join(" "));
+    console.log(lgTailwindClasses);
+    node.addAttributes({
+      "data-yoink-classes": lgTailwindClasses.join(" "),
+    });
   }
 
   // Recurse on children
-  for (const child of Array.from(node.children)) {
-    convertNodeToTailwindLgRecurse(child as HTMLElement);
+  for (const child of node.components()) {
+    convertNodeToTailwindLgRecurse(child);
   }
 }
 
-export function convertNodeToTailwindMdRecurse(node: HTMLElement) {
-  const mdData = node.getAttribute("data-yoink-md");
-  const smData = node.getAttribute("data-yoink-base");
+export function convertNodeToTailwindMdRecurse(node: Component) {
+  const el = node.getEl();
+  const mdData = node.getAttributes()["data-yoink-md"];
+  const smData = node.getAttributes()["data-yoink-sm"];
 
-  if (smData && mdData) {
+  if (smData && mdData && el && node.getType() != "textnode") {
     let mdStyles: Record<string, string>;
     let smStyles: Record<string, string>;
 
@@ -200,34 +244,35 @@ export function convertNodeToTailwindMdRecurse(node: HTMLElement) {
     mdTailwindClasses = mdTailwindClasses.filter(
       (cls) => !smTailwindClasses.includes(cls)
     );
-    mdTailwindClasses = simplifySVGSpecific(node, mdTailwindClasses);
+    // mdTailwindClasses = simplifySVGSpecific(el, mdTailwindClasses);
     mdTailwindClasses = simplifyClasses(mdTailwindClasses);
 
     mdTailwindClasses = mdTailwindClasses
       .filter((cls) => cls.length > 0)
       .map((cls) => `md:${cls}`);
 
-    node.setAttribute(
-      "data-yoink-classes",
-      mdTailwindClasses.join(" ") +
+    node.addAttributes({
+      "data-yoink-classes":
+        mdTailwindClasses.join(" ") +
         " " +
-        node.getAttribute("data-yoink-classes")
-    );
+        node.getAttributes()["data-yoink-classes"],
+    });
   }
 
   // Recurse on children
-  for (const child of Array.from(node.children)) {
-    convertNodeToTailwindMdRecurse(child as HTMLElement);
+  for (const child of node.components()) {
+    convertNodeToTailwindMdRecurse(child);
   }
 }
 
 export async function convertNodeToTailwindBaseRecurse(
-  node: HTMLElement,
+  node: Component,
   inherited = {}
 ) {
-  const smData = node.getAttribute("data-yoink-base");
+  const el = node.getEl();
+  const smData = node.getAttributes()["data-yoink-sm"];
 
-  if (smData) {
+  if (smData && el && node.getType() != "textnode") {
     let smStyles: Record<string, string>;
 
     try {
@@ -240,31 +285,37 @@ export async function convertNodeToTailwindBaseRecurse(
     let cleanedStyles = removeInheritedStyles(smStyles, inherited);
 
     let smTailwindClasses: string[] = cssToTailwind(cleanedStyles);
-    let defaultTailwindClasses: string[] = cssToTailwind(
-      await getTailwindDefaultStyles(node)
-    );
+    let defaultTailwindClasses: string[] = [];
+    if (getDefaultTailwindStyles(node)) {
+      defaultTailwindClasses = cssToTailwind(
+        getDefaultTailwindStyles(node) || {}
+      );
+    }
+    console.log(defaultTailwindClasses);
 
     smTailwindClasses = smTailwindClasses.filter(
       (cls) => !defaultTailwindClasses.includes(cls)
     );
-    smTailwindClasses = simplifySVGSpecific(node, smTailwindClasses);
+    // smTailwindClasses = simplifySVGSpecific(el, smTailwindClasses);
     // for explanation on why border patterns is only checked in sm, go to the function definition
     smTailwindClasses = simplifyBorderPatterns(smTailwindClasses);
     smTailwindClasses = simplifyClasses(smTailwindClasses);
 
-    const existing = node.getAttribute("data-yoink-classes");
+    const existing = node.getAttributes()["data-yoink-classes"];
     const combined =
       smTailwindClasses.join(" ") + (existing ? " " + existing : "");
-    node.setAttribute("data-yoink-classes", combined);
+    node.addAttributes({
+      "data-yoink-classes": combined,
+    });
 
     // Recurse on children
-    for (const child of Array.from(node.children)) {
-      convertNodeToTailwindBaseRecurse(child as HTMLElement, smStyles);
+    for (const child of node.components()) {
+      convertNodeToTailwindBaseRecurse(child, smStyles);
     }
   } else {
     // Recurse on children
-    for (const child of Array.from(node.children)) {
-      convertNodeToTailwindBaseRecurse(child as HTMLElement, inherited);
+    for (const child of node.components()) {
+      convertNodeToTailwindBaseRecurse(child, inherited);
     }
   }
 }

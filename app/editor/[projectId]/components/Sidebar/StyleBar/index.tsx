@@ -451,7 +451,7 @@ export default function StylesBar() {
           scrollbarColor: "#26272B #18191A",
         }}
       >
-        <div className="p-4">
+        <div className="p-2 space-y-2">
           {selectedComponent ? (
             <div className="space-y-6">
               {categoryOrder.map(
@@ -513,28 +513,27 @@ export default function StylesBar() {
                                     >
                                     </button> */}
                                   </DropdownMenuTrigger>
-                                  <DropdownMenuContent className="p-5 min-w-[200px]">
+                                  <DropdownMenuContent className="p-5 min-w-[200px] max-w-[300px]">
                                     {Object.entries(config.longhands).map(
                                       ([longhand, longhandConfig]) => {
                                         const longhandValue =
                                           (styleValues as any)[longhand] ?? "";
                                         return (
-                                          <div key={longhand} className="mb-2">
-                                            <RenderComponent
-                                              cssProp={longhand}
-                                              config={longhandConfig}
-                                              value={longhandValue}
-                                              styleValues={styleValues}
-                                              updateComponentStyle={
-                                                updateComponentStyle
-                                              }
-                                              handleSliderChange={
-                                                handleSliderChange
-                                              }
-                                              getLabel={getLabel}
-                                              labelClassName="block text-xs font-medium text-zinc-50 mb-1"
-                                            />
-                                          </div>
+                                          <RenderComponent
+                                            key={longhand}
+                                            cssProp={longhand}
+                                            config={longhandConfig}
+                                            value={longhandValue}
+                                            styleValues={styleValues}
+                                            updateComponentStyle={
+                                              updateComponentStyle
+                                            }
+                                            handleSliderChange={
+                                              handleSliderChange
+                                            }
+                                            getLabel={getLabel}
+                                            labelClassName="block text-xs font-medium text-zinc-50 mb-1"
+                                          />
                                         );
                                       }
                                     )}

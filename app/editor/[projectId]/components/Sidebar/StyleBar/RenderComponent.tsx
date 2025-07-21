@@ -1,4 +1,3 @@
-import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { ColorPicker } from "@/components/ui/color-picker";
 import { Slider } from "@/components/ui/slider";
@@ -9,7 +8,7 @@ import {
   SelectItem,
   SelectValue,
 } from "@/components/ui/select";
-import { twMerge } from "tailwind-merge";
+import LocalizedInput from "./LocalizedInput";
 
 interface PropertyConfigType {
   [key: string]: {
@@ -123,12 +122,11 @@ export function RenderComponent({
   return (
     <div className={finalContainerClassName}>
       <Label className={labelClassName}>{getLabel(cssProp)}</Label>
-      <Input
-        type="text"
-        placeholder={config.placeholder}
-        className={config.inputClassName || ""}
+      <LocalizedInput
+        config={config}
         value={value}
-        onChange={(e) => updateComponentStyle(cssProp, e.target.value)}
+        updateComponentStyle={updateComponentStyle}
+        cssProp={cssProp}
       />
     </div>
   );

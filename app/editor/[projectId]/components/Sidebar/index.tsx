@@ -1,7 +1,7 @@
 import Blocks from "./Blocks";
 import StylesBar from "./StyleBar";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
-import { useEditorStore } from "../../store/editorStore";
+import { useEditorStore } from "../../../(project)/store/editorStore";
 import { useShallow } from "zustand/react/shallow";
 
 const Sidebar = () => {

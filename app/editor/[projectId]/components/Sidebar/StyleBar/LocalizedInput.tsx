@@ -3,7 +3,7 @@
 import { Input } from "@/components/ui/input";
 import { useEffect, useState } from "react";
 import { isValidCssValue } from "../../../utils/helpers";
-import { useEditorStore } from "../../../store";
+import { useEditorStore } from "../../../../(project)/store";
 import { useShallow } from "zustand/react/shallow";
 
 const LocalizedInput = ({

@@ -3,17 +3,15 @@ import {
   inheritableCss,
   propsToArbitraryMap,
   unmappableProps,
-} from "./constants";
-import { simplifySVGSpecific } from "../simplify/dom/svgSpecific";
-import { simplifyClasses } from "../simplify/classes";
-import { simplifyBorderPatterns } from "../simplify/classes/border";
-import {
-  getDefaultTailwindStyles,
-  initTailwindDefaultStyles,
-} from "../../../utils/defaultStyles/tailwind.ts";
+} from "./constants.ts";
+import { simplifySVGSpecific } from "../simplify/dom/svgSpecific.ts";
+import { simplifyClasses } from "../simplify/classes/index.ts";
+import { simplifyBorderPatterns } from "../simplify/classes/border.ts";
+import { getDefaultTailwindStyles } from "../../../utils/defaultStyles/tailwind.ts/index.ts";
 import { Component } from "grapesjs";
-import { DeviceName } from "../../../types";
-import { useEditorStore } from "../../../store";
+import { DeviceName } from "../../../types/index.ts";
+import { useEditorStore } from "../../../../(project)/store";
+import { getMergedComponentStyles } from "../../../utils/helpers.ts";
 
 function cssToTailwind(cssJson: Record<string, string>) {
   let tailwindClasses: string[] = [];
@@ -46,67 +44,14 @@ function cssToTailwind(cssJson: Record<string, string>) {
   return tailwindClasses;
 }
 
-// export function cssToJsonString(el: HTMLElement) {
-//   const styleMap = el.computedStyleMap();
-//   // const computedStyle = window.getComputedStyle(el);
-//   const cssObject: { [key: string]: string } = {};
-
-//   // props to arbitrary
-//   for (const [cssProp, _] of Object.entries(propsToArbitraryMap)) {
-//     const value = styleMap.get(cssProp)?.toString();
-
-//     if (value) {
-//       cssObject[cssProp] = value;
-//     }
-//   }
-
-//   // direct mappings
-//   for (const [prop, map] of Object.entries(directMappings)) {
-//     const val = styleMap.get(prop)?.toString().trim();
-
-//     if (val && map[val]) {
-//       cssObject[prop] = val;
-//     }
-//   }
-
-//   for (const cssProp of unmappableProps) {
-//     const value = styleMap.get(cssProp)?.toString();
-
-//     if (value) {
-//       cssObject[cssProp] = value;
-//     }
-//   }
-
-//   return JSON.stringify(cssObject);
-// }
-
 function getCssObject(component: Component, device: DeviceName) {
   const { editor, defaultBaseStyles } = useEditorStore.getState();
-  const styles = editor?.Css.getComponentRules(component);
-  if (styles) {
-    let baseStyles = {};
-    let viewportStyles = {};
-    let currentStyles = {};
-    for (const rule of styles) {
-      if (rule.getDevice().getName() != device) {
-        viewportStyles = { ...viewportStyles, ...rule.getStyle() };
-      } else {
-        currentStyles = { ...currentStyles, ...rule.getStyle() };
-      }
-    }
-    viewportStyles = { ...viewportStyles, ...currentStyles };
-
-    if (defaultBaseStyles && defaultBaseStyles["div"]) {
-      console.log(defaultBaseStyles["div"]);
-      return {
-        ...defaultBaseStyles["div"],
-        ...baseStyles,
-        ...viewportStyles,
-      };
-    } else {
-      return { ...baseStyles, ...viewportStyles };
-    }
-  }
+  return getMergedComponentStyles({
+    component,
+    device,
+    editor,
+    defaultBaseStyles,
+  });
 }
 
 function removeInheritedStyles(

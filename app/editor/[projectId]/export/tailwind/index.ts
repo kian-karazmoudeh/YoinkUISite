@@ -1,4 +1,4 @@
-import { twMerge } from "tailwind-merge";
+// import { twMerge } from "tailwind-merge";
 import {
   addCSSAttributesRecursivelyResponsive,
   convertNodeToTailwindLgRecurse,
@@ -6,19 +6,20 @@ import {
   convertNodeToTailwindBaseRecurse,
 } from "./CSS/css";
 import { cleanRedundantTags } from "./HTML/dom";
-import {
-  changeImgTagSrc,
-  changeSourceTagSrc,
-  changeVideoTagSrc,
-} from "./HTML/placeholder";
+// import {
+//   changeImgTagSrc,
+//   changeSourceTagSrc,
+//   changeVideoTagSrc,
+// } from "./HTML/placeholder";
 import { removeCommentsFromDOM } from "./simplify/dom/removeComments";
 import {
   removeYoinkAttributes,
+  removeYoinkAttributesFromCanvas,
   removeYoinkElements,
   swapYoinkClasses,
 } from "./simplify/dom/removeYoink";
 import { removeInvisibleNodesRecurse } from "../shared/elementVisibility";
-import { useEditorStore } from "../../store";
+import { useEditorStore } from "../../../(project)/store";
 import { Component } from "grapesjs";
 
 function convertToComponent(root: Element): HTMLElement {
@@ -67,5 +68,7 @@ export function mapResponsivePage() {
   convertNodeToTailwindBaseRecurse(root);
 
   let converted = convertToComponent(root.getEl()!);
+
+  removeYoinkAttributesFromCanvas(root);
   console.log(converted);
 }

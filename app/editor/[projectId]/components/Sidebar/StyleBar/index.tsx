@@ -8,7 +8,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { twMerge } from "tailwind-merge";
 import { useShallow } from "zustand/react/shallow";
-import { useEditorStore } from "../../../store/editorStore";
+import { useEditorStore } from "../../../../(project)/store/editorStore";
 import { RenderComponent } from "./RenderComponent";
 import { ChevronDownIcon } from "lucide-react";
 

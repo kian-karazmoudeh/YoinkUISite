@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState, useRef } from "react";
-import { useEditorStore } from "./store";
+import { useEditorStore } from "../(project)/store";
 import Navbar from "./components/Navbar";
 import Sidebar from "./components/Sidebar";
 import { objectToUniversalCss } from "./utils/objectToUniversalCss";

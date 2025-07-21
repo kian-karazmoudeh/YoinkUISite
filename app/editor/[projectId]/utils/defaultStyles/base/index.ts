@@ -1,4 +1,4 @@
-import { useEditorStore } from "../../../store";
+import { useEditorStore } from "../../../../(project)/store";
 import { tags } from "./tags";
 
 export function initBaseDefaultStyles() {

@@ -388,3 +388,50 @@ export const getDefaultStyleValues = (): import("../types").StyleValues => {
     "mask-type": "",
   };
 };
+
+/**
+ * Merges defaultBaseStyles['div'] and device-specific styles for a component.
+ * For Desktop: default + Desktop styles.
+ * For Tablet: default + Desktop + Tablet styles.
+ * For Mobile: default + Desktop + Tablet + Mobile styles.
+ */
+export function getMergedComponentStyles({
+  component,
+  device,
+  editor,
+  defaultBaseStyles,
+}: {
+  component: any; // GrapesJS Component
+  device: DeviceName;
+  editor: any;
+  defaultBaseStyles: Record<string, Record<string, string>> | undefined;
+}): Record<string, string> {
+  const styles = editor?.Css.getComponentRules(component);
+  if (!styles) return {};
+
+  let desktopStyles = {};
+  let tabletStyles = {};
+  let mobileStyles = {};
+  for (const rule of styles) {
+    const deviceName = rule.getDevice().getName();
+    if (deviceName === "Desktop") {
+      desktopStyles = { ...desktopStyles, ...rule.getStyle() };
+    } else if (deviceName === "Tablet") {
+      tabletStyles = { ...tabletStyles, ...rule.getStyle() };
+    } else if (deviceName === "Mobile") {
+      mobileStyles = { ...mobileStyles, ...rule.getStyle() };
+    }
+  }
+
+  let mergedStyles = {};
+  if (defaultBaseStyles && defaultBaseStyles["div"]) {
+    mergedStyles = { ...defaultBaseStyles["div"] };
+  }
+  mergedStyles = { ...mergedStyles, ...desktopStyles };
+  if (device === "Tablet") {
+    mergedStyles = { ...mergedStyles, ...tabletStyles };
+  } else if (device === "Mobile") {
+    mergedStyles = { ...mergedStyles, ...tabletStyles, ...mobileStyles };
+  }
+  return mergedStyles;
+}

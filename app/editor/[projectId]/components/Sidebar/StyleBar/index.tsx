@@ -426,9 +426,9 @@ export default function StylesBar() {
     }))
   );
 
-  const sectors = editor?.StyleManager.getSectors() || [];
+  // const sectors = editor?.StyleManager.getSectors() || [];
 
-  console.log(sectors);
+  // console.log(sectors);
 
   // Group properties by category
   const categorized = useMemo(() => {

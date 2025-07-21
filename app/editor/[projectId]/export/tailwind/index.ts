@@ -21,42 +21,38 @@ import { removeInvisibleNodesRecurse } from "../shared/elementVisibility";
 import { useEditorStore } from "../../store";
 import { Component } from "grapesjs";
 
-// function convertToComponent(): HTMLElement {
-//   const htmlDoc = document.documentElement.cloneNode(true) as HTMLElement;
+function convertToComponent(root: Element): HTMLElement {
+  const rootClone = root.cloneNode(true) as HTMLElement;
 
-//   cleanRedundantTags(htmlDoc);
-//   const docBody = htmlDoc.querySelector("body");
+  // console.log(rootClone);
 
-//   changeImgTagSrc(htmlDoc);
-//   changeVideoTagSrc(htmlDoc);
-//   changeSourceTagSrc(htmlDoc);
-//   // changeTrackTagSrc(htmlDoc);
+  cleanRedundantTags(rootClone);
+  // const docBody = rootClone.querySelector("body");
 
-//   let htmlClasses = htmlDoc.getAttribute("data-yoink-classes");
-//   let bodyClasses = docBody?.getAttribute("data-yoink-classes");
-//   // create a new div to hold the children of body
+  // // changeTrackTagSrc(htmlDoc);
+  // let htmlClasses = rootClone.getAttribute("data-yoink-classes");
+  // let bodyClasses = docBody?.getAttribute("data-yoink-classes");
+  // create a new div to hold the children of body
 
-//   const componentContainer = document.createElement("div");
-//   componentContainer.setAttribute(
-//     "data-yoink-classes",
-//     twMerge(htmlClasses, bodyClasses)
-//   );
+  // const componentContainer = document.createElement("div");
+  // componentContainer.setAttribute(
+  //   "data-yoink-classes",
+  //   twMerge(htmlClasses, bodyClasses)
+  // );
 
-//   // Move all children from body to component div
-//   while (docBody!.firstChild) {
-//     componentContainer.appendChild(docBody!.firstChild);
-//   }
+  // Move all children from body to component div
+  // while (docBody!.firstChild) {
+  //   componentContainer.appendChild(docBody!.firstChild);
+  // }
 
-//   removeInvisibleNodesRecurse(componentContainer);
-//   swapYoinkClasses(componentContainer);
-//   removeYoinkAttributes(componentContainer);
-//   removeYoinkElements(componentContainer);
-//   removeCommentsFromDOM(componentContainer);
+  removeInvisibleNodesRecurse(rootClone);
+  swapYoinkClasses(rootClone);
+  removeYoinkAttributes(rootClone);
+  removeYoinkElements(rootClone);
+  removeCommentsFromDOM(rootClone);
 
-//   removeYoinkAttributes(document.documentElement);
-
-//   return componentContainer;
-// }
+  return rootClone;
+}
 
 export function mapResponsivePage() {
   const editor = useEditorStore.getState().editor;
@@ -70,5 +66,6 @@ export function mapResponsivePage() {
   convertNodeToTailwindMdRecurse(root);
   convertNodeToTailwindBaseRecurse(root);
 
-  console.log(root.getEl());
+  let converted = convertToComponent(root.getEl()!);
+  console.log(converted);
 }

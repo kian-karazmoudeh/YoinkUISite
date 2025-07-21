@@ -1,13 +1,3 @@
-// Type for the component styles object
-export interface StylesHashTable {
-  [uid: string]: {
-    base: { [key: string]: string };
-    sm: { [key: string]: string };
-    md: { [key: string]: string };
-    lg: { [key: string]: string };
-  };
-}
-
 export interface StyleValues {
   width: any;
   height: any;

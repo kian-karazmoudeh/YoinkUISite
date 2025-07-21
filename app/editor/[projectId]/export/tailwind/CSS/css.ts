@@ -97,6 +97,7 @@ function getCssObject(component: Component, device: DeviceName) {
     viewportStyles = { ...viewportStyles, ...currentStyles };
 
     if (defaultBaseStyles && defaultBaseStyles["div"]) {
+      console.log(defaultBaseStyles["div"]);
       return {
         ...defaultBaseStyles["div"],
         ...baseStyles,
@@ -146,35 +147,12 @@ export function addCSSAttributesRecursivelyResponsive(
     node.addAttributes({ [`data-yoink-${viewport}`]: cssString });
   }
 
-  // console.log(node.getAttributes());
-
   node
     .components()
     .forEach((child: Component) =>
       addCSSAttributesRecursivelyResponsive(child, device)
     );
-
-  // return node;
 }
-
-// export function addCSSAttributesRecursivelyComponent(node: HTMLElement) {
-//   if (
-//     node.nodeType === Node.ELEMENT_NODE &&
-//     !(node instanceof HTMLBRElement) &&
-//     !(node instanceof HTMLPictureElement) &&
-//     !(node instanceof HTMLSourceElement) &&
-//     !(node instanceof HTMLTrackElement)
-//   ) {
-//     const cssString = cssToJsonString(node);
-//     node.setAttribute(`data-yoink-base`, cssString);
-//     // setVisibilityRootAttr(node, "base");
-//     // setVisibilityTerminateAttrComponent(node);
-//   }
-
-//   node.childNodes.forEach((child) =>
-//     addCSSAttributesRecursivelyComponent(child as HTMLElement)
-//   );
-// }
 
 export function convertNodeToTailwindLgRecurse(node: Component) {
   if (node.getType() == "textnode") {
@@ -291,7 +269,6 @@ export async function convertNodeToTailwindBaseRecurse(
         getDefaultTailwindStyles(node) || {}
       );
     }
-    console.log(defaultTailwindClasses);
 
     smTailwindClasses = smTailwindClasses.filter(
       (cls) => !defaultTailwindClasses.includes(cls)

@@ -96,7 +96,6 @@ export const tags = [
 
 export const essentialAttributes = new Set([
   // Global
-  "id",
   "class",
   "title",
   "hidden",

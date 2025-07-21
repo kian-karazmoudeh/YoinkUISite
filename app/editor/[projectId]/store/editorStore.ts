@@ -4,8 +4,7 @@ import grapesjs from "grapesjs";
 import "grapesjs/dist/css/grapes.min.css";
 import { getEditorConfig } from "../config/editorConfig";
 import "../styles/editor.css";
-import { DeviceName, StyleValues } from "../types";
-import { getDefaultStyleValues, parseStyleValues } from "../utils/helpers";
+import { DeviceName } from "../types";
 
 interface EditorState {
   // Editor instance
@@ -20,7 +19,7 @@ interface EditorState {
   currentDevice: DeviceName;
 
   // Style management
-  styleValues: StyleValues;
+  styleValues: Record<string, string>;
   activeTab: string;
 
   // Default styles
@@ -43,7 +42,7 @@ interface EditorActions {
   handleDeviceChange: (deviceName: DeviceName) => void;
 
   // Style management
-  setStyleValues: (values: StyleValues) => void;
+  setStyleValues: (values: Record<string, string>) => void;
   changeStyleState: () => void;
   updateComponentStyle: (property: string, value: string) => void;
   handleSliderChange: (
@@ -71,7 +70,7 @@ export const useEditorStore = create<EditorStore>((set, get) => ({
   contentLoaded: false,
   selectedComponent: null,
   currentDevice: "Desktop",
-  styleValues: getDefaultStyleValues(),
+  styleValues: {},
   activeTab: "blocks",
   defaultBaseStyles: undefined,
   defaultTailwindStyles: undefined,
@@ -149,7 +148,7 @@ export const useEditorStore = create<EditorStore>((set, get) => ({
         isEditorReady: false,
         contentLoaded: false,
         selectedComponent: null,
-        styleValues: getDefaultStyleValues(),
+        styleValues: {},
         activeTab: "blocks",
       });
     }
@@ -170,7 +169,7 @@ export const useEditorStore = create<EditorStore>((set, get) => ({
     editor.on("component:deselected", () => {
       set({
         selectedComponent: null,
-        styleValues: getDefaultStyleValues(),
+        styleValues: {},
         activeTab: "blocks",
       });
     });
@@ -269,7 +268,7 @@ export const useEditorStore = create<EditorStore>((set, get) => ({
   },
 
   // Style management
-  setStyleValues: (values: StyleValues) => {
+  setStyleValues: (values: Record<string, string>) => {
     set({ styleValues: values });
   },
 
@@ -277,7 +276,7 @@ export const useEditorStore = create<EditorStore>((set, get) => ({
     const {
       editor,
       selectedComponent,
-      defaultBaseStyles: defaultStyles,
+      defaultBaseStyles,
       currentDevice,
       setStyleValues,
     } = get();
@@ -297,16 +296,15 @@ export const useEditorStore = create<EditorStore>((set, get) => ({
       }
       viewportStyles = { ...viewportStyles, ...currentStyles };
 
-      if (defaultStyles) {
-        setStyleValues(
-          parseStyleValues({
-            ...defaultStyles,
-            ...baseStyles,
-            ...viewportStyles,
-          })
-        );
+      if (defaultBaseStyles && defaultBaseStyles["div"]) {
+        console.log(defaultBaseStyles["div"]);
+        setStyleValues({
+          ...defaultBaseStyles["div"],
+          ...baseStyles,
+          ...viewportStyles,
+        });
       } else {
-        setStyleValues(parseStyleValues({ ...baseStyles, ...viewportStyles }));
+        setStyleValues({ ...baseStyles, ...viewportStyles });
       }
     }
   },
@@ -317,9 +315,7 @@ export const useEditorStore = create<EditorStore>((set, get) => ({
     if (!selectedComponent) return;
 
     // Update the component's style in GrapesJS
-    if (value != "") {
-      selectedComponent.setStyle({ [property]: value });
-    }
+    selectedComponent.setStyle({ [property]: value });
 
     // update the style state
     get().changeStyleState();

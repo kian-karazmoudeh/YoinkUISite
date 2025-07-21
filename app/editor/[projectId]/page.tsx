@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState, useRef } from "react";
-import { useEditorStore } from "../(project)/store";
+import { useEditorStore } from "./store";
 import Navbar from "./components/Navbar";
 import Sidebar from "./components/Sidebar";
 import { objectToUniversalCss } from "./utils/objectToUniversalCss";
@@ -9,7 +9,7 @@ import { User } from "@supabase/supabase-js";
 import { createClient } from "@/utils/supabase/client";
 import { useParams } from "next/navigation";
 import { initBaseDefaultStyles } from "./utils/defaultStyles/base";
-import { initTailwindDefaultStyles } from "./utils/defaultStyles/tailwind.ts";
+import { initTailwindDefaultStyles } from "./utils/defaultStyles/tailwind";
 
 export default function EditorPage() {
   const { projectId } = useParams();
@@ -28,6 +28,24 @@ export default function EditorPage() {
   } = useEditorStore();
 
   const baseStyleInjected = useRef(false);
+
+  useEffect(() => {
+    window.addEventListener("message", (event) => {
+      if (
+        event.origin == `${window.location.origin}` &&
+        event.data.type == "NEW_YOINK"
+      ) {
+        console.log("Message from parent:", event.data);
+        alert("New Yoink");
+
+        // Send response back to the source
+        (event.source as Window)?.postMessage(
+          { type: "NEW_YOINK_RESPONSE", message: "Yoink received!" },
+          event.origin
+        );
+      }
+    });
+  }, []);
 
   // Main initialization effect - handles user auth, content fetching, and editor setup
   useEffect(() => {

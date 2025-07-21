@@ -1,4 +1,4 @@
-import Navbar from "./[projectId]/components/Navbar";
+import Navbar from "./components/Navbar";
 
 const EditorLayout = ({ children }: { children: React.ReactNode }) => {
   return (

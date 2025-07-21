@@ -1,6 +1,6 @@
 import { LaptopMinimal, Monitor, Smartphone } from "lucide-react";
 import { DeviceName } from "../../types";
-import { useEditorStore } from "../../../(project)/store/editorStore";
+import { useEditorStore } from "../../store";
 import { useShallow } from "zustand/react/shallow";
 
 const Devices = () => {

@@ -3,15 +3,15 @@ import {
   inheritableCss,
   propsToArbitraryMap,
   unmappableProps,
-} from "./constants.ts";
-import { simplifySVGSpecific } from "../simplify/dom/svgSpecific.ts";
-import { simplifyClasses } from "../simplify/classes/index.ts";
-import { simplifyBorderPatterns } from "../simplify/classes/border.ts";
-import { getDefaultTailwindStyles } from "../../../utils/defaultStyles/tailwind.ts/index.ts";
+} from "./constants";
+import { simplifySVGSpecific } from "../simplify/dom/svgSpecific";
+import { simplifyClasses } from "../simplify/classes/index";
+import { simplifyBorderPatterns } from "../simplify/classes/border";
+import { getDefaultTailwindStyles } from "../../../utils/defaultStyles/tailwind";
 import { Component } from "grapesjs";
-import { DeviceName } from "../../../types/index.ts";
-import { useEditorStore } from "../../../../(project)/store";
-import { getMergedComponentStyles } from "../../../utils/helpers.ts";
+import { DeviceName } from "../../../types/index";
+import { useEditorStore } from "../../../store";
+import { getMergedComponentStyles } from "../../../utils/helpers";
 
 function cssToTailwind(cssJson: Record<string, string>) {
   let tailwindClasses: string[] = [];

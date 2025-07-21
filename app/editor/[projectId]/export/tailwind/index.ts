@@ -19,7 +19,7 @@ import {
   swapYoinkClasses,
 } from "./simplify/dom/removeYoink";
 import { removeInvisibleNodesRecurse } from "../shared/elementVisibility";
-import { useEditorStore } from "../../../(project)/store";
+import { useEditorStore } from "../../store";
 import { Component } from "grapesjs";
 
 function convertToComponent(root: Element): HTMLElement {

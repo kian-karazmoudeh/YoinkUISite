@@ -2,7 +2,7 @@
 
 import { useRef } from "react";
 import { Block, Editor } from "grapesjs";
-import { useEditorStore } from "../../../(project)/store/editorStore";
+import { useEditorStore } from "../../store";
 import { useShallow } from "zustand/react/shallow";
 
 const Blocks = () => {

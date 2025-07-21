@@ -1,5 +1,5 @@
 import { Component } from "grapesjs";
-import { useEditorStore } from "../../../../(project)/store";
+import { useEditorStore } from "../../../store";
 import { tags } from "./tags";
 
 export function initTailwindDefaultStyles() {

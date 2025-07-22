@@ -7,11 +7,10 @@ import ExportBtn from "./ExportBtn";
 import { User } from "@supabase/supabase-js";
 import { Skeleton } from "@/components/ui/skeleton";
 import FileName from "./FileName";
+import SaveBtn from "./SaveBtn";
 
 type EditorNavbarProps = {
   user: User | null;
-  yoinkId: string;
-  yoinkName: string | null;
 };
 
 const LoadingUser = () => {
@@ -27,7 +26,7 @@ const LoadingUser = () => {
   );
 };
 
-const Navbar = ({ user, yoinkId, yoinkName }: EditorNavbarProps) => {
+const Navbar = ({ user }: EditorNavbarProps) => {
   return (
     <div className="flex items-center justify-between">
       <div className="flex items-center gap-2">
@@ -99,12 +98,12 @@ const Navbar = ({ user, yoinkId, yoinkName }: EditorNavbarProps) => {
               className="inline fill-zinc-800 stroke-[1px]"
             ></path>
           </svg>
-          <FileName yoinkId={yoinkId} fileName={yoinkName || "Untitled"} />
+          <FileName />
         </div>
       </div>
       <div className="flex items-center gap-1 flex-1">
         <Devices />
-
+        <SaveBtn />
         <ExportBtn />
       </div>
     </div>

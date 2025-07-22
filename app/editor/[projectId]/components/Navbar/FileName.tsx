@@ -2,16 +2,18 @@
 
 import { createClient } from "@/utils/supabase/client";
 import { useState, useRef, useEffect } from "react";
+import { useShallow } from "zustand/react/shallow";
+import { useEditorStore } from "../../store";
 
-const FileName = ({
-  fileName,
-  yoinkId,
-}: {
-  fileName: string;
-  yoinkId: string;
-}) => {
+const FileName = () => {
+  const { yoinkName, yoinkId } = useEditorStore(
+    useShallow((state) => ({
+      yoinkName: state.yoinkName,
+      yoinkId: state.yoinkId,
+    }))
+  );
   const [isEditing, setIsEditing] = useState(false);
-  const [newFileName, setNewFileName] = useState(fileName);
+  const [newFileName, setNewFileName] = useState(yoinkName || "Untitled");
   const inputRef = useRef<HTMLInputElement>(null);
   const supabase = createClient();
 
@@ -21,12 +23,7 @@ const FileName = ({
 
   const handleBlur = () => {
     setIsEditing(false);
-    console.log(yoinkId);
-    supabase
-      .from("yoinks")
-      .update({ name: newFileName })
-      .eq("id", yoinkId)
-      .then((res) => console.log(res));
+    supabase.from("yoinks").update({ name: newFileName }).eq("id", yoinkId);
   };
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {

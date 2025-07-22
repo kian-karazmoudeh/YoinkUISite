@@ -8,11 +8,17 @@ import { DeviceName } from "../types";
 import { initBaseDefaultStyles } from "../utils/defaultStyles/base";
 import { initTailwindDefaultStyles } from "../utils/defaultStyles/tailwind";
 import { objectToUniversalCss } from "../utils/objectToUniversalCss";
+import { createClient } from "@/utils/supabase/client";
 
 interface EditorState {
   // Editor instance
   editor: Editor | null;
   isEditorReady: boolean;
+
+  // Yoink metadata
+  yoinkId: string | null;
+  yoinkName: string | null;
+  yoinkCreatorId: string | null;
 
   // Component management
   selectedComponent: Component | null;
@@ -33,6 +39,11 @@ interface EditorActions {
   // Editor initialization
   initializeEditor: () => Promise<void>;
   destroyEditor: () => void;
+
+  // Yoink metadata
+  setYoinkId: (id: string) => void;
+  setYoinkName: (name: string) => void;
+  setYoinkCreatorId: (id: string) => void;
 
   // Component management
   setSelectedComponent: (component: Component) => void;
@@ -74,6 +85,9 @@ export const useEditorStore = create<EditorStore>((set, get) => ({
   activeTab: "blocks",
   defaultBaseStyles: undefined,
   defaultTailwindStyles: undefined,
+  yoinkId: null,
+  yoinkName: null,
+  yoinkCreatorId: null,
   // Editor initialization
   initializeEditor: async () => {
     // const { defaultBaseStyles } = get();
@@ -158,10 +172,61 @@ export const useEditorStore = create<EditorStore>((set, get) => ({
         get().setCurrentDevice(deviceName);
       });
 
-      // if (defaultBaseStyles) {
-      //   const cssString = objectToUniversalCss(defaultBaseStyles["div"]);
-      //   editor.addStyle(cssString);
-      // }
+      editor.Storage.add("remote", {
+        // This method will be called when saving the project
+        async store(data) {
+          console.log("Saving project to Supabase Storage...", data);
+          try {
+            const supabase = createClient();
+            // IMPORTANT: window.projectId must be set by the main page before initializing the editor
+
+            const filePath = `${get().yoinkCreatorId}/${get().yoinkId}.json`;
+            // Convert data to string if needed
+            const fileContent =
+              typeof data === "string" ? data : JSON.stringify(data);
+            const { error } = await supabase.storage
+              .from("yoink-content")
+              .upload(filePath, fileContent, {
+                upsert: true,
+                contentType: "application/json",
+              });
+            if (error) {
+              console.error("Error uploading project:", error.message);
+              return { error: error.message };
+            }
+            return { result: "success", filePath };
+          } catch (err: any) {
+            console.error(
+              "Unexpected error uploading project:",
+              err?.message || err
+            );
+            return { error: err?.message || "Unknown error" };
+          }
+        },
+        // This method will be called when loading the project
+        async load() {
+          try {
+            const supabase = createClient();
+            const filePath = `${get().yoinkCreatorId}/${get().yoinkId}.json`;
+            const { data: fileData, error } = await supabase.storage
+              .from("yoink-content")
+              .download(filePath);
+            if (error || !fileData) {
+              console.error("Error downloading project:", error?.message);
+              return {};
+            }
+            const textContent = JSON.parse(await fileData.text());
+            console.log(textContent);
+            return textContent;
+          } catch (err: any) {
+            console.error(
+              "Unexpected error loading project:",
+              err?.message || err
+            );
+            return {};
+          }
+        },
+      });
 
       // Load content if provided
       set({ editor, isEditorReady: true });
@@ -183,6 +248,11 @@ export const useEditorStore = create<EditorStore>((set, get) => ({
       });
     }
   },
+
+  // Yoink metadata
+  setYoinkId: (id: string) => set({ yoinkId: id }),
+  setYoinkName: (name: string) => set({ yoinkName: name }),
+  setYoinkCreatorId: (id: string) => set({ yoinkCreatorId: id }),
 
   // Component management
   setSelectedComponent: (component: Component) => {

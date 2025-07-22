@@ -1,5 +1,3 @@
-import Navbar from "./components/Navbar";
-
 const EditorLayout = ({ children }: { children: React.ReactNode }) => {
   return (
     <div className='font-[GeistSans,_"GeistSans_Fallback",_Geist,_"Geist_Fallback",_Arial,_"Apple_Color_Emoji",_"Segoe_UI_Emoji",_"Segoe_UI_Symbol"] w-full bg-zinc-950 leading-[1.5] text-zinc-100'>

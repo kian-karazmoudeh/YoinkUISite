@@ -5,12 +5,14 @@ import "grapesjs/dist/css/grapes.min.css";
 import { getEditorConfig } from "../config/editorConfig";
 import "../styles/editor.css";
 import { DeviceName } from "../types";
+import { initBaseDefaultStyles } from "../utils/defaultStyles/base";
+import { initTailwindDefaultStyles } from "../utils/defaultStyles/tailwind";
+import { objectToUniversalCss } from "../utils/objectToUniversalCss";
 
 interface EditorState {
   // Editor instance
   editor: Editor | null;
   isEditorReady: boolean;
-  contentLoaded: boolean;
 
   // Component management
   selectedComponent: Component | null;
@@ -29,9 +31,8 @@ interface EditorState {
 
 interface EditorActions {
   // Editor initialization
-  initializeEditor: (content: string) => void;
+  initializeEditor: () => Promise<void>;
   destroyEditor: () => void;
-  setupEventListeners: (editor: Editor) => void;
 
   // Component management
   setSelectedComponent: (component: Component) => void;
@@ -67,7 +68,6 @@ export const useEditorStore = create<EditorStore>((set, get) => ({
   // Initial state
   editor: null,
   isEditorReady: false,
-  contentLoaded: false,
   selectedComponent: null,
   currentDevice: "Desktop",
   styleValues: {},
@@ -75,7 +75,9 @@ export const useEditorStore = create<EditorStore>((set, get) => ({
   defaultBaseStyles: undefined,
   defaultTailwindStyles: undefined,
   // Editor initialization
-  initializeEditor: (content: string) => {
+  initializeEditor: async () => {
+    // const { defaultBaseStyles } = get();
+
     const container = document.getElementById("gjs-container");
     if (!container) {
       console.error("Editor container not found");
@@ -83,7 +85,16 @@ export const useEditorStore = create<EditorStore>((set, get) => ({
     }
 
     try {
-      const editor = grapesjs.init(getEditorConfig({ content }));
+      const editor = grapesjs.init(getEditorConfig());
+      // Load base default styles
+      const defaultBaseStyles = await initBaseDefaultStyles();
+      // Load tailwind default styles
+      initTailwindDefaultStyles();
+
+      if (defaultBaseStyles) {
+        const cssString = objectToUniversalCss(defaultBaseStyles["div"]);
+        editor.addStyle(cssString);
+      }
 
       // Add device switching commands
       editor.Commands.add("set-device-desktop", {
@@ -122,18 +133,38 @@ export const useEditorStore = create<EditorStore>((set, get) => ({
         },
       });
 
-      set({ editor, isEditorReady: true });
-
       // Set up event listeners
-      get().setupEventListeners(editor);
+      // Component add event
+      editor.on("component:add", (component: Component) => {
+        get().addComponent(component);
+      });
+
+      // Component selection events
+      editor.on("component:selected", (component: Component) => {
+        get().setSelectedComponent(component);
+      });
+
+      editor.on("component:deselected", () => {
+        set({
+          selectedComponent: null,
+          styleValues: {},
+          activeTab: "blocks",
+        });
+      });
+
+      // Device selection event
+      editor.on("device:select", (device: Device) => {
+        const deviceName = device.get("name") as DeviceName;
+        get().setCurrentDevice(deviceName);
+      });
+
+      // if (defaultBaseStyles) {
+      //   const cssString = objectToUniversalCss(defaultBaseStyles["div"]);
+      //   editor.addStyle(cssString);
+      // }
 
       // Load content if provided
-      if (content) {
-        setTimeout(() => {
-          editor.setComponents(content);
-          set({ contentLoaded: true });
-        }, 100);
-      }
+      set({ editor, isEditorReady: true });
     } catch (error) {
       console.error("Error initializing editor:", error);
     }
@@ -146,44 +177,11 @@ export const useEditorStore = create<EditorStore>((set, get) => ({
       set({
         editor: null,
         isEditorReady: false,
-        contentLoaded: false,
         selectedComponent: null,
         styleValues: {},
         activeTab: "blocks",
       });
     }
-  },
-
-  // Event listeners setup
-  setupEventListeners: (editor: Editor) => {
-    // Component add event
-    editor.on("component:add", (component: Component) => {
-      get().addComponent(component);
-    });
-
-    // Component selection events
-    editor.on("component:selected", (component: Component) => {
-      get().setSelectedComponent(component);
-    });
-
-    editor.on("component:deselected", () => {
-      set({
-        selectedComponent: null,
-        styleValues: {},
-        activeTab: "blocks",
-      });
-    });
-
-    // Component removal event
-    // editor.on("component:remove", (component: any) => {
-    //   get().removeComponent(component);
-    // });
-
-    // Device selection event
-    editor.on("device:select", (device: Device) => {
-      const deviceName = device.get("name") as DeviceName;
-      get().setCurrentDevice(deviceName);
-    });
   },
 
   // Component management
@@ -205,25 +203,13 @@ export const useEditorStore = create<EditorStore>((set, get) => ({
         console.error("Error parsing existing styles:", e);
       }
     }
-
-    // Automatically select the component after it's added
-    // setTimeout(() => {
-    //   const { editor } = get();
-    //   if (editor) {
-    //     editor.select(component);
-    //   }
-    // }, 0);
   },
 
   // Device management
   setCurrentDevice: (device: DeviceName) => {
     set({ currentDevice: device });
 
-    const {
-      editor,
-      selectedComponent,
-      defaultBaseStyles: defaultStyles,
-    } = get();
+    const { editor, selectedComponent } = get();
 
     // Update panel button states
     if (editor) {

@@ -8,35 +8,41 @@ import { objectToUniversalCss } from "./utils/objectToUniversalCss";
 import { User } from "@supabase/supabase-js";
 import { createClient } from "@/utils/supabase/client";
 import { useParams } from "next/navigation";
-import { initBaseDefaultStyles } from "./utils/defaultStyles/base";
-import { initTailwindDefaultStyles } from "./utils/defaultStyles/tailwind";
+import LoadingScreen from "./components/LoadingScreen";
 
 export default function EditorPage() {
   const { projectId } = useParams();
   const [user, setUser] = useState<User | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
   const supabase = createClient();
   const [yoinkName, setYoinkName] = useState<string | null>(null);
   const [yoinkContent, setYoinkContent] = useState<string | null>(null);
 
   // Zustand store
-  const {
-    editor,
-    isEditorReady,
-    defaultBaseStyles,
-    initializeEditor,
-    destroyEditor,
-  } = useEditorStore();
+  const { editor, isEditorReady, initializeEditor } = useEditorStore();
 
-  const baseStyleInjected = useRef(false);
+  const getUser = async () => {
+    const { data } = await supabase.auth.getUser();
+    if (data.user) {
+      setUser(data.user);
+      return data.user;
+    }
+    return null;
+  };
 
   useEffect(() => {
+    getUser();
+    initializeEditor();
+
     window.addEventListener("message", (event) => {
       if (
         event.origin == `${window.location.origin}` &&
         event.data.type == "NEW_YOINK"
       ) {
         console.log("Message from parent:", event.data);
-        alert("New Yoink");
+        // alert("New Yoink");
+        setYoinkName(event.data.name);
+        setYoinkContent(event.data.content);
 
         // Send response back to the source
         (event.source as Window)?.postMessage(
@@ -49,15 +55,6 @@ export default function EditorPage() {
 
   // Main initialization effect - handles user auth, content fetching, and editor setup
   useEffect(() => {
-    const getUser = async () => {
-      const { data } = await supabase.auth.getUser();
-      if (data.user) {
-        setUser(data.user);
-        return data.user;
-      }
-      return null;
-    };
-
     const fetchYoinkContent = async (currentUser: User, projectId: string) => {
       try {
         // 1. Get the yoink row for this user + project
@@ -93,57 +90,42 @@ export default function EditorPage() {
         const textContent = await fileData.text();
 
         // 4. Save into state
-        setYoinkContent(textContent);
+        editor?.setComponents(textContent);
         setYoinkName(yoinks.name);
       } catch (err) {
         console.error("Unexpected error:", err);
       }
     };
 
-    // Initialize user and fetch content
-    getUser().then((fetchedUser) => {
-      if (fetchedUser) {
-        fetchYoinkContent(fetchedUser, projectId as string);
+    const createNewYoink = async (currentUser: User) => {
+      if (yoinkContent) {
+        editor?.setComponents(yoinkContent);
+        const { data, error } = await supabase
+          .from("yoinks")
+          .insert({ user_id: currentUser.id, name: yoinkName });
+
+        if (error) {
+          console.error("Error creating new yoink:", error.message);
+        } else if (data) {
+          console.log("New yoink created:", data);
+        }
       }
-    });
-
-    // Load base default styles
-    initBaseDefaultStyles();
-
-    // Load tailwind default styles
-    initTailwindDefaultStyles();
-
-    // Cleanup on unmount
-    return () => {
-      destroyEditor();
     };
-  }, [projectId, supabase, destroyEditor]);
 
-  // Editor and styles management effect
-  useEffect(() => {
-    // Initialize editor when content is available
-    if (yoinkContent && !isEditorReady) {
-      initializeEditor(yoinkContent);
+    if (projectId != "new" && user && !isEditorReady) {
+      fetchYoinkContent(user, projectId as string);
+    } else if (projectId == "new" && user && editor) {
+      createNewYoink(user).then(() => {
+        editor.once("component:mount", () => {
+          setIsLoading(false);
+        });
+      });
     }
-
-    // Inject base styles into editor
-    if (editor && !baseStyleInjected.current) {
-      if (defaultBaseStyles) {
-        const cssString = objectToUniversalCss(defaultBaseStyles["div"]);
-        editor.addStyle(cssString);
-        baseStyleInjected.current = true;
-      }
-    }
-  }, [
-    yoinkContent,
-    isEditorReady,
-    initializeEditor,
-    defaultBaseStyles,
-    editor,
-  ]);
+  }, [projectId, user, isEditorReady, yoinkContent, editor]);
 
   return (
     <>
+      {isLoading && <LoadingScreen />}
       <Navbar yoinkName={yoinkName} yoinkId={projectId as string} user={user} />
       <div className="flex h-full min-h-0">
         <div className="flex h-full flex-1 gap-4 min-h-0">

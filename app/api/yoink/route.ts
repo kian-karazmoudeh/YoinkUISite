@@ -37,6 +37,7 @@ export async function POST(req: NextRequest) {
   }
 
   let name = body.name;
+  let content_url = body.content_url || null;
 
   if (!name || typeof name !== "string") {
     name = "Untitled";
@@ -57,7 +58,7 @@ export async function POST(req: NextRequest) {
     // increment yoink
     const { data: newYoink, error: insertError } = await supabase
       .from("yoinks")
-      .insert([{ user_id: data.user.id }])
+      .insert([{ user_id: data.user.id, content_url, name }])
       .select()
       .single();
 
@@ -94,7 +95,7 @@ export async function POST(req: NextRequest) {
     } else {
       const { data: newYoink, error: insertError } = await supabase
         .from("yoinks")
-        .insert([{ user_id: data.user.id }])
+        .insert([{ user_id: data.user.id, content_url, name }])
         .select()
         .single();
 

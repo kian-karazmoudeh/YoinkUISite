@@ -1,6 +1,6 @@
 import { blocks } from "../components/blocks";
 
-export const getEditorConfig = ({ content }: { content: string }) => ({
+export const getEditorConfig = () => ({
   container: "#gjs-container",
   height: "100%",
   width: "auto",

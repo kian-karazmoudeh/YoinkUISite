@@ -1,20 +1,17 @@
+import Image from "next/image";
 import React from "react";
 
-interface LoadingScreenProps {
-  message?: string;
-  subMessage?: string;
-}
-
-export default function LoadingScreen({
-  message = "Loading your project...",
-  subMessage = "Please wait while we fetch your content",
-}: LoadingScreenProps) {
+export default function LoadingScreen() {
   return (
-    <div className="flex items-center justify-center h-full min-h-screen bg-gray-50">
+    <div className="flex items-center absolute inset-0 justify-center h-full z-[9999] bg-zinc-950">
       <div className="text-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
-        <h2 className="text-xl font-semibold text-gray-700 mb-2">{message}</h2>
-        <p className="text-gray-500">{subMessage}</p>
+        <Image
+          src="/logo/YoinkUI transparent logo.png"
+          alt="Loading"
+          width={100}
+          height={100}
+          className="animate-pulse size-15 mx-auto select-none pointer-events-none"
+        />
       </div>
     </div>
   );

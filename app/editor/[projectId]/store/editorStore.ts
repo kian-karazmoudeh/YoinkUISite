@@ -184,6 +184,8 @@ export const useEditorStore = create<EditorStore>((set, get) => ({
             // Convert data to string if needed
             const fileContent =
               typeof data === "string" ? data : JSON.stringify(data);
+            // console.log(fileContent);
+            console.log(filePath);
             const { error } = await supabase.storage
               .from("yoink-content")
               .upload(filePath, fileContent, {
@@ -194,6 +196,17 @@ export const useEditorStore = create<EditorStore>((set, get) => ({
               console.error("Error uploading project:", error.message);
               return { error: error.message };
             }
+
+            supabase
+              .from("yoinks")
+              .update({
+                updated_at: new Date().toISOString(),
+                content_url: filePath,
+              })
+              .eq("id", get().yoinkId);
+
+            console.log("Updated yoink in database");
+
             return { result: "success", filePath };
           } catch (err: any) {
             console.error(
@@ -216,7 +229,7 @@ export const useEditorStore = create<EditorStore>((set, get) => ({
               return {};
             }
             const textContent = JSON.parse(await fileData.text());
-            console.log(textContent);
+            // console.log(textContent);
             return textContent;
           } catch (err: any) {
             console.error(

@@ -1,16 +1,17 @@
 import Image from "next/image";
 import Profile from "./Profile";
 import { User } from "@supabase/supabase-js";
+import Link from "next/link";
 
 const Navbar = ({ user }: { user: User | null }) => {
   return (
     <div className="flex items-center justify-between px-4 py-6 text-zinc-50">
       <div className="flex items-center gap-2">
         <div className="relative">
-          <a
+          <Link
             className="flex size-[30px] cursor-pointer items-center justify-center rounded-full"
             title="Right-click for brand assets menu"
-            href="/home"
+            href="/editor"
           >
             <div className="relative size-full cursor-pointer">
               <Image
@@ -20,7 +21,7 @@ const Navbar = ({ user }: { user: User | null }) => {
                 className="size-full rounded-full"
               />
             </div>
-          </a>
+          </Link>
         </div>
         <div className="flex items-center gap-2">
           <svg

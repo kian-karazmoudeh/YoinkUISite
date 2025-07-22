@@ -6,12 +6,11 @@ import Navbar from "./components/Navbar";
 import Sidebar from "./components/Sidebar";
 import { User } from "@supabase/supabase-js";
 import { createClient } from "@/utils/supabase/client";
-import { useParams, useRouter } from "next/navigation";
+import { useParams } from "next/navigation";
 import LoadingScreen from "./components/LoadingScreen";
 
 export default function EditorPage() {
   const { projectId } = useParams();
-  const router = useRouter();
   const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const supabase = createClient();

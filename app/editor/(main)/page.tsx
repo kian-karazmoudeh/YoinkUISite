@@ -117,9 +117,16 @@ const DashboardHomePage = () => {
                             <YoinkFileSkeleton />
                           </>
                         ) : (
-                          yoinkFiles.map((yoinkFile) => (
-                            <YoinkFile key={yoinkFile.id} {...yoinkFile} />
-                          ))
+                          yoinkFiles
+                            .slice()
+                            .sort(
+                              (a, b) =>
+                                new Date(b.updated_at).getTime() -
+                                new Date(a.updated_at).getTime()
+                            )
+                            .map((yoinkFile) => (
+                              <YoinkFile key={yoinkFile.id} {...yoinkFile} />
+                            ))
                         )}
                         {loadingMore && (
                           <>

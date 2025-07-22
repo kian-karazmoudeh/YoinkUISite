@@ -1,13 +1,13 @@
 "use client";
 
 import Image from "next/image";
-import { DeviceName } from "../../types";
 import Devices from "./Devices";
 import ExportBtn from "./ExportBtn";
 import { User } from "@supabase/supabase-js";
 import { Skeleton } from "@/components/ui/skeleton";
 import FileName from "./FileName";
 import SaveBtn from "./SaveBtn";
+import Link from "next/link";
 
 type EditorNavbarProps = {
   user: User | null;
@@ -31,10 +31,10 @@ const Navbar = ({ user }: EditorNavbarProps) => {
     <div className="flex items-center justify-between">
       <div className="flex items-center gap-2">
         <div className="relative">
-          <a
+          <Link
             className="flex size-[30px] cursor-pointer items-center justify-center rounded-full"
             title="Right-click for brand assets menu"
-            href="/home"
+            href="/editor"
           >
             <div className="relative size-full cursor-pointer">
               <Image
@@ -44,7 +44,7 @@ const Navbar = ({ user }: EditorNavbarProps) => {
                 className="size-full rounded-full"
               />
             </div>
-          </a>
+          </Link>
         </div>
         <div className="flex items-center gap-2">
           <svg

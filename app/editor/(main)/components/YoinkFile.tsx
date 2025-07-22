@@ -20,6 +20,18 @@ export const YoinkFileSkeleton = () => {
   );
 };
 
+const formatDate = (dateString: string) => {
+  const date = new Date(dateString);
+  return date.toLocaleString(undefined, {
+    year: "numeric",
+    month: "short",
+    day: "2-digit",
+    hour: "2-digit",
+    minute: "2-digit",
+    hour12: true,
+  });
+};
+
 const YoinkFile = (props: YoinkFile) => {
   return (
     <Link
@@ -34,7 +46,7 @@ const YoinkFile = (props: YoinkFile) => {
             </div>
             <div className="text-zinc-400 flex items-center cursor-pointer gap-[6px]">
               <span className="leading-[1] text-[13px] block cursor-pointer">
-                {props.updated_at}
+                {formatDate(props.updated_at)}
               </span>
             </div>
           </div>

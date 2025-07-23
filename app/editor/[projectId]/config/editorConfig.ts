@@ -1,6 +1,7 @@
+import { EditorConfig } from "grapesjs";
 import { blocks } from "../components/blocks";
 
-export const getEditorConfig = () => ({
+export const getEditorConfig: () => EditorConfig = () => ({
   container: "#gjs-container",
   height: "100%",
   width: "auto",

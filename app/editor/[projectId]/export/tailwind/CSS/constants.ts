@@ -367,12 +367,16 @@ export const directMappings: { [key: string]: { [subkey: string]: string } } = {
     stretch: "justify-self-stretch",
   },
   "justify-content": {
+    normal: "justify-normal",
     "flex-start": "justify-start",
     center: "justify-center",
     "flex-end": "justify-end",
     "space-between": "justify-between",
     "space-around": "justify-around",
     "space-evenly": "justify-evenly",
+    stretch: "justify-stretch",
+    "safe center": "justify-center-safe",
+    "safe end": "justify-end-safe",
   },
   "align-items": {
     stretch: "items-stretch",

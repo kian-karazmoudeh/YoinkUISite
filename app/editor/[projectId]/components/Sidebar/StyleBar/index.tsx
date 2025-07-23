@@ -38,8 +38,42 @@ const propertyConfig: PropertyConfigType = {
   display: {
     label: "Display",
     type: "select",
-    options: ["block", "inline", "flex", "grid", "none"],
+    options: [
+      "block",
+      "inline",
+      "flex",
+      "grid",
+      "inline-block",
+      "inline-flex",
+      "inline-grid",
+      "contents",
+      "none",
+    ],
     category: "Layout",
+  },
+  gap: {
+    label: "Gap",
+    type: "text",
+    category: "Layout",
+    placeholder: "e.g., 10px, 1rem",
+    visibleWhen: {
+      property: "display",
+      values: ["grid", "inline-grid", "flex", "inline-flex"],
+    },
+    longhands: {
+      "row-gap": {
+        label: "Row Gap",
+        type: "text",
+        category: "Layout",
+        containerClassName: LEFT_CELL_CLASSES,
+      },
+      "column-gap": {
+        label: "Column Gap",
+        type: "text",
+        category: "Layout",
+        containerClassName: RIGHT_CELL_CLASSES,
+      },
+    },
   },
   width: {
     label: "Width",
@@ -126,6 +160,121 @@ const propertyConfig: PropertyConfigType = {
       values: ["absolute", "sticky", "fixed"],
     },
     containerClassName: RIGHT_CELL_CLASSES,
+  },
+  "grid-template-columns": {
+    label: "Grid Columns",
+    type: "text",
+    visibleWhen: {
+      property: "display",
+      values: ["grid", "inline-grid"],
+    },
+    category: "Grid",
+    containerClassName: RIGHT_CELL_CLASSES,
+  },
+  "grid-template-rows": {
+    label: "Grid Rows",
+    type: "text",
+    visibleWhen: {
+      property: "display",
+      values: ["grid", "inline-grid"],
+    },
+    category: "Grid",
+    containerClassName: LEFT_CELL_CLASSES,
+  },
+  "grid-auto-flow": {
+    label: "Grid Flow Direction",
+    type: "select",
+    options: ["row", "column", "dense", "row-dense", "col-dense"],
+    visibleWhen: {
+      property: "display",
+      values: ["grid", "inline-grid"],
+    },
+    category: "Grid",
+  },
+  "flex-direction": {
+    label: "Flex Direction",
+    type: "select",
+    options: ["row", "row-reverse", "column", "column-reverse"],
+    containerClassName: LEFT_CELL_CLASSES,
+    visibleWhen: {
+      property: "display",
+      values: ["flex", "inline-flex"],
+    },
+    category: "Flex",
+  },
+  "flex-wrap": {
+    label: "Flex Wrap",
+    type: "select",
+    options: ["nowrap", "wrap", "wrap-reverse"],
+    containerClassName: RIGHT_CELL_CLASSES,
+    visibleWhen: {
+      property: "display",
+      values: ["flex", "inline-flex"],
+    },
+    category: "Flex",
+  },
+  "justify-content": {
+    label: "Justify Content",
+    type: "select",
+    options: [
+      "normal",
+      "flex-start",
+      "flex-end",
+      "center",
+      "space-between",
+      "space-around",
+      "space-evenly",
+      "stretch",
+      "safe center",
+      "safe end",
+    ],
+    containerClassName: LEFT_CELL_CLASSES,
+    visibleWhen: {
+      property: "display",
+      values: ["flex", "inline-flex"],
+    },
+    category: "Flex",
+  },
+  "align-items": {
+    label: "Align Items",
+    type: "select",
+    options: [
+      "flex-start",
+      "flex-end",
+      "center",
+      "stretch",
+      "baseline",
+      "safe center",
+      "safe flex-end",
+      "last baseline",
+    ],
+    containerClassName: RIGHT_CELL_CLASSES,
+    visibleWhen: {
+      property: "display",
+      values: ["flex", "inline-flex"],
+    },
+    category: "Flex",
+  },
+  "align-content": {
+    label: "Align Content",
+    type: "select",
+    options: [
+      "normal",
+      "space-evenly",
+      "baseline",
+      "stretch",
+      "flex-start",
+      "center",
+      "flex-end",
+      "space-between",
+      "space-around",
+    ],
+    containerClassName: RIGHT_CELL_CLASSES,
+    visibleWhen: {
+      property: "display",
+      values: ["flex", "inline-flex"],
+    },
+    category: "Flex",
   },
   "z-index": { label: "Z-Index", type: "text", category: "Layout" },
   margin: {
@@ -336,13 +485,13 @@ const propertyConfig: PropertyConfigType = {
 
 const categoryOrder = [
   "Layout",
-  "Spacing",
-  "Border",
-  "Typography",
-  "Colors",
-  "Effects",
   "Grid",
   "Flex",
+  "Spacing",
+  "Colors",
+  "Typography",
+  "Border",
+  "Effects",
   "Other",
 ];
 
@@ -465,6 +614,16 @@ export default function StylesBar() {
                         const config = propertyConfig[cssProp] || {};
                         const value = (styleValues as any)[cssProp] ?? "";
 
+                        // Visibility logic
+                        if (config.visibleWhen) {
+                          const { property, values } = config.visibleWhen;
+                          const currentValue =
+                            (styleValues as any)[property] ?? "";
+                          if (!values.includes(currentValue)) {
+                            return null; // Don't render this property
+                          }
+                        }
+
                         // Skip if this is a longhand and should be shown as longhand
                         if (shouldShowAsLonghand(cssProp, styleValues)) {
                           return null;
@@ -569,16 +728,6 @@ export default function StylesBar() {
                                 );
                               }
                             );
-                          }
-                        }
-
-                        // Visibility logic
-                        if (config.visibleWhen) {
-                          const { property, values } = config.visibleWhen;
-                          const currentValue =
-                            (styleValues as any)[property] ?? "";
-                          if (!values.includes(currentValue)) {
-                            return null; // Don't render this property
                           }
                         }
 

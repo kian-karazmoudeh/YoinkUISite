@@ -8,8 +8,10 @@ import { User } from "@supabase/supabase-js";
 import { createClient } from "@/utils/supabase/client";
 import { useParams } from "next/navigation";
 import LoadingScreen from "./components/LoadingScreen";
+import { useRouter } from "next/navigation";
 
 export default function EditorPage() {
+  const router = useRouter();
   const { projectId } = useParams();
   const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -108,10 +110,15 @@ export default function EditorPage() {
         .select("name")
         .eq("id", projectId as string)
         .single()
-        .then(({ data }) => setYoinkName(data?.name || "Untitled"));
+        .then(({ data }) => {
+          if (!data) {
+            router.push("/404");
+          }
+          setYoinkName(data?.name || "Untitled");
+        });
 
       editor?.load().then(() => setIsLoading(false));
-    } else if (projectId == "new" && user && editor) {
+    } else if (projectId == "new" && user && editor && yoinkContent) {
       createNewYoink(user);
     }
   }, [projectId, user, isEditorReady, yoinkContent, editor]);

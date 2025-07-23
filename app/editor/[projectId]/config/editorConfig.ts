@@ -18,8 +18,11 @@ export const getEditorConfig: () => EditorConfig = () => ({
     autoload: false, // Disable autoload
     stepsBeforeSave: 1,
   },
+  assetManager: {
+    upload: false,
+  },
   // layerManager: {
-  //   appendTo: ".layers-container",
+  //   appendTo: "layers-container",
   // },
   // Don't initialize with content - we'll load it after editor is ready
   components: "",

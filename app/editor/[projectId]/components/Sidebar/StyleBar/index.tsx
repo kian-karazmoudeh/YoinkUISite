@@ -10,7 +10,7 @@ import { twMerge } from "tailwind-merge";
 import { useShallow } from "zustand/react/shallow";
 import { useEditorStore } from "../../../store";
 import { RenderComponent } from "./RenderComponent";
-import { ChevronDownIcon, ChevronUpIcon } from "lucide-react";
+import { ChevronDownIcon, ChevronUpIcon, Maximize } from "lucide-react";
 
 const LEFT_CELL_CLASSES = "inline-block w-1/2 pr-1";
 const RIGHT_CELL_CLASSES = "inline-block w-1/2 pl-1";
@@ -718,13 +718,7 @@ export default function StylesBar() {
                       if (config.longhands) {
                         const expanded = expandedShorthands[cssProp];
                         return (
-                          <div
-                            key={cssProp}
-                            className={twMerge(
-                              "flex flex-col gap-1",
-                              config.containerClassName
-                            )}
-                          >
+                          <div key={cssProp}>
                             <div className="flex items-center gap-2">
                               {!expanded ? (
                                 <RenderComponent
@@ -756,50 +750,45 @@ export default function StylesBar() {
                               ) : null}
                               <button
                                 type="button"
-                                className="ml-1 px-2 py-0.5 rounded bg-zinc-800 text-zinc-300 border border-zinc-700 hover:bg-zinc-700 text-xs flex items-center gap-1"
+                                className="ml-1 p-2 rounded bg-zinc-800 text-zinc-300 border border-zinc-700 hover:bg-zinc-700 text-xs flex items-center gap-1"
                                 onClick={() => handleToggleShorthand(cssProp)}
                                 tabIndex={0}
                               >
                                 {expanded ? (
                                   <>
-                                    <ChevronUpIcon className="size-3" /> Show
-                                    less
+                                    <Maximize className="size-3 text-blue-400" />
                                   </>
                                 ) : (
                                   <>
-                                    <ChevronDownIcon className="size-3" /> Show
-                                    details
+                                    <Maximize className="size-3" />
                                   </>
                                 )}
                               </button>
                             </div>
-                            {expanded && (
-                              <div className="flex flex-wrap gap-2 mt-1">
-                                {Object.entries(config.longhands).map(
-                                  ([longhand, longhandConfig]) => {
-                                    const longhandValue =
-                                      (styleValues as any)[longhand] ?? "";
-                                    return (
-                                      <RenderComponent
-                                        key={longhand}
-                                        cssProp={longhand}
-                                        config={longhandConfig}
-                                        value={longhandValue}
-                                        styleValues={styleValues}
-                                        updateComponentStyle={(_prop, val) =>
-                                          updateComponentStyle(longhand, val)
-                                        }
-                                        handleSliderChange={(_prop, val) =>
-                                          handleSliderChange(longhand, val)
-                                        }
-                                        getLabel={getLabel}
-                                        labelClassName="block text-xs font-medium text-zinc-50 mb-1"
-                                      />
-                                    );
-                                  }
-                                )}
-                              </div>
-                            )}
+                            {expanded &&
+                              Object.entries(config.longhands).map(
+                                ([longhand, longhandConfig]) => {
+                                  const longhandValue =
+                                    (styleValues as any)[longhand] ?? "";
+                                  return (
+                                    <RenderComponent
+                                      key={longhand}
+                                      cssProp={longhand}
+                                      config={longhandConfig}
+                                      value={longhandValue}
+                                      styleValues={styleValues}
+                                      updateComponentStyle={(_prop, val) =>
+                                        updateComponentStyle(longhand, val)
+                                      }
+                                      handleSliderChange={(_prop, val) =>
+                                        handleSliderChange(longhand, val)
+                                      }
+                                      getLabel={getLabel}
+                                      labelClassName="block text-xs font-medium text-zinc-50 mb-1"
+                                    />
+                                  );
+                                }
+                              )}
                           </div>
                         );
                       }

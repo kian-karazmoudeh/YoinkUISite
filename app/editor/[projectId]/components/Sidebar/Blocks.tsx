@@ -1,7 +1,6 @@
 "use client";
 
-import { useRef } from "react";
-import { Block, Editor } from "grapesjs";
+import { Block } from "grapesjs";
 import { useEditorStore } from "../../store";
 import { useShallow } from "zustand/react/shallow";
 
@@ -58,6 +57,7 @@ const Blocks = () => {
                   onDragStart={(e) => startDrag(block, e)}
                   draggable
                 >
+                  {block.getMedia()}
                   {block.getLabel()}
                 </div>
               ))}

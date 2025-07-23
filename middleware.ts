@@ -1,7 +1,7 @@
 import { type NextRequest } from "next/server";
 import { updateSession } from "./utils/supabase/middleware";
 
-const privateRoutes: string[] = [];
+const privateRoutes: string[] = ["/editor"];
 
 export async function middleware(request: NextRequest) {
   const requestPath = request.nextUrl.pathname;

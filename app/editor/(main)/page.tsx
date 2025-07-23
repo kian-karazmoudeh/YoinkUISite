@@ -88,7 +88,7 @@ const DashboardHomePage = () => {
       <Navbar user={user} />
 
       <div
-        className='text-white leading-[1.5] h-full min-w-74 font-[GeistSans,_"GeistSans_Fallback",_ui-sans-serif,_system-ui,_sans-serif,_"Apple_Color_Emoji",_"Segoe_UI_Emoji",_"Segoe_UI_Symbol",_"Noto_Color_Emoji"] bg-neutral-950  shadow-[_#0000000a_0px_2px_2px_0px,_#0000000a_0px_8px_8px_-8px] grow bg-clip-padding relative overflow-hidden border-zinc-800 border-[0.8px] rounded-lg'
+        className='text-zinc-900 leading-[1.5] h-full min-w-74 font-[GeistSans,_"GeistSans_Fallback",_ui-sans-serif,_system-ui,_sans-serif,_"Apple_Color_Emoji",_"Segoe_UI_Emoji",_"Segoe_UI_Symbol",_"Noto_Color_Emoji"] bg-zinc-50  shadow-[_#0000000a_0px_2px_2px_0px,_#0000000a_0px_8px_8px_-8px] grow bg-clip-padding relative overflow-hidden border-zinc-800 border-[0.8px] rounded-lg'
         id="block-panel-left"
       >
         <div className="h-full flex relative flex-col">
@@ -101,7 +101,7 @@ const DashboardHomePage = () => {
                     <div className="flex justify-between items-center">
                       <div className="text-left font-medium">Recent Yoinks</div>
                     </div>
-                    <div className="text-zinc-400 leading-[1.42857] text-sm">
+                    <div className="text-zinc-500 leading-[1.42857] text-sm">
                       Edit your projects and share them with your friends.
                     </div>
                   </div>
@@ -142,7 +142,7 @@ const DashboardHomePage = () => {
                           disabled={loadingMore}
                           className="leading-[1.42857] h-8 text-sm bg-neutral-900 shrink-0 flex relative text-center text-nowrap font-medium whitespace-nowrap justify-center items-center cursor-pointer px-3 gap-[6px] border-white/12 border-[0.8px] rounded-lg disabled:opacity-50 disabled:cursor-not-allowed"
                         >
-                          <div className="flex justify-center items-center cursor-pointer gap-2">
+                          <div className="flex justify-center items-center cursor-pointer gap-2 text-zinc-50">
                             {loadingMore ? "Loading..." : "Load More"}
                           </div>
                         </button>

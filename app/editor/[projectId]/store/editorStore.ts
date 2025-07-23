@@ -168,6 +168,10 @@ export const useEditorStore = create<EditorStore>((set, get) => ({
         get().setCurrentDevice(deviceName);
       });
 
+      editor.on("asset:open", () => {
+        editor.AssetManager.close();
+      });
+
       editor.Storage.add("remote", {
         // This method will be called when saving the project
         async store(data) {

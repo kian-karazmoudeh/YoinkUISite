@@ -542,6 +542,8 @@ function getLonghandValues(prop: string, styleValues: any): string {
   const allMatch = longhandProps.every(
     (longhandProp) => (styleValues as any)[longhandProp] === firstValue
   );
+
+  console.log(allMatch ? firstValue : "");
   return allMatch ? firstValue : "";
 }
 
@@ -743,11 +745,11 @@ export default function StylesBar() {
                                           config={longhandConfig}
                                           value={longhandValue}
                                           styleValues={styleValues}
-                                          updateComponentStyle={
-                                            updateComponentStyle
+                                          updateComponentStyle={(_prop, val) =>
+                                            updateComponentStyle(longhand, val)
                                           }
-                                          handleSliderChange={
-                                            handleSliderChange
+                                          handleSliderChange={(_prop, val) =>
+                                            handleSliderChange(longhand, val)
                                           }
                                           getLabel={getLabel}
                                           labelClassName="block text-xs font-medium text-zinc-50 mb-1"
@@ -772,8 +774,12 @@ export default function StylesBar() {
                                   config={longhandConfig}
                                   value={longhandValue}
                                   styleValues={styleValues}
-                                  updateComponentStyle={updateComponentStyle}
-                                  handleSliderChange={handleSliderChange}
+                                  updateComponentStyle={(prop, val) =>
+                                    updateComponentStyle(longhand, val)
+                                  }
+                                  handleSliderChange={(prop, val) =>
+                                    handleSliderChange(longhand, val)
+                                  }
                                   getLabel={getLabel}
                                 />
                               );

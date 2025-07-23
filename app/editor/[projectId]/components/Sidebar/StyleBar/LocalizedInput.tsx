@@ -17,9 +17,9 @@ const LocalizedInput = ({
   updateComponentStyle: (cssProp: string, value: string) => void;
   cssProp: string;
 }) => {
-  const { selectedComponent, currentDevice } = useEditorStore(
+  const { selectedComponents, currentDevice } = useEditorStore(
     useShallow((state) => ({
-      selectedComponent: state.selectedComponent,
+      selectedComponents: state.selectedComponents,
       currentDevice: state.currentDevice,
     }))
   );
@@ -27,7 +27,7 @@ const LocalizedInput = ({
 
   useEffect(() => {
     setLocalValue(value);
-  }, [selectedComponent, currentDevice]);
+  }, [selectedComponents, currentDevice]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const val = e.target.value;

@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useMemo, useState, useEffect } from "react";
 import {
   DropdownMenu,
   DropdownMenuTrigger,
@@ -364,7 +364,36 @@ const propertyConfig: PropertyConfigType = {
     min: 0,
     max: 20,
     category: "Border",
-    displayProperty: "border-width",
+    longhands: {
+      "border-top-width": {
+        label: "Border Top Width",
+        type: "range",
+        min: 0,
+        max: 20,
+        category: "Border",
+      },
+      "border-right-width": {
+        label: "Border Right Width",
+        type: "range",
+        min: 0,
+        max: 20,
+        category: "Border",
+      },
+      "border-bottom-width": {
+        label: "Border Bottom Width",
+        type: "range",
+        min: 0,
+        max: 20,
+        category: "Border",
+      },
+      "border-left-width": {
+        label: "Border Left Width",
+        type: "range",
+        min: 0,
+        max: 20,
+        category: "Border",
+      },
+    },
   },
   "border-style": {
     label: "Border Style",
@@ -515,20 +544,6 @@ function getLabel(prop: string) {
   );
 }
 
-// Helper function to check if all longhand values match
-function allLonghandsMatch(prop: string, styleValues: any): boolean {
-  const config = propertyConfig[prop];
-  if (!config?.longhands) return false;
-
-  const longhandProps = Object.keys(config.longhands);
-  if (longhandProps.length === 0) return false;
-
-  const firstValue = (styleValues as any)[longhandProps[0]] ?? "";
-  return longhandProps.every(
-    (longhandProp) => (styleValues as any)[longhandProp] === firstValue
-  );
-}
-
 // Helper function to get a single longhand value (if all match, return that value, else return empty string)
 function getLonghandValues(prop: string, styleValues: any): string {
   const config = propertyConfig[prop];
@@ -547,27 +562,6 @@ function getLonghandValues(prop: string, styleValues: any): string {
 }
 
 // Helper function to check if a property should be shown as longhand
-function shouldShowAsLonghand(prop: string, styleValues: any): boolean {
-  // Check if this property is a longhand of another property
-  for (const [shorthandProp, config] of Object.entries(propertyConfig)) {
-    if (config.longhands && prop in config.longhands) {
-      // If all longhands match, show shorthand instead
-      if (allLonghandsMatch(shorthandProp, styleValues)) {
-        return false;
-      }
-      return true;
-    }
-  }
-  return false;
-}
-
-// Helper function to check if a shorthand should be shown
-function shouldShowShorthand(prop: string, styleValues: any): boolean {
-  const config = propertyConfig[prop];
-  if (!config?.longhands) return true;
-
-  return allLonghandsMatch(prop, styleValues);
-}
 
 export default function StylesBar() {
   const {
@@ -605,12 +599,55 @@ export default function StylesBar() {
     [prop: string]: boolean;
   }>({});
 
+  // Helper: check if all longhands match
+  function allLonghandsMatch(prop: string, styleValues: any): boolean {
+    const config = propertyConfig[prop];
+    if (!config?.longhands) return false;
+    const longhandProps = Object.keys(config.longhands);
+    if (longhandProps.length === 0) return false;
+    const firstValue = (styleValues as any)[longhandProps[0]] ?? "";
+    return longhandProps.every(
+      (longhandProp) => (styleValues as any)[longhandProp] === firstValue
+    );
+  }
+
+  // On styleValues change, auto-expand shorthands with differing longhands
+  useEffect(() => {
+    const newExpanded: { [prop: string]: boolean } = { ...expandedShorthands };
+    Object.keys(propertyConfig).forEach((prop) => {
+      const config = propertyConfig[prop];
+      if (config?.longhands) {
+        if (!allLonghandsMatch(prop, styleValues)) {
+          newExpanded[prop] = true;
+        } else {
+          // Only collapse if not already set by user
+          newExpanded[prop] = false;
+        }
+      }
+    });
+    setExpandedShorthands(newExpanded);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [styleValues]);
+
   const handleToggleShowAll = (cat: string) => {
     setShowAllCategories((prev) => ({ ...prev, [cat]: !prev[cat] }));
   };
 
   const handleToggleShorthand = (prop: string) => {
-    setExpandedShorthands((prev) => ({ ...prev, [prop]: !prev[prop] }));
+    const config = propertyConfig[prop];
+    if (!config?.longhands) return;
+    const longhandProps = Object.keys(config.longhands);
+    const firstValue = (styleValues as any)[longhandProps[0]] ?? "";
+    if (expandedShorthands[prop]) {
+      // Going from expanded (longhands) to collapsed (shorthand): set all longhands to first value
+      longhandProps.forEach((longhand) => {
+        updateComponentStyle(longhand, firstValue);
+      });
+      setExpandedShorthands((prev) => ({ ...prev, [prop]: false }));
+    } else {
+      // Going from collapsed to expanded
+      setExpandedShorthands((prev) => ({ ...prev, [prop]: true }));
+    }
   };
 
   return (

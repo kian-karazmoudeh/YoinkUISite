@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import {
   DropdownMenu,
   DropdownMenuTrigger,
@@ -28,6 +28,7 @@ interface PropertyConfigType {
     placeholder?: string;
     visibleWhen?: { property: string; values: string[] };
     longhands?: PropertyConfigType;
+    isExtra?: boolean;
     inputClassName?: string;
     containerClassName?: string;
   };
@@ -95,24 +96,28 @@ const propertyConfig: PropertyConfigType = {
     label: "Min Width",
     type: "text",
     category: "Layout",
+    isExtra: true,
     containerClassName: LEFT_CELL_CLASSES,
   },
   "min-height": {
     label: "Min Height",
     type: "text",
     category: "Layout",
+    isExtra: true,
     containerClassName: RIGHT_CELL_CLASSES,
   },
   "max-width": {
     label: "Max Width",
     type: "text",
     category: "Layout",
+    isExtra: true,
     containerClassName: LEFT_CELL_CLASSES,
   },
   "max-height": {
     label: "Max Height",
     type: "text",
     category: "Layout",
+    isExtra: true,
     containerClassName: RIGHT_CELL_CLASSES,
   },
   position: {
@@ -276,7 +281,12 @@ const propertyConfig: PropertyConfigType = {
     },
     category: "Flex",
   },
-  "z-index": { label: "Z-Index", type: "text", category: "Layout" },
+  "z-index": {
+    label: "Z-Index",
+    type: "text",
+    category: "Layout",
+    isExtra: true,
+  },
   margin: {
     label: "Margin",
     type: "text",
@@ -575,10 +585,6 @@ export default function StylesBar() {
     }))
   );
 
-  // const sectors = editor?.StyleManager.getSectors() || [];
-
-  // console.log(sectors);
-
   // Group properties by category
   const categorized = useMemo(() => {
     const groups: { [cat: string]: string[] } = {};
@@ -590,6 +596,15 @@ export default function StylesBar() {
     });
     return groups;
   }, []);
+
+  // Track which categories have 'show all' enabled
+  const [showAllCategories, setShowAllCategories] = useState<{
+    [cat: string]: boolean;
+  }>({});
+
+  const handleToggleShowAll = (cat: string) => {
+    setShowAllCategories((prev) => ({ ...prev, [cat]: !prev[cat] }));
+  };
 
   return (
     <div className="flex-1 p-4 overflow-hidden flex flex-col h-full min-h-0">
@@ -603,151 +618,187 @@ export default function StylesBar() {
         <div className="p-2 space-y-2">
           {selectedComponents.length > 0 ? (
             <div className="space-y-6">
-              {categoryOrder.map(
-                (cat) =>
-                  categorized[cat] && (
-                    <div className="space-y-3" key={cat}>
-                      <h3 className="text-xs font-bold text-gray-500 mb-2 uppercase tracking-wide">
+              {categoryOrder.map((cat) => {
+                if (!categorized[cat]) return null;
+                // Check if this category has any isExtra properties
+                const hasExtra = categorized[cat].some(
+                  (cssProp) => propertyConfig[cssProp]?.isExtra
+                );
+                // Filter properties for this category to only those that would actually render
+                const visibleProps = categorized[cat].filter((cssProp) => {
+                  const config = propertyConfig[cssProp] || {};
+                  // Hide isExtra unless showAll is enabled for this category
+                  if (config.isExtra && !showAllCategories[cat]) {
+                    return false;
+                  }
+                  // Visibility logic
+                  if (config.visibleWhen) {
+                    const { property, values } = config.visibleWhen;
+                    const currentValue = (styleValues as any)[property] ?? "";
+                    if (!values.includes(currentValue)) {
+                      return false; // Don't render this property
+                    }
+                  }
+                  // Skip if this is a longhand and should be shown as longhand
+                  if (shouldShowAsLonghand(cssProp, styleValues)) {
+                    return false;
+                  }
+                  // If this is a shorthand with longhands
+                  if (config.longhands) {
+                    // If all longhands match, show shorthand input (visible)
+                    // If not, show all longhand inputs (visible)
+                    return true;
+                  }
+                  // Otherwise, visible
+                  return true;
+                });
+                if (visibleProps.length === 0) return null;
+                return (
+                  <div className="space-y-3" key={cat}>
+                    <div className="flex items-center mb-2">
+                      <h3 className="text-xs font-bold text-gray-500 uppercase tracking-wide flex-1">
                         {cat}
                       </h3>
-                      {categorized[cat].map((cssProp) => {
-                        const config = propertyConfig[cssProp] || {};
-                        const value = (styleValues as any)[cssProp] ?? "";
-
-                        // Visibility logic
-                        if (config.visibleWhen) {
-                          const { property, values } = config.visibleWhen;
-                          const currentValue =
-                            (styleValues as any)[property] ?? "";
-                          if (!values.includes(currentValue)) {
-                            return null; // Don't render this property
-                          }
-                        }
-
-                        // Skip if this is a longhand and should be shown as longhand
-                        if (shouldShowAsLonghand(cssProp, styleValues)) {
-                          return null;
-                        }
-
-                        // If this is a shorthand with longhands
-                        if (config.longhands) {
-                          if (shouldShowShorthand(cssProp, styleValues)) {
-                            // All longhands match, show shorthand input with popover
-
-                            return (
-                              <div
-                                key={cssProp}
-                                className={twMerge(
-                                  "flex items-start gap-2",
-                                  config.containerClassName
-                                )}
-                              >
-                                <RenderComponent
-                                  cssProp={cssProp}
-                                  config={config}
-                                  value={getLonghandValues(
-                                    cssProp,
-                                    styleValues
-                                  )}
-                                  styleValues={styleValues}
-                                  updateComponentStyle={(_prop, val) => {
-                                    // When shorthand changes, update all longhands
-                                    Object.keys(config.longhands!).forEach(
-                                      (longhand) => {
-                                        updateComponentStyle(longhand, val);
-                                      }
-                                    );
-                                  }}
-                                  handleSliderChange={(_prop, val) => {
-                                    // When shorthand changes, update all longhands
-                                    Object.keys(config.longhands!).forEach(
-                                      (longhand) => {
-                                        handleSliderChange(longhand, val);
-                                      }
-                                    );
-                                  }}
-                                  getLabel={getLabel}
-                                  containerClassName="flex-1"
-                                  labelClassName="block text-sm font-medium text-zinc-50 mb-1 flex-shrink-0"
-                                />
-                                <DropdownMenu>
-                                  <DropdownMenuTrigger asChild>
-                                    <ChevronDownIcon className="size-4 shrink-0 text-zinc-50 hover:bg-zinc-700 rounded-md cursor-pointer" />
-                                    {/* <button
-                                      type="button"
-                                      className="size-6 rounded bg-zinc-700 text-zinc-100 hover:bg-zinc-600 focus:outline-none shrink-0"
-                                      title="Show individual sides"
-                                    >
-                                    </button> */}
-                                  </DropdownMenuTrigger>
-                                  <DropdownMenuContent className="p-5 min-w-[200px] max-w-[300px]">
-                                    {Object.entries(config.longhands).map(
-                                      ([longhand, longhandConfig]) => {
-                                        const longhandValue =
-                                          (styleValues as any)[longhand] ?? "";
-                                        return (
-                                          <RenderComponent
-                                            key={longhand}
-                                            cssProp={longhand}
-                                            config={longhandConfig}
-                                            value={longhandValue}
-                                            styleValues={styleValues}
-                                            updateComponentStyle={
-                                              updateComponentStyle
-                                            }
-                                            handleSliderChange={
-                                              handleSliderChange
-                                            }
-                                            getLabel={getLabel}
-                                            labelClassName="block text-xs font-medium text-zinc-50 mb-1"
-                                          />
-                                        );
-                                      }
-                                    )}
-                                  </DropdownMenuContent>
-                                </DropdownMenu>
-                              </div>
-                            );
-                          } else {
-                            // Longhands differ, show all longhand inputs
-                            return Object.entries(config.longhands).map(
-                              ([longhand, longhandConfig]) => {
-                                const longhandValue =
-                                  (styleValues as any)[longhand] ?? "";
-                                return (
-                                  <RenderComponent
-                                    key={longhand}
-                                    cssProp={longhand}
-                                    config={longhandConfig}
-                                    value={longhandValue}
-                                    styleValues={styleValues}
-                                    updateComponentStyle={updateComponentStyle}
-                                    handleSliderChange={handleSliderChange}
-                                    getLabel={getLabel}
-                                  />
-                                );
-                              }
-                            );
-                          }
-                        }
-
-                        // Use RenderComponent for all input types
-                        return (
-                          <RenderComponent
-                            key={cssProp}
-                            cssProp={cssProp}
-                            config={config}
-                            value={value}
-                            styleValues={styleValues}
-                            updateComponentStyle={updateComponentStyle}
-                            handleSliderChange={handleSliderChange}
-                            getLabel={getLabel}
-                          />
-                        );
-                      })}
+                      {hasExtra && (
+                        <button
+                          type="button"
+                          className="text-[10px] px-2 py-0.5 rounded bg-zinc-800 text-zinc-300 border border-zinc-700 hover:bg-zinc-700 ml-2"
+                          style={{ lineHeight: 1 }}
+                          onClick={() => handleToggleShowAll(cat)}
+                          tabIndex={0}
+                        >
+                          {showAllCategories[cat] ? "Hide extras" : "Show all"}
+                        </button>
+                      )}
                     </div>
-                  )
-              )}
+                    {visibleProps.map((cssProp) => {
+                      const config = propertyConfig[cssProp] || {};
+                      const value = (styleValues as any)[cssProp] ?? "";
+
+                      // Visibility logic (already checked above, but keep for safety)
+                      if (config.visibleWhen) {
+                        const { property, values } = config.visibleWhen;
+                        const currentValue =
+                          (styleValues as any)[property] ?? "";
+                        if (!values.includes(currentValue)) {
+                          return null; // Don't render this property
+                        }
+                      }
+
+                      // Skip if this is a longhand and should be shown as longhand (already checked above)
+                      if (shouldShowAsLonghand(cssProp, styleValues)) {
+                        return null;
+                      }
+
+                      // If this is a shorthand with longhands
+                      if (config.longhands) {
+                        if (shouldShowShorthand(cssProp, styleValues)) {
+                          // All longhands match, show shorthand input with popover
+                          return (
+                            <div
+                              key={cssProp}
+                              className={twMerge(
+                                "flex items-start gap-2",
+                                config.containerClassName
+                              )}
+                            >
+                              <RenderComponent
+                                cssProp={cssProp}
+                                config={config}
+                                value={getLonghandValues(cssProp, styleValues)}
+                                styleValues={styleValues}
+                                updateComponentStyle={(_prop, val) => {
+                                  // When shorthand changes, update all longhands
+                                  Object.keys(config.longhands!).forEach(
+                                    (longhand) => {
+                                      updateComponentStyle(longhand, val);
+                                    }
+                                  );
+                                }}
+                                handleSliderChange={(_prop, val) => {
+                                  // When shorthand changes, update all longhands
+                                  Object.keys(config.longhands!).forEach(
+                                    (longhand) => {
+                                      handleSliderChange(longhand, val);
+                                    }
+                                  );
+                                }}
+                                getLabel={getLabel}
+                                containerClassName="flex-1"
+                                labelClassName="block text-sm font-medium text-zinc-50 mb-1 flex-shrink-0"
+                              />
+                              <DropdownMenu>
+                                <DropdownMenuTrigger asChild>
+                                  <ChevronDownIcon className="size-4 shrink-0 text-zinc-50 hover:bg-zinc-700 rounded-md cursor-pointer" />
+                                </DropdownMenuTrigger>
+                                <DropdownMenuContent className="p-5 min-w-[200px] max-w-[300px]">
+                                  {Object.entries(config.longhands).map(
+                                    ([longhand, longhandConfig]) => {
+                                      const longhandValue =
+                                        (styleValues as any)[longhand] ?? "";
+                                      return (
+                                        <RenderComponent
+                                          key={longhand}
+                                          cssProp={longhand}
+                                          config={longhandConfig}
+                                          value={longhandValue}
+                                          styleValues={styleValues}
+                                          updateComponentStyle={
+                                            updateComponentStyle
+                                          }
+                                          handleSliderChange={
+                                            handleSliderChange
+                                          }
+                                          getLabel={getLabel}
+                                          labelClassName="block text-xs font-medium text-zinc-50 mb-1"
+                                        />
+                                      );
+                                    }
+                                  )}
+                                </DropdownMenuContent>
+                              </DropdownMenu>
+                            </div>
+                          );
+                        } else {
+                          // Longhands differ, show all longhand inputs
+                          return Object.entries(config.longhands).map(
+                            ([longhand, longhandConfig]) => {
+                              const longhandValue =
+                                (styleValues as any)[longhand] ?? "";
+                              return (
+                                <RenderComponent
+                                  key={longhand}
+                                  cssProp={longhand}
+                                  config={longhandConfig}
+                                  value={longhandValue}
+                                  styleValues={styleValues}
+                                  updateComponentStyle={updateComponentStyle}
+                                  handleSliderChange={handleSliderChange}
+                                  getLabel={getLabel}
+                                />
+                              );
+                            }
+                          );
+                        }
+                      }
+
+                      // Use RenderComponent for all input types
+                      return (
+                        <RenderComponent
+                          key={cssProp}
+                          cssProp={cssProp}
+                          config={config}
+                          value={value}
+                          styleValues={styleValues}
+                          updateComponentStyle={updateComponentStyle}
+                          handleSliderChange={handleSliderChange}
+                          getLabel={getLabel}
+                        />
+                      );
+                    })}
+                  </div>
+                );
+              })}
             </div>
           ) : (
             <div className="text-center text-gray-500 italic py-8">

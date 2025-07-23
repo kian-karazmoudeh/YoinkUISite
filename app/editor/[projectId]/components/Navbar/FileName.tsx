@@ -23,7 +23,11 @@ const FileName = () => {
 
   const handleBlur = () => {
     setIsEditing(false);
-    supabase.from("yoinks").update({ name: newFileName }).eq("id", yoinkId);
+    supabase
+      .from("yoinks")
+      .update({ name: newFileName })
+      .eq("id", yoinkId)
+      .then((res) => console.log("bruh", res));
   };
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
@@ -31,6 +35,10 @@ const FileName = () => {
       handleBlur();
     }
   };
+
+  useEffect(() => {
+    setNewFileName(yoinkName || "Untitled");
+  }, [yoinkName]);
 
   useEffect(() => {
     if (isEditing && inputRef.current) {

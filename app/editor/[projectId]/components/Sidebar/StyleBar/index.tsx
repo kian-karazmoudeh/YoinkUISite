@@ -474,6 +474,7 @@ export default function StylesBar() {
                         if (config.longhands) {
                           if (shouldShowShorthand(cssProp, styleValues)) {
                             // All longhands match, show shorthand input with popover
+
                             return (
                               <div
                                 key={cssProp}
@@ -498,7 +499,14 @@ export default function StylesBar() {
                                       }
                                     );
                                   }}
-                                  handleSliderChange={handleSliderChange}
+                                  handleSliderChange={(_prop, val) => {
+                                    // When shorthand changes, update all longhands
+                                    Object.keys(config.longhands!).forEach(
+                                      (longhand) => {
+                                        handleSliderChange(longhand, val);
+                                      }
+                                    );
+                                  }}
                                   getLabel={getLabel}
                                   containerClassName="flex-1"
                                   labelClassName="block text-sm font-medium text-zinc-50 mb-1 flex-shrink-0"

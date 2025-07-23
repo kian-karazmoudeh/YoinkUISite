@@ -39,6 +39,7 @@ interface EditorActions {
   // Editor initialization
   initializeEditor: () => Promise<void>;
   destroyEditor: () => void;
+  resetStore: () => void;
 
   // Yoink metadata
   setYoinkId: (id: string) => void;
@@ -47,7 +48,6 @@ interface EditorActions {
 
   // Component management
   setSelectedComponent: (component: Component) => void;
-  addComponent: (component: Component) => void;
 
   // Device management
   setCurrentDevice: (device: DeviceName) => void;
@@ -148,10 +148,6 @@ export const useEditorStore = create<EditorStore>((set, get) => ({
       });
 
       // Set up event listeners
-      // Component add event
-      editor.on("component:add", (component: Component) => {
-        get().addComponent(component);
-      });
 
       // Component selection events
       editor.on("component:selected", (component: Component) => {
@@ -262,6 +258,24 @@ export const useEditorStore = create<EditorStore>((set, get) => ({
     }
   },
 
+  resetStore: () => {
+    const { editor } = get();
+    if (editor) {
+      editor.destroy();
+    }
+    set({
+      editor: null,
+      isEditorReady: false,
+      yoinkId: null,
+      yoinkName: null,
+      yoinkCreatorId: null,
+      currentDevice: "Desktop",
+      selectedComponent: null,
+      styleValues: {},
+      activeTab: "blocks",
+    });
+  },
+
   // Yoink metadata
   setYoinkId: (id: string) => set({ yoinkId: id }),
   setYoinkName: (name: string) => set({ yoinkName: name }),
@@ -271,21 +285,9 @@ export const useEditorStore = create<EditorStore>((set, get) => ({
   setSelectedComponent: (component: Component) => {
     set({ selectedComponent: component, activeTab: "styles" });
 
+    console.log(get().editor?.getSelectedAll());
+
     get().changeStyleState();
-  },
-
-  addComponent: (component: Component) => {
-    const current = component.getAttributes();
-
-    // Apply any existing styles from data-yoink-base if present
-    if (current["data-yoink-base"]) {
-      try {
-        const styles = JSON.parse(current["data-yoink-base"]);
-        component.setStyle(styles);
-      } catch (e) {
-        console.error("Error parsing existing styles:", e);
-      }
-    }
   },
 
   // Device management
@@ -353,7 +355,6 @@ export const useEditorStore = create<EditorStore>((set, get) => ({
 
     const styles = editor?.Css.getComponentRules(selectedComponent);
     if (styles) {
-      let baseStyles = {};
       let viewportStyles = {};
       let currentStyles = {};
       for (const rule of styles) {
@@ -366,14 +367,12 @@ export const useEditorStore = create<EditorStore>((set, get) => ({
       viewportStyles = { ...viewportStyles, ...currentStyles };
 
       if (defaultBaseStyles && defaultBaseStyles["div"]) {
-        console.log(defaultBaseStyles["div"]);
         setStyleValues({
           ...defaultBaseStyles["div"],
-          ...baseStyles,
           ...viewportStyles,
         });
       } else {
-        setStyleValues({ ...baseStyles, ...viewportStyles });
+        setStyleValues({ ...viewportStyles });
       }
     }
   },
@@ -402,6 +401,8 @@ export const useEditorStore = create<EditorStore>((set, get) => ({
     const finalValue =
       displayProperty === "opacity" ? `${parseInt(value) / 100}` : `${value}px`;
     const styleProperty = displayProperty || property;
+
+    // console.log(styleProperty, finalValue);
 
     // Update the component's style in GrapesJS
     selectedComponent.setStyle({ [styleProperty]: finalValue });

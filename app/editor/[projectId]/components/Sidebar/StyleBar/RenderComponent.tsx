@@ -70,6 +70,20 @@ export function RenderComponent({
   }
 
   if (config.type === "range") {
+    // Remove unit from value (e.g., "20px" -> "20", "0.5" -> "0.5")
+    let numericValue = value;
+    if (typeof value === "string") {
+      numericValue = value.replace(/(px|%|em|rem)$/, "");
+    }
+
+    if (cssProp == "opacity") {
+      numericValue = Math.round(Number(numericValue) * 100).toString();
+    }
+
+    if (cssProp == "border-radius") {
+      console.log("numericValue", numericValue);
+      console.log("value", value);
+    }
     return (
       <div className={finalContainerClassName}>
         <Label className={labelClassName}>{getLabel(cssProp)}</Label>
@@ -77,7 +91,7 @@ export function RenderComponent({
           <Slider
             min={config.min}
             max={config.max}
-            value={[Number(value) || 0]}
+            value={[Number(numericValue) || 0]}
             onValueChange={([val]) =>
               handleSliderChange(
                 cssProp,
@@ -87,7 +101,7 @@ export function RenderComponent({
             }
           />
           <div className="text-xs text-gray-500 text-center">
-            {value}
+            {numericValue}
             {cssProp === "opacity" ? "%" : "px"}
           </div>
         </div>

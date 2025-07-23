@@ -25,19 +25,22 @@ export default function EditorPage() {
     setYoinkId,
     setYoinkName,
     setYoinkCreatorId,
+    resetStore,
   } = useEditorStore();
 
-  const getUser = async () => {
-    const { data } = await supabase.auth.getUser();
-    if (data.user) {
-      setUser(data.user);
-      setYoinkCreatorId(data.user.id);
-      return data.user;
-    }
-    return null;
-  };
-
   useEffect(() => {
+    const getUser = async () => {
+      const { data } = await supabase.auth.getUser();
+      if (data.user) {
+        setUser(data.user);
+        setYoinkCreatorId(data.user.id);
+        return data.user;
+      }
+      return null;
+    };
+
+    resetStore();
+
     getUser();
     initializeEditor();
 
@@ -58,12 +61,17 @@ export default function EditorPage() {
         );
       }
     });
+
+    return () => {
+      resetStore();
+    };
   }, []);
 
   // Main initialization effect - handles user auth, content fetching, and editor setup
   useEffect(() => {
     const createNewYoink = async (currentUser: User) => {
       if (yoinkContent) {
+        editor?.once("component:mount", () => setIsLoading(false));
         editor?.setComponents(yoinkContent);
 
         const { data, error } = await supabase
@@ -104,9 +112,7 @@ export default function EditorPage() {
 
       editor?.load().then(() => setIsLoading(false));
     } else if (projectId == "new" && user && editor) {
-      createNewYoink(user).then(() => {
-        editor?.once("component:mount", () => setIsLoading(false));
-      });
+      createNewYoink(user);
     }
   }, [projectId, user, isEditorReady, yoinkContent, editor]);
 

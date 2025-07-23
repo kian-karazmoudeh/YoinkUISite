@@ -10,7 +10,7 @@ import { twMerge } from "tailwind-merge";
 import { useShallow } from "zustand/react/shallow";
 import { useEditorStore } from "../../../store";
 import { RenderComponent } from "./RenderComponent";
-import { ChevronDownIcon } from "lucide-react";
+import { ChevronDownIcon, ChevronUpIcon } from "lucide-react";
 
 const LEFT_CELL_CLASSES = "inline-block w-1/2 pr-1";
 const RIGHT_CELL_CLASSES = "inline-block w-1/2 pl-1";
@@ -590,7 +590,6 @@ export default function StylesBar() {
   // Group properties by category
   const categorized = useMemo(() => {
     const groups: { [cat: string]: string[] } = {};
-    // Use properties from propertyConfig instead of cssProperties to ensure all configured properties are included
     Object.keys(propertyConfig).forEach((prop) => {
       const cat = getCategory(prop);
       if (!groups[cat]) groups[cat] = [];
@@ -604,8 +603,17 @@ export default function StylesBar() {
     [cat: string]: boolean;
   }>({});
 
+  // Track which shorthands are expanded to show longhands
+  const [expandedShorthands, setExpandedShorthands] = useState<{
+    [prop: string]: boolean;
+  }>({});
+
   const handleToggleShowAll = (cat: string) => {
     setShowAllCategories((prev) => ({ ...prev, [cat]: !prev[cat] }));
+  };
+
+  const handleToggleShorthand = (prop: string) => {
+    setExpandedShorthands((prev) => ({ ...prev, [prop]: !prev[prop] }));
   };
 
   return (
@@ -622,36 +630,22 @@ export default function StylesBar() {
             <div className="space-y-6">
               {categoryOrder.map((cat) => {
                 if (!categorized[cat]) return null;
-                // Check if this category has any isExtra properties
                 const hasExtra = categorized[cat].some(
                   (cssProp) => propertyConfig[cssProp]?.isExtra
                 );
-                // Filter properties for this category to only those that would actually render
                 const visibleProps = categorized[cat].filter((cssProp) => {
                   const config = propertyConfig[cssProp] || {};
-                  // Hide isExtra unless showAll is enabled for this category
                   if (config.isExtra && !showAllCategories[cat]) {
                     return false;
                   }
-                  // Visibility logic
                   if (config.visibleWhen) {
                     const { property, values } = config.visibleWhen;
                     const currentValue = (styleValues as any)[property] ?? "";
                     if (!values.includes(currentValue)) {
-                      return false; // Don't render this property
+                      return false;
                     }
                   }
-                  // Skip if this is a longhand and should be shown as longhand
-                  if (shouldShowAsLonghand(cssProp, styleValues)) {
-                    return false;
-                  }
-                  // If this is a shorthand with longhands
-                  if (config.longhands) {
-                    // If all longhands match, show shorthand input (visible)
-                    // If not, show all longhand inputs (visible)
-                    return true;
-                  }
-                  // Otherwise, visible
+                  // No auto longhand logic here
                   return true;
                 });
                 if (visibleProps.length === 0) return null;
@@ -677,115 +671,103 @@ export default function StylesBar() {
                       const config = propertyConfig[cssProp] || {};
                       const value = (styleValues as any)[cssProp] ?? "";
 
-                      // Visibility logic (already checked above, but keep for safety)
                       if (config.visibleWhen) {
                         const { property, values } = config.visibleWhen;
                         const currentValue =
                           (styleValues as any)[property] ?? "";
                         if (!values.includes(currentValue)) {
-                          return null; // Don't render this property
+                          return null;
                         }
-                      }
-
-                      // Skip if this is a longhand and should be shown as longhand (already checked above)
-                      if (shouldShowAsLonghand(cssProp, styleValues)) {
-                        return null;
                       }
 
                       // If this is a shorthand with longhands
                       if (config.longhands) {
-                        if (shouldShowShorthand(cssProp, styleValues)) {
-                          // All longhands match, show shorthand input with popover
-                          return (
-                            <div
-                              key={cssProp}
-                              className={twMerge(
-                                "flex items-start gap-2",
-                                config.containerClassName
-                              )}
-                            >
-                              <RenderComponent
-                                cssProp={cssProp}
-                                config={config}
-                                value={getLonghandValues(cssProp, styleValues)}
-                                styleValues={styleValues}
-                                updateComponentStyle={(_prop, val) => {
-                                  // When shorthand changes, update all longhands
-                                  Object.keys(config.longhands!).forEach(
-                                    (longhand) => {
-                                      updateComponentStyle(longhand, val);
-                                    }
-                                  );
-                                }}
-                                handleSliderChange={(_prop, val) => {
-                                  // When shorthand changes, update all longhands
-                                  Object.keys(config.longhands!).forEach(
-                                    (longhand) => {
-                                      handleSliderChange(longhand, val);
-                                    }
-                                  );
-                                }}
-                                getLabel={getLabel}
-                                containerClassName="flex-1"
-                                labelClassName="block text-sm font-medium text-zinc-50 mb-1 flex-shrink-0"
-                              />
-                              <DropdownMenu>
-                                <DropdownMenuTrigger asChild>
-                                  <ChevronDownIcon className="size-4 shrink-0 text-zinc-50 hover:bg-zinc-700 rounded-md cursor-pointer" />
-                                </DropdownMenuTrigger>
-                                <DropdownMenuContent className="p-5 min-w-[200px] max-w-[300px]">
-                                  {Object.entries(config.longhands).map(
-                                    ([longhand, longhandConfig]) => {
-                                      const longhandValue =
-                                        (styleValues as any)[longhand] ?? "";
-                                      return (
-                                        <RenderComponent
-                                          key={longhand}
-                                          cssProp={longhand}
-                                          config={longhandConfig}
-                                          value={longhandValue}
-                                          styleValues={styleValues}
-                                          updateComponentStyle={(_prop, val) =>
-                                            updateComponentStyle(longhand, val)
-                                          }
-                                          handleSliderChange={(_prop, val) =>
-                                            handleSliderChange(longhand, val)
-                                          }
-                                          getLabel={getLabel}
-                                          labelClassName="block text-xs font-medium text-zinc-50 mb-1"
-                                        />
-                                      );
-                                    }
-                                  )}
-                                </DropdownMenuContent>
-                              </DropdownMenu>
-                            </div>
-                          );
-                        } else {
-                          // Longhands differ, show all longhand inputs
-                          return Object.entries(config.longhands).map(
-                            ([longhand, longhandConfig]) => {
-                              const longhandValue =
-                                (styleValues as any)[longhand] ?? "";
-                              return (
+                        const expanded = expandedShorthands[cssProp];
+                        return (
+                          <div
+                            key={cssProp}
+                            className={twMerge(
+                              "flex flex-col gap-1",
+                              config.containerClassName
+                            )}
+                          >
+                            <div className="flex items-center gap-2">
+                              {!expanded ? (
                                 <RenderComponent
-                                  key={longhand}
-                                  cssProp={longhand}
-                                  config={longhandConfig}
-                                  value={longhandValue}
+                                  cssProp={cssProp}
+                                  config={config}
+                                  value={getLonghandValues(
+                                    cssProp,
+                                    styleValues
+                                  )}
                                   styleValues={styleValues}
-                                  updateComponentStyle={(prop, val) =>
-                                    updateComponentStyle(longhand, val)
-                                  }
-                                  handleSliderChange={(prop, val) =>
-                                    handleSliderChange(longhand, val)
-                                  }
+                                  updateComponentStyle={(_prop, val) => {
+                                    Object.keys(config.longhands!).forEach(
+                                      (longhand) => {
+                                        updateComponentStyle(longhand, val);
+                                      }
+                                    );
+                                  }}
+                                  handleSliderChange={(_prop, val) => {
+                                    Object.keys(config.longhands!).forEach(
+                                      (longhand) => {
+                                        handleSliderChange(longhand, val);
+                                      }
+                                    );
+                                  }}
                                   getLabel={getLabel}
+                                  containerClassName="flex-1"
+                                  labelClassName="block text-sm font-medium text-zinc-50 mb-1 flex-shrink-0"
                                 />
-                              );
-                            }
-                          );
-                        }
+                              ) : null}
+                              <button
+                                type="button"
+                                className="ml-1 px-2 py-0.5 rounded bg-zinc-800 text-zinc-300 border border-zinc-700 hover:bg-zinc-700 text-xs flex items-center gap-1"
+                                onClick={() => handleToggleShorthand(cssProp)}
+                                tabIndex={0}
+                              >
+                                {expanded ? (
+                                  <>
+                                    <ChevronUpIcon className="size-3" /> Show
+                                    less
+                                  </>
+                                ) : (
+                                  <>
+                                    <ChevronDownIcon className="size-3" /> Show
+                                    details
+                                  </>
+                                )}
+                              </button>
+                            </div>
+                            {expanded && (
+                              <div className="flex flex-wrap gap-2 mt-1">
+                                {Object.entries(config.longhands).map(
+                                  ([longhand, longhandConfig]) => {
+                                    const longhandValue =
+                                      (styleValues as any)[longhand] ?? "";
+                                    return (
+                                      <RenderComponent
+                                        key={longhand}
+                                        cssProp={longhand}
+                                        config={longhandConfig}
+                                        value={longhandValue}
+                                        styleValues={styleValues}
+                                        updateComponentStyle={(_prop, val) =>
+                                          updateComponentStyle(longhand, val)
+                                        }
+                                        handleSliderChange={(_prop, val) =>
+                                          handleSliderChange(longhand, val)
+                                        }
+                                        getLabel={getLabel}
+                                        labelClassName="block text-xs font-medium text-zinc-50 mb-1"
+                                      />
+                                    );
+                                  }
+                                )}
+                              </div>
+                            )}
+                          </div>
+                        );
                       }
 
                       // Use RenderComponent for all input types

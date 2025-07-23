@@ -26,8 +26,6 @@ const DashboardHomePage = () => {
     const from = page * pageSize;
     const to = from + pageSize - 1;
 
-    console.log(`Fetching page ${page} from ${from} to ${to}`);
-
     const { data, error } = await supabase
       .from("yoinks")
       .select("*")

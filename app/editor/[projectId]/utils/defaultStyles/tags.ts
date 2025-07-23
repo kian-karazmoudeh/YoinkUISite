@@ -96,6 +96,7 @@ function getTagStyles(
       stylesMap.get("background-attachment")?.toString() || "scroll",
     "box-shadow": stylesMap.get("box-shadow")?.toString() || "none",
     "text-wrap": stylesMap.get("text-wrap")?.toString() || "wrap",
+    "text-align": stylesMap.get("text-align")?.toString() || "start",
     opacity: stylesMap.get("opacity")?.toString() || "1",
     "fill-opacity": stylesMap.get("fill-opacity")?.toString() || "",
     "stroke-opacity": stylesMap.get("stroke-opacity")?.toString() || "",

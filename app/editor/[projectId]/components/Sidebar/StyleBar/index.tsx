@@ -351,7 +351,6 @@ const propertyConfig: PropertyConfigType = {
       },
     },
   },
-
   "background-color": {
     label: "Background Color",
     type: "color",
@@ -370,31 +369,31 @@ const propertyConfig: PropertyConfigType = {
   "border-style": {
     label: "Border Style",
     type: "select",
-    options: ["solid", "dashed", "dotted", "double"],
+    options: ["none", "solid", "dashed", "dotted", "double"],
     category: "Border",
     longhands: {
       "border-top-style": {
         label: "Border Style",
         type: "select",
-        options: ["solid", "dashed", "dotted", "double"],
+        options: ["none", "solid", "dashed", "dotted", "double"],
         category: "Border",
       },
       "border-right-style": {
         label: "Border Right Style",
         type: "select",
-        options: ["solid", "dashed", "dotted", "double"],
+        options: ["none", "solid", "dashed", "dotted", "double"],
         category: "Border",
       },
       "border-bottom-style": {
         label: "Border Bottom Style",
         type: "select",
-        options: ["solid", "dashed", "dotted", "double"],
+        options: ["none", "solid", "dashed", "dotted", "double"],
         category: "Border",
       },
       "border-left-style": {
         label: "Border Left Style",
         type: "select",
-        options: ["solid", "dashed", "dotted", "double"],
+        options: ["none", "solid", "dashed", "dotted", "double"],
         category: "Border",
       },
     },
@@ -572,14 +571,12 @@ function shouldShowShorthand(prop: string, styleValues: any): boolean {
 
 export default function StylesBar() {
   const {
-    editor,
     selectedComponents,
     styleValues,
     updateComponentStyle,
     handleSliderChange,
   } = useEditorStore(
     useShallow((state) => ({
-      editor: state.editor,
       selectedComponents: state.selectedComponents,
       styleValues: state.styleValues,
       updateComponentStyle: state.updateComponentStyle,

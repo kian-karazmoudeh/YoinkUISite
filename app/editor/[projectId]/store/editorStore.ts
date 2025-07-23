@@ -21,7 +21,7 @@ interface EditorState {
   yoinkCreatorId: string | null;
 
   // Component management
-  selectedComponent: Component | null;
+  selectedComponents: Component[];
 
   // Device management
   currentDevice: DeviceName;
@@ -47,7 +47,7 @@ interface EditorActions {
   setYoinkCreatorId: (id: string) => void;
 
   // Component management
-  setSelectedComponent: (component: Component) => void;
+  setSelectedComponents: () => void;
 
   // Device management
   setCurrentDevice: (device: DeviceName) => void;
@@ -79,7 +79,7 @@ export const useEditorStore = create<EditorStore>((set, get) => ({
   // Initial state
   editor: null,
   isEditorReady: false,
-  selectedComponent: null,
+  selectedComponents: [],
   currentDevice: "Desktop",
   styleValues: {},
   activeTab: "blocks",
@@ -150,13 +150,13 @@ export const useEditorStore = create<EditorStore>((set, get) => ({
       // Set up event listeners
 
       // Component selection events
-      editor.on("component:selected", (component: Component) => {
-        get().setSelectedComponent(component);
+      editor.on("component:selected", () => {
+        get().setSelectedComponents();
       });
 
       editor.on("component:deselected", () => {
         set({
-          selectedComponent: null,
+          selectedComponents: [],
           styleValues: {},
           activeTab: "blocks",
         });
@@ -251,7 +251,7 @@ export const useEditorStore = create<EditorStore>((set, get) => ({
       set({
         editor: null,
         isEditorReady: false,
-        selectedComponent: null,
+        selectedComponents: [],
         styleValues: {},
         activeTab: "blocks",
       });
@@ -270,7 +270,7 @@ export const useEditorStore = create<EditorStore>((set, get) => ({
       yoinkName: null,
       yoinkCreatorId: null,
       currentDevice: "Desktop",
-      selectedComponent: null,
+      selectedComponents: [],
       styleValues: {},
       activeTab: "blocks",
     });
@@ -282,11 +282,11 @@ export const useEditorStore = create<EditorStore>((set, get) => ({
   setYoinkCreatorId: (id: string) => set({ yoinkCreatorId: id }),
 
   // Component management
-  setSelectedComponent: (component: Component) => {
-    set({ selectedComponent: component, activeTab: "styles" });
-
-    console.log(get().editor?.getSelectedAll());
-
+  setSelectedComponents: () => {
+    const { editor } = get();
+    if (!editor) return;
+    const selected = editor.getSelectedAll();
+    set({ selectedComponents: selected, activeTab: "styles" });
     get().changeStyleState();
   },
 
@@ -294,7 +294,7 @@ export const useEditorStore = create<EditorStore>((set, get) => ({
   setCurrentDevice: (device: DeviceName) => {
     set({ currentDevice: device });
 
-    const { editor, selectedComponent } = get();
+    const { editor, selectedComponents } = get();
 
     // Update panel button states
     if (editor) {
@@ -312,13 +312,13 @@ export const useEditorStore = create<EditorStore>((set, get) => ({
       }
     }
 
-    if (selectedComponent) {
+    if (selectedComponents.length > 0) {
       get().changeStyleState();
     }
   },
 
   handleDeviceChange: (deviceName: DeviceName) => {
-    const { editor, selectedComponent } = get();
+    const { editor, selectedComponents } = get();
 
     if (!editor) return;
 
@@ -332,7 +332,7 @@ export const useEditorStore = create<EditorStore>((set, get) => ({
       deviceManager.select(targetDevice);
       set({ currentDevice: deviceName });
 
-      if (selectedComponent) {
+      if (selectedComponents.length > 0) {
         get().changeStyleState();
       }
     }
@@ -346,46 +346,68 @@ export const useEditorStore = create<EditorStore>((set, get) => ({
   changeStyleState: () => {
     const {
       editor,
-      selectedComponent,
+      selectedComponents,
       defaultBaseStyles,
       currentDevice,
       setStyleValues,
     } = get();
-    if (!selectedComponent) return;
+    if (!selectedComponents || selectedComponents.length === 0) return;
 
-    const styles = editor?.Css.getComponentRules(selectedComponent);
-    if (styles) {
+    // Helper to get styles for a component
+    const getComponentStyles = (component: Component) => {
+      const styles = editor?.Css.getComponentRules(component);
       let viewportStyles = {};
       let currentStyles = {};
-      for (const rule of styles) {
-        if (rule.getDevice().getName() != currentDevice) {
-          viewportStyles = { ...viewportStyles, ...rule.getStyle() };
-        } else {
-          currentStyles = { ...currentStyles, ...rule.getStyle() };
+      if (styles) {
+        for (const rule of styles) {
+          if (rule.getDevice().getName() != currentDevice) {
+            viewportStyles = { ...viewportStyles, ...rule.getStyle() };
+          } else {
+            currentStyles = { ...currentStyles, ...rule.getStyle() };
+          }
         }
       }
-      viewportStyles = { ...viewportStyles, ...currentStyles };
+      return { ...viewportStyles, ...currentStyles };
+    };
 
-      if (defaultBaseStyles && defaultBaseStyles["div"]) {
-        setStyleValues({
-          ...defaultBaseStyles["div"],
-          ...viewportStyles,
-        });
-      } else {
-        setStyleValues({ ...viewportStyles });
-      }
+    // Get intersection of styles
+    let intersection: Record<string, string> = {};
+    if (selectedComponents.length === 1) {
+      intersection = getComponentStyles(selectedComponents[0]);
+    } else {
+      const allStyles: Record<string, string>[] =
+        selectedComponents.map(getComponentStyles);
+      const keys = allStyles.reduce(
+        (acc: Set<string>, style: Record<string, string>) => {
+          Object.keys(style).forEach((k) => acc.add(k));
+          return acc;
+        },
+        new Set<string>()
+      );
+      Array.from(keys).forEach((key: string) => {
+        const firstVal = allStyles[0][key];
+        if (allStyles.every((style) => style[key] === firstVal)) {
+          intersection[key] = firstVal;
+        }
+      });
+    }
+
+    if (defaultBaseStyles && defaultBaseStyles["div"]) {
+      setStyleValues({
+        ...defaultBaseStyles["div"],
+        ...intersection,
+      });
+    } else {
+      setStyleValues({ ...intersection });
     }
   },
 
   updateComponentStyle: (property: string, value: string) => {
-    const { selectedComponent } = get();
-
-    if (!selectedComponent) return;
-
-    // Update the component's style in GrapesJS
-    selectedComponent.setStyle({ [property]: value });
-
-    // update the style state
+    const { selectedComponents } = get();
+    if (!selectedComponents || selectedComponents.length === 0) return;
+    selectedComponents.forEach((component) => {
+      component.setStyle({ [property]: value });
+    });
     get().changeStyleState();
   },
 
@@ -394,20 +416,14 @@ export const useEditorStore = create<EditorStore>((set, get) => ({
     value: string,
     displayProperty?: string
   ) => {
-    const { selectedComponent } = get();
-
-    if (!selectedComponent) return;
-
+    const { selectedComponents } = get();
+    if (!selectedComponents || selectedComponents.length === 0) return;
     const finalValue =
       displayProperty === "opacity" ? `${parseInt(value) / 100}` : `${value}px`;
     const styleProperty = displayProperty || property;
-
-    // console.log(styleProperty, finalValue);
-
-    // Update the component's style in GrapesJS
-    selectedComponent.setStyle({ [styleProperty]: finalValue });
-
-    // update the style state
+    selectedComponents.forEach((component) => {
+      component.setStyle({ [styleProperty]: finalValue });
+    });
     get().changeStyleState();
   },
 

@@ -412,14 +412,14 @@ function shouldShowShorthand(prop: string, styleValues: any): boolean {
 export default function StylesBar() {
   const {
     editor,
-    selectedComponent,
+    selectedComponents,
     styleValues,
     updateComponentStyle,
     handleSliderChange,
   } = useEditorStore(
     useShallow((state) => ({
       editor: state.editor,
-      selectedComponent: state.selectedComponent,
+      selectedComponents: state.selectedComponents,
       styleValues: state.styleValues,
       updateComponentStyle: state.updateComponentStyle,
       handleSliderChange: state.handleSliderChange,
@@ -452,7 +452,7 @@ export default function StylesBar() {
         }}
       >
         <div className="p-2 space-y-2">
-          {selectedComponent ? (
+          {selectedComponents.length > 0 ? (
             <div className="space-y-6">
               {categoryOrder.map(
                 (cat) =>

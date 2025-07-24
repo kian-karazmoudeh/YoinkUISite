@@ -58,7 +58,6 @@ export function RenderComponent({
         <ColorPicker
           value={value}
           onChange={(color) => updateComponentStyle(cssProp, color)}
-          label={getLabel(cssProp)}
         />
       </div>
     );

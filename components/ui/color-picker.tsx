@@ -11,7 +11,6 @@ import { useShallow } from "zustand/react/shallow";
 interface ColorPickerProps {
   value: string;
   onChange: (color: string) => void;
-  label?: string;
   className?: string;
 }
 
@@ -82,12 +81,7 @@ function rgbToHex(r: number, g: number, b: number) {
   return "#" + ((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1);
 }
 
-export function ColorPicker({
-  value,
-  onChange,
-  label,
-  className,
-}: ColorPickerProps) {
+export function ColorPicker({ value, onChange, className }: ColorPickerProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [colorType, setColorType] = useState<"hex" | "rgb" | "rgba">("hex");
   const [colorValue, setColorValue] = useState<any>("#000000");
@@ -182,11 +176,6 @@ export function ColorPicker({
 
   return (
     <div className={cn("space-y-2", className)}>
-      {label && (
-        <Label className="block text-sm font-medium text-zinc-50 mb-1">
-          {label}
-        </Label>
-      )}
       <div className="flex gap-2">
         <div className="relative" ref={popoverRef}>
           <button

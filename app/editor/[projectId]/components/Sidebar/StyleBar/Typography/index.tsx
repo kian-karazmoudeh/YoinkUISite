@@ -2,46 +2,21 @@ import { useShallow } from "zustand/react/shallow";
 import RadioGroup, { Option } from "../shared/RadioGroup";
 import Category from "../shared/Category";
 import { useEditorStore } from "@/app/editor/[projectId]/store";
+import { Ban } from "lucide-react";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 const DECORATION_BUTTONS: Option[] = [
   {
-    key: "bold",
-    label: "Bold",
+    key: "none",
+    label: "None",
     icon: (
-      <svg
-        height="16"
-        strokeLinejoin="round"
-        viewBox="0 0 16 16"
-        width="16"
-        className="text-zinc-400 fill-black stroke-[1px] box-border align-middle cursor-pointer overflow-hidden size-4"
-      >
-        <path
-          fillRule="evenodd"
-          clipRule="evenodd"
-          d="M4.25 1H5H13.75H14.5V2.5H13.75H10.5475L7.02746 13.5H11H11.75V15H11H2.25H1.5V13.5H2.25H5.45254L8.97254 2.5H5H4.25V1Z"
-          className="fill-zinc-400 stroke-[1px] inline box-border cursor-pointer"
-        ></path>
-      </svg>
-    ),
-  },
-  {
-    key: "italic",
-    label: "Italic",
-    icon: (
-      <svg
-        height="16"
-        strokeLinejoin="round"
-        viewBox="0 0 16 16"
-        width="16"
-        className="text-zinc-400 fill-black stroke-[1px] box-border align-middle cursor-pointer overflow-hidden size-4"
-      >
-        <path
-          fillRule="evenodd"
-          clipRule="evenodd"
-          d="M8.00001 0.583374C6.15186 0.583374 4.89601 1.20742 4.10921 2.08165C3.34402 2.93186 3.08334 3.95168 3.08334 4.66671C3.08334 5.30246 3.25446 5.98764 3.73035 6.62516C3.82673 6.75427 3.934 6.8793 4.05254 7H1.75H1V8.5H1.75H14.25H15V7H14.25H7.01815L6.51769 6.8024C5.6688 6.46724 5.19511 6.07985 4.93239 5.72789C4.67477 5.38278 4.58334 5.0232 4.58334 4.66671C4.58334 4.27063 4.73934 3.62378 5.22415 3.0851C5.68734 2.57044 6.51483 2.08337 8.00001 2.08337C9.99003 2.08337 10.8295 2.95573 11.1785 3.6895L11.5006 4.36679L12.8552 3.72252L12.5331 3.04522C11.9243 1.76535 10.5425 0.583374 8.00001 0.583374ZM12.9167 11.25V10.5H11.4167V11.25C11.4167 11.6491 11.2587 12.3206 10.7686 12.8815C10.302 13.4155 9.47586 13.9167 8.00001 13.9167C6.13953 13.9167 5.27285 13.0402 4.87848 12.3L4.52584 11.638L3.20199 12.3433L3.55464 13.0053C4.18889 14.1958 5.54264 15.4167 8.00001 15.4167C9.85749 15.4167 11.1147 14.7652 11.8981 13.8685C12.658 12.9988 12.9167 11.9621 12.9167 11.25Z"
-          className="fill-zinc-400 stroke-[1px] inline box-border cursor-pointer"
-        ></path>
-      </svg>
+      <Ban className="text-zinc-400 fill-black stroke-[1px] box-border align-middle cursor-pointer overflow-hidden size-4" />
     ),
   },
   {
@@ -63,8 +38,28 @@ const DECORATION_BUTTONS: Option[] = [
     ),
   },
   {
-    key: "strike",
+    key: "line-through",
     label: "Strikethrough",
+    icon: (
+      <svg
+        height="16"
+        strokeLinejoin="round"
+        viewBox="0 0 16 16"
+        width="16"
+        className="text-zinc-400 fill-black stroke-[1px] box-border align-middle cursor-pointer overflow-hidden size-4"
+      >
+        <path
+          fillRule="evenodd"
+          clipRule="evenodd"
+          d="M8.00001 0.583374C6.15186 0.583374 4.89601 1.20742 4.10921 2.08165C3.34402 2.93186 3.08334 3.95168 3.08334 4.66671C3.08334 5.30246 3.25446 5.98764 3.73035 6.62516C3.82673 6.75427 3.934 6.8793 4.05254 7H1.75H1V8.5H1.75H14.25H15V7H14.25H7.01815L6.51769 6.8024C5.6688 6.46724 5.19511 6.07985 4.93239 5.72789C4.67477 5.38278 4.58334 5.0232 4.58334 4.66671C4.58334 4.27063 4.73934 3.62378 5.22415 3.0851C5.68734 2.57044 6.51483 2.08337 8.00001 2.08337C9.99003 2.08337 10.8295 2.95573 11.1785 3.6895L11.5006 4.36679L12.8552 3.72252L12.5331 3.04522C11.9243 1.76535 10.5425 0.583374 8.00001 0.583374ZM12.9167 11.25V10.5H11.4167V11.25C11.4167 11.6491 11.2587 12.3206 10.7686 12.8815C10.302 13.4155 9.47586 13.9167 8.00001 13.9167C6.13953 13.9167 5.27285 13.0402 4.87848 12.3L4.52584 11.638L3.20199 12.3433L3.55464 13.0053C4.18889 14.1958 5.54264 15.4167 8.00001 15.4167C9.85749 15.4167 11.1147 14.7652 11.8981 13.8685C12.658 12.9988 12.9167 11.9621 12.9167 11.25Z"
+          className="fill-zinc-400 stroke-[1px] inline box-border cursor-pointer"
+        ></path>
+      </svg>
+    ),
+  },
+  {
+    key: "overline",
+    label: "Overline",
     icon: (
       <svg
         height="16"
@@ -84,24 +79,6 @@ const DECORATION_BUTTONS: Option[] = [
       </svg>
     ),
   },
-  {
-    key: "code",
-    label: "Code",
-    icon: (
-      <svg
-        height="16"
-        strokeLinejoin="round"
-        viewBox="0 0 16 16"
-        width="16"
-        className="text-zinc-400 fill-black stroke-[1px] box-border align-middle cursor-pointer overflow-hidden size-4"
-      >
-        <path
-          d="M8.00371 14.804C5.07771 14.804 3.23471 12.068 3.23471 7.774C3.23471 3.442 5.07771 0.706 8.00371 0.706C10.9297 0.706 12.7727 3.442 12.7727 7.774C12.7727 12.068 10.9297 14.804 8.00371 14.804ZM4.88771 7.774C4.88771 9.047 5.05871 10.149 5.40071 11.023L9.80871 3.1C9.31471 2.568 8.70671 2.264 8.00371 2.264C6.10371 2.264 4.88771 4.392 4.88771 7.774ZM6.17971 12.41C6.67371 12.942 7.30071 13.246 8.00371 13.246C9.90371 13.246 11.1197 11.118 11.1197 7.774C11.1197 6.463 10.9297 5.323 10.5877 4.43L6.17971 12.41Z"
-          className="fill-zinc-400 stroke-[1px] inline box-border cursor-pointer"
-        ></path>
-      </svg>
-    ),
-  },
 ];
 
 const Typography = () => {
@@ -114,58 +91,74 @@ const Typography = () => {
   return (
     <Category title="Typography">
       <div className="w-full flex flex-wrap gap-3">
-        <div className="grow flex flex-col gap-[6px]">
-          <label className="leading-[16px] text-xs opacity-[0.6] fill-black stroke-[1px] box-border capitalize cursor-default">
-            Line Height
-          </label>
-          <div className="w-full flex justify-between gap-2">
-            <div className="grow flex items-center gap-3">
-              <div className="w-full relative">
-                <span className="w-3 h-full -left-1 absolute"></span>
-                <div className="bg-neutral-950 flex flex-col overflow-hidden size-full">
-                  <label className="absolute text-nowrap whitespace-nowrap cursor-default -m-px overflow-hidden size-px"></label>
-                  <div className="">
-                    <div className="w-full flex flex-col">
-                      <div className="w-full h-8 bg-neutral-950 shrink-0 flex items-center px-2 py-1 border-white/12 border-[0.8px] rounded-lg">
-                        <input
-                          role="combobox"
-                          type="text"
-                          value="1.75rem"
-                          className="leading-[20px] w-full text-sm cursor-text overflow-clip"
-                        />
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
+        <div title="Font weight" className="grow flex">
+          <div className="w-full flex flex-col gap-[6px]">
+            <label className="text-zinc-400 leading-[16px] text-xs capitalize cursor-default">
+              Weight
+            </label>
+            <Select
+              value={styleValues["font-weight"]}
+              onValueChange={(val) => updateComponentStyle("font-weight", val)}
+            >
+              <SelectTrigger className="w-full">
+                <SelectValue placeholder="select" />
+              </SelectTrigger>
+              <SelectContent>
+                {[
+                  "100",
+                  "200",
+                  "300",
+                  "400",
+                  "500",
+                  "600",
+                  "700",
+                  "800",
+                  "900",
+                ].map((opt) => (
+                  <SelectItem value={opt} key={opt}>
+                    {opt}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
           </div>
         </div>
-        <div className="grow flex flex-col gap-[6px]">
-          <label className="leading-[16px] text-xs opacity-[0.6] capitalize cursor-default">
-            Letter Spacing
-          </label>
-          <div className="w-full flex justify-between gap-2">
-            <div className="grow flex items-center gap-3">
-              <div className="w-full relative">
-                <span className="w-3 h-full -left-1 absolute"></span>
-                <div className="bg-neutral-950 flex flex-col overflow-hidden size-full">
-                  <label className="absolute text-nowrap whitespace-nowrap cursor-default -m-px overflow-hidden size-px"></label>
-                  <div>
-                    <div className="w-full flex flex-col">
-                      <div className="w-full h-8 bg-neutral-950 shrink-0 flex items-center px-2 py-1 border-white/12 border-[0.8px] rounded-lg">
-                        <input
-                          role="combobox"
-                          type="text"
-                          value="0em"
-                          className="leading-[20px] w-full text-sm cursor-text overflow-clip"
-                        />
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
+        <div title="Font size" className="grow flex">
+          <div className="w-full flex flex-col gap-[6px]">
+            <label className="text-zinc-400 leading-[16px] text-xs capitalize cursor-default">
+              Font size
+            </label>
+            <Select
+              value={styleValues["font-size"]}
+              onValueChange={(val) => updateComponentStyle("font-size", val)}
+            >
+              <SelectTrigger className="w-full">
+                <SelectValue placeholder="select" />
+              </SelectTrigger>
+              <SelectContent>
+                {[
+                  "12px",
+                  "14px",
+                  "16px",
+                  "18px",
+                  "20px",
+                  "22px",
+                  "24px",
+                  "26px",
+                  "28px",
+                  "30px",
+                  "32px",
+                  "34px",
+                  "36px",
+                  "38px",
+                  "40px",
+                ].map((opt) => (
+                  <SelectItem value={opt} key={opt}>
+                    {opt}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
           </div>
         </div>
       </div>

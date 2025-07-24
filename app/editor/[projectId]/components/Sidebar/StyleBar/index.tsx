@@ -1,16 +1,15 @@
 "use client";
 
 import { useMemo, useState, useEffect } from "react";
-import {
-  DropdownMenu,
-  DropdownMenuTrigger,
-  DropdownMenuContent,
-} from "@/components/ui/dropdown-menu";
 import { twMerge } from "tailwind-merge";
 import { useShallow } from "zustand/react/shallow";
 import { useEditorStore } from "../../../store";
 import { RenderComponent } from "./RenderComponent";
-import { ChevronDownIcon, ChevronUpIcon, Maximize } from "lucide-react";
+import { Maximize } from "lucide-react";
+import Typography from "./Typography";
+import Layout from "./Layout";
+import Size from "./Size";
+import Color from "./Color";
 
 const LEFT_CELL_CLASSES = "inline-block w-1/2 pr-1";
 const RIGHT_CELL_CLASSES = "inline-block w-1/2 pl-1";
@@ -557,7 +556,6 @@ function getLonghandValues(prop: string, styleValues: any): string {
     (longhandProp) => (styleValues as any)[longhandProp] === firstValue
   );
 
-  console.log(allMatch ? firstValue : "");
   return allMatch ? firstValue : "";
 }
 
@@ -651,7 +649,7 @@ export default function StylesBar() {
   };
 
   return (
-    <div className="flex-1 p-4 overflow-hidden flex flex-col h-full min-h-0">
+    <div className="flex-1 overflow-hidden flex flex-col h-full min-h-0">
       <div
         className="overflow-y-auto"
         style={{
@@ -659,7 +657,11 @@ export default function StylesBar() {
           scrollbarColor: "#26272B #18191A",
         }}
       >
-        <div className="p-2 space-y-2">
+        <div className="space-y-2">
+          <Typography />
+          <Layout />
+          <Size />
+          <Color />
           {selectedComponents.length > 0 ? (
             <div className="space-y-6">
               {categoryOrder.map((cat) => {

@@ -12,7 +12,7 @@ const Sidebar = () => {
     }))
   );
   return (
-    <div className="w-80 h-full bg-[#18191A] border border-[#26272B] overflow-y-auto flex flex-col rounded-md min-h-0 p-3">
+    <div className="w-80 h-full bg-[#0F0E11] border border-[#26272B] overflow-y-auto flex flex-col rounded-md min-h-0">
       <Tabs
         value={activeTab}
         onValueChange={setActiveTab}

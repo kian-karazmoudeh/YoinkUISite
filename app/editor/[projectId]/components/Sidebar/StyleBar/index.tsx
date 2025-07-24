@@ -10,6 +10,8 @@ import Typography from "./Typography";
 import Layout from "./Layout";
 import Size from "./Size";
 import Color from "./Color";
+import Flex from "./Flex";
+import Grid from "./Grid";
 
 const LEFT_CELL_CLASSES = "inline-block w-1/2 pr-1";
 const RIGHT_CELL_CLASSES = "inline-block w-1/2 pl-1";
@@ -658,11 +660,15 @@ export default function StylesBar() {
         }}
       >
         <div className="space-y-2">
-          <Typography />
+          {selectedComponents.length > 0 &&
+            selectedComponents[selectedComponents.length - 1].getType() ===
+              "text" && <Typography />}
           <Layout />
           <Size />
+          {["flex", "inline-flex"].includes(styleValues["display"]) && <Flex />}
+          {["grid", "inline-grid"].includes(styleValues["display"]) && <Grid />}
           <Color />
-          {selectedComponents.length > 0 ? (
+          {/* {selectedComponents.length > 0 ? (
             <div className="space-y-6">
               {categoryOrder.map((cat) => {
                 if (!categorized[cat]) return null;
@@ -814,7 +820,7 @@ export default function StylesBar() {
             <div className="text-center text-gray-500 italic py-8">
               Select a component to edit its styles
             </div>
-          )}
+          )} */}
         </div>
       </div>
     </div>

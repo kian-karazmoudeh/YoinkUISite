@@ -1,13 +1,13 @@
-import AlignmentCheckboxGroup, {
-  CheckboxButton,
-} from "../shared/AlignmentCheckboxGroup";
+import { useShallow } from "zustand/react/shallow";
+import RadioGroup, { Option } from "../shared/RadioGroup";
 import Category from "../shared/Category";
+import { useEditorStore } from "@/app/editor/[projectId]/store";
 
-const DECORATION_BUTTONS: CheckboxButton[] = [
+const DECORATION_BUTTONS: Option[] = [
   {
     key: "bold",
     label: "Bold",
-    svg: (
+    icon: (
       <svg
         height="16"
         strokeLinejoin="round"
@@ -27,7 +27,7 @@ const DECORATION_BUTTONS: CheckboxButton[] = [
   {
     key: "italic",
     label: "Italic",
-    svg: (
+    icon: (
       <svg
         height="16"
         strokeLinejoin="round"
@@ -47,7 +47,7 @@ const DECORATION_BUTTONS: CheckboxButton[] = [
   {
     key: "underline",
     label: "Underline",
-    svg: (
+    icon: (
       <svg
         height="16"
         strokeLinejoin="round"
@@ -65,7 +65,7 @@ const DECORATION_BUTTONS: CheckboxButton[] = [
   {
     key: "strike",
     label: "Strikethrough",
-    svg: (
+    icon: (
       <svg
         height="16"
         strokeLinejoin="round"
@@ -87,7 +87,7 @@ const DECORATION_BUTTONS: CheckboxButton[] = [
   {
     key: "code",
     label: "Code",
-    svg: (
+    icon: (
       <svg
         height="16"
         strokeLinejoin="round"
@@ -105,6 +105,12 @@ const DECORATION_BUTTONS: CheckboxButton[] = [
 ];
 
 const Typography = () => {
+  const { styleValues, updateComponentStyle } = useEditorStore(
+    useShallow((state) => ({
+      styleValues: state.styleValues,
+      updateComponentStyle: state.updateComponentStyle,
+    }))
+  );
   return (
     <Category title="Typography">
       <div className="w-full flex flex-wrap gap-3">
@@ -169,7 +175,10 @@ const Typography = () => {
             <label className="text-zinc-400 leading-[16px] text-xs capitalize cursor-default">
               Alignment
             </label>
-            <AlignmentCheckboxGroup />
+            <RadioGroup
+              value={styleValues["text-align"]}
+              onChange={(value) => updateComponentStyle("text-align", value)}
+            />
           </div>
         </div>
         <div title="Decoration" className="grow flex">
@@ -177,7 +186,13 @@ const Typography = () => {
             <label className="text-zinc-400 leading-[16px] text-xs capitalize cursor-default">
               Decoration
             </label>
-            <AlignmentCheckboxGroup buttons={DECORATION_BUTTONS} />
+            <RadioGroup
+              buttons={DECORATION_BUTTONS}
+              value={styleValues["text-decoration"]}
+              onChange={(value) =>
+                updateComponentStyle("text-decoration", value)
+              }
+            />
           </div>
         </div>
       </div>

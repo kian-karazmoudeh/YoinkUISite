@@ -1,53 +1,64 @@
 "use client";
 
+import { useEditorStore } from "@/app/editor/[projectId]/store";
+import { isValidCssValue } from "@/app/editor/[projectId]/utils/helpers";
 import { useState, useRef, useCallback, useEffect } from "react";
+import { useShallow } from "zustand/react/shallow";
 
 interface DraggableInputProps {
-  initialValue?: number;
+  value?: string;
   min?: number;
   max?: number;
   step?: number;
-  unit?: string;
-  onChange?: (value: number) => void;
+  onChange?: (value: string) => void;
   icon?: React.ReactNode;
 }
 
 const DraggableInput = ({
-  initialValue = 0,
-  min = -1000,
-  max = 1000,
+  value = "0",
+  min = 0,
+  max,
   step = 1,
-  unit = "px",
   onChange,
   icon,
 }: DraggableInputProps) => {
-  const [value, setValue] = useState(initialValue);
+  const { selectedComponents, currentDevice } = useEditorStore(
+    useShallow((state) => ({
+      selectedComponents: state.selectedComponents,
+      currentDevice: state.currentDevice,
+    }))
+  );
+  const [localValue, setLocalValue] = useState(value);
   const [isDragging, setIsDragging] = useState(false);
   const [startX, setStartX] = useState(0);
   const [startValue, setStartValue] = useState(0);
   const spanRef = useRef<HTMLSpanElement>(null);
 
-  const handleMouseDown = useCallback(
+  const handleDragMouseDown = useCallback(
     (e: React.MouseEvent) => {
       e.preventDefault();
       setIsDragging(true);
       setStartX(e.clientX);
-      setStartValue(value);
+      setStartValue(0);
       document.body.style.userSelect = "none";
     },
-    [value]
+    [localValue]
   );
 
   const handleMouseMove = useCallback(
     (e: MouseEvent) => {
       if (!isDragging) return;
-
       const deltaX = e.clientX - startX;
       const deltaValue = Math.round(deltaX / 2) * step; // Adjust sensitivity by changing divisor
-      const newValue = Math.max(min, Math.min(max, startValue + deltaValue));
-
-      setValue(newValue);
-      onChange?.(newValue);
+      let newValue;
+      if (max) {
+        newValue = Math.max(min, Math.min(max, startValue + deltaValue));
+      } else {
+        newValue = Math.max(min, startValue + deltaValue);
+      }
+      const newString = `${newValue}px`;
+      setLocalValue(newString);
+      onChange?.(newString);
     },
     [isDragging, startX, startValue, step, min, max, onChange]
   );
@@ -58,32 +69,43 @@ const DraggableInput = ({
   }, []);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const inputValue = e.target.value.replace(unit, "");
-    const numericValue = parseFloat(inputValue) || 0;
-    const clampedValue = Math.max(min, Math.min(max, numericValue));
-    setValue(clampedValue);
-    onChange?.(clampedValue);
+    const val = e.target.value;
+    setLocalValue(val);
+
+    // Only propagate valid values to the canvas
+    if (isValidCssValue(val)) {
+      onChange?.(val);
+    }
   };
 
-  const handleInputBlur = () => {
-    // Ensure value is properly formatted when input loses focus
-    const clampedValue = Math.max(min, Math.min(max, value));
-    setValue(clampedValue);
-    onChange?.(clampedValue);
+  const handleBlur = () => {
+    // On blur, fallback to a safe value if invalid
+    if (!isValidCssValue(localValue)) {
+      onChange?.("auto");
+      setLocalValue("auto");
+    }
   };
 
   // Add global mouse event listeners
   useEffect(() => {
     if (isDragging) {
+      // When dragging starts, add global mousemove and mouseup listeners
       document.addEventListener("mousemove", handleMouseMove);
       document.addEventListener("mouseup", handleMouseUp);
-
-      return () => {
-        document.removeEventListener("mousemove", handleMouseMove);
-        document.removeEventListener("mouseup", handleMouseUp);
-      };
+    } else {
+      document.removeEventListener("mousemove", handleMouseMove);
+      document.removeEventListener("mouseup", handleMouseUp);
     }
-  }, [isDragging, handleMouseMove, handleMouseUp]);
+
+    return () => {
+      document.removeEventListener("mousemove", handleMouseMove);
+      document.removeEventListener("mouseup", handleMouseUp);
+    };
+  }, [isDragging]);
+
+  useEffect(() => {
+    setLocalValue(value);
+  }, [selectedComponents, currentDevice]);
 
   return (
     <div className="w-full flex flex-col">
@@ -92,7 +114,7 @@ const DraggableInput = ({
           <span
             ref={spanRef}
             className="cursor-e-resize select-none"
-            onMouseDown={handleMouseDown}
+            onMouseDown={handleDragMouseDown}
           >
             {icon || (
               <svg
@@ -112,9 +134,9 @@ const DraggableInput = ({
         </div>
         <input
           type="text"
-          value={`${value}${unit}`}
+          value={localValue}
           onChange={handleInputChange}
-          onBlur={handleInputBlur}
+          onBlur={handleBlur}
           className="leading-[20px] w-full text-sm fill-black stroke-[1px] box-border cursor-text overflow-clip bg-transparent text-white outline-none"
         />
       </div>

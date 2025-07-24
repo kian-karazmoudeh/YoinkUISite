@@ -4,27 +4,7 @@ const ALIGNMENTS = [
   {
     key: "left",
     label: "Align Left",
-    svg: (
-      <svg
-        height="16"
-        strokeLinejoin="round"
-        viewBox="0 0 16 16"
-        width="16"
-        className="text-zinc-400 opacity-[0.5] align-middle cursor-pointer overflow-hidden size-4"
-      >
-        <path
-          fillRule="evenodd"
-          clipRule="evenodd"
-          d="M4.46967 9.09099L5 9.62132L6.06066 8.56066L5.53033 8.03033L3.56063 6.06063H10.125C11.989 6.06063 13.5 7.57167 13.5 9.43563C13.5 11.2996 11.989 12.8106 10.125 12.8106H4.5H3.75V14.3106H4.5H10.125C12.8174 14.3106 15 12.128 15 9.43563C15 6.74324 12.8174 4.56063 10.125 4.56063H3.56069L5.53033 2.59099L6.06066 2.06066L5 1L4.46967 1.53033L1.21967 4.78033C0.926777 5.07322 0.926777 5.5481 1.21967 5.84099L4.46967 9.09099Z"
-          className="fill-zinc-400 inline cursor-pointer"
-        ></path>
-      </svg>
-    ),
-  },
-  {
-    key: "center",
-    label: "Align Center",
-    svg: (
+    icon: (
       <svg
         height="16"
         strokeLinejoin="round"
@@ -42,9 +22,9 @@ const ALIGNMENTS = [
     ),
   },
   {
-    key: "right",
-    label: "Align Right",
-    svg: (
+    key: "center",
+    label: "Align Center",
+    icon: (
       <svg
         height="16"
         strokeLinejoin="round"
@@ -62,9 +42,9 @@ const ALIGNMENTS = [
     ),
   },
   {
-    key: "justify",
-    label: "Justify",
-    svg: (
+    key: "right",
+    label: "Align Right",
+    icon: (
       <svg
         height="16"
         strokeLinejoin="round"
@@ -82,9 +62,9 @@ const ALIGNMENTS = [
     ),
   },
   {
-    key: "full",
-    label: "Full Align",
-    svg: (
+    key: "justify",
+    label: "Justify",
+    icon: (
       <svg
         height="16"
         strokeLinejoin="round"
@@ -103,40 +83,47 @@ const ALIGNMENTS = [
   },
 ];
 
-export type CheckboxButton = {
+export type Option = {
   key: string;
   label: string;
-  svg: React.ReactNode;
+  icon: React.ReactNode;
 };
 
-interface AlignmentCheckboxGroupProps {
-  buttons?: CheckboxButton[];
+interface RadioGroupProps {
+  value?: string;
+  buttons?: Option[];
+  onChange?: (key: string) => void;
 }
 
-const AlignmentCheckboxGroup: React.FC<AlignmentCheckboxGroupProps> = ({
+const RadioGroup: React.FC<RadioGroupProps> = ({
+  value,
   buttons,
+  onChange,
 }) => {
   const btns = buttons || ALIGNMENTS;
-  const [selected, setSelected] = useState<string>(btns[0].key);
+  const [selected, setSelected] = useState<string>(value || btns[0].key);
 
   return (
     <div className="leading-[1.42857] w-full h-8 text-sm bg-neutral-900 flex p-[2px] gap-[2px] border-zinc-800 border-[0.8px] rounded-md">
       {btns.map((btn) => (
         <button
           key={btn.key}
-          className={`text-neutral-200 grow flex text-center justify-center items-center cursor-pointer py-1 rounded-sm ${
-            selected === btn.key ? "bg-zinc-800" : ""
-          }`}
+          className={`text-neutral-200 grow flex text-center justify-center items-center cursor-pointer py-1 rounded-sm`}
+          style={{
+            backgroundColor: selected === btn.key ? "rgb(32 32 35)" : "",
+          }}
           aria-pressed={selected === btn.key}
-          onClick={() => setSelected(btn.key)}
+          onClick={() => {
+            setSelected(btn.key);
+            onChange?.(btn.key);
+          }}
           type="button"
-          tabIndex={0}
         >
-          {btn.svg}
+          {btn.icon}
         </button>
       ))}
     </div>
   );
 };
 
-export default AlignmentCheckboxGroup;
+export default RadioGroup;

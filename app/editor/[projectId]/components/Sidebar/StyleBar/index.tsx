@@ -705,7 +705,7 @@ export default function StylesBar() {
                     </div>
                     {visibleProps.map((cssProp) => {
                       const config = propertyConfig[cssProp] || {};
-                      const value = (styleValues as any)[cssProp] ?? "";
+                      const value = styleValues[cssProp] ?? "";
 
                       if (config.visibleWhen) {
                         const { property, values } = config.visibleWhen;
@@ -730,7 +730,6 @@ export default function StylesBar() {
                                     cssProp,
                                     styleValues
                                   )}
-                                  styleValues={styleValues}
                                   updateComponentStyle={(_prop, val) => {
                                     Object.keys(config.longhands!).forEach(
                                       (longhand) => {
@@ -778,7 +777,6 @@ export default function StylesBar() {
                                       cssProp={longhand}
                                       config={longhandConfig}
                                       value={longhandValue}
-                                      styleValues={styleValues}
                                       updateComponentStyle={(_prop, val) =>
                                         updateComponentStyle(longhand, val)
                                       }
@@ -802,7 +800,6 @@ export default function StylesBar() {
                           cssProp={cssProp}
                           config={config}
                           value={value}
-                          styleValues={styleValues}
                           updateComponentStyle={updateComponentStyle}
                           handleSliderChange={handleSliderChange}
                           getLabel={getLabel}

@@ -1,4 +1,4 @@
-export const PaddingTopIcon = (
+export const MarginTopIcon = (
   <svg
     height="16"
     stroke-linejoin="round"
@@ -13,7 +13,7 @@ export const PaddingTopIcon = (
   </svg>
 );
 
-export const PaddingBottomIcon = (
+export const MarginBottomIcon = (
   <svg
     height="16"
     stroke-linejoin="round"
@@ -28,7 +28,7 @@ export const PaddingBottomIcon = (
   </svg>
 );
 
-export const PaddingLeftIcon = (
+export const MarginLeftIcon = (
   <svg
     height="16"
     stroke-linejoin="round"
@@ -43,7 +43,7 @@ export const PaddingLeftIcon = (
   </svg>
 );
 
-export const PaddingRightIcon = (
+export const MarginRightIcon = (
   <svg
     height="16"
     stroke-linejoin="round"
@@ -53,6 +53,134 @@ export const PaddingRightIcon = (
   >
     <path
       d="M14 1V15H12.5V1H14ZM5.00488 5.89746C5.05621 5.39333 5.48232 5 6 5H10L10.1025 5.00488C10.573 5.05278 10.9472 5.42703 10.9951 5.89746L11 6V10L10.9951 10.1025C10.9472 10.573 10.573 10.9472 10.1025 10.9951L10 11H6C5.48232 11 5.05621 10.6067 5.00488 10.1025L5 10L5 6L5.00488 5.89746ZM9.5 9.5V6.5H6.5V9.5H9.5Z"
+      className="fill-zinc-400 stroke-[1px] inline box-border"
+    ></path>
+  </svg>
+);
+
+export const MarginHorizontalIcon = (
+  <svg
+    height="16"
+    strokeLinejoin="round"
+    viewBox="0 0 16 16"
+    width="16"
+    className="text-zinc-400 fill-black stroke-[1px] box-border align-middle overflow-hidden size-4"
+  >
+    <path
+      d="M14 1V15H12.5V1H14ZM5.00488 5.89746C5.05621 5.39333 5.48232 5 6 5H10L10.1025 5.00488C10.573 5.05278 10.9472 5.42703 10.9951 5.89746L11 6V10L10.9951 10.1025C10.9472 10.573 10.573 10.9472 10.1025 10.9951L10 11H6C5.48232 11 5.05621 10.6067 5.00488 10.1025L5 10V6L5.00488 5.89746ZM9.5 9.5V6.5H6.5L6.5 9.5H9.5ZM3.5 1L3.5 15H2L2 1H3.5Z"
+      className="fill-zinc-400 stroke-[1px] inline box-border"
+    ></path>
+  </svg>
+);
+
+export const PaddingTopIcon = (
+  <svg
+    height="16"
+    stroke-linejoin="round"
+    viewBox="0 0 16 16"
+    width="16"
+    className="text-zinc-400 fill-black stroke-[1px] box-border align-middle overflow-hidden size-4"
+  >
+    <path
+      d="M14.1025 1.00488C14.6067 1.05621 15 1.48232 15 2V14L14.9951 14.1025C14.9472 14.573 14.573 14.9472 14.1025 14.9951L14 15H2L1.89746 14.9951C1.42703 14.9472 1.05278 14.573 1.00488 14.1025L1 14V2C1 1.48232 1.39333 1.05621 1.89746 1.00488L2 1H14L14.1025 1.00488ZM2.5 13.5H13.5V2.5H2.5V13.5ZM12.375 5.66699H3.625V4.2666H12.375V5.66699Z"
+      className="fill-zinc-400 stroke-[1px] inline box-border"
+    ></path>
+  </svg>
+);
+
+export const PaddingBottomIcon = (
+  <svg
+    height="16"
+    stroke-linejoin="round"
+    viewBox="0 0 16 16"
+    width="16"
+    className="text-zinc-400 fill-black stroke-[1px] box-border align-middle overflow-hidden size-4"
+  >
+    <path
+      d="M14.1025 1.00488C14.6067 1.05621 15 1.48232 15 2V14L14.9951 14.1025C14.9472 14.573 14.573 14.9472 14.1025 14.9951L14 15H2L1.89746 14.9951C1.42703 14.9472 1.05278 14.573 1.00488 14.1025L1 14V2C1 1.48232 1.39333 1.05621 1.89746 1.00488L2 1H14L14.1025 1.00488ZM2.5 13.5H13.5V2.5H2.5V13.5ZM12.375 11.7334H3.625V10.333H12.375V11.7334Z"
+      className="fill-zinc-400 stroke-[1px] inline box-border"
+    ></path>
+  </svg>
+);
+
+export const PaddingLeftIcon = (
+  <svg
+    height="16"
+    stroke-linejoin="round"
+    viewBox="0 0 16 16"
+    width="16"
+    className="text-zinc-400 fill-black stroke-[1px] box-border align-middle overflow-hidden size-4"
+  >
+    <path
+      d="M14.9951 14.1025C14.9438 14.6067 14.5177 15 14 15H2L1.89746 14.9951C1.42703 14.9472 1.05278 14.573 1.00488 14.1025L1 14V2L1.00488 1.89746C1.05278 1.42703 1.42703 1.05278 1.89746 1.00488L2 1H14C14.5177 1 14.9438 1.39333 14.9951 1.89746L15 2V14L14.9951 14.1025ZM2.5 2.5V13.5H13.5V2.5H2.5ZM4.2666 12.375V3.625H5.66699V12.375H4.2666Z"
+      className="fill-zinc-400 stroke-[1px] inline box-border"
+    ></path>
+  </svg>
+);
+
+export const PaddingRightIcon = (
+  <svg
+    height="16"
+    stroke-linejoin="round"
+    viewBox="0 0 16 16"
+    width="16"
+    className="text-zinc-400 fill-black stroke-[1px] box-border align-middle overflow-hidden size-4"
+  >
+    <svg
+      width="16"
+      height="16"
+      viewBox="0 0 16 16"
+      xmlns="http://www.w3.org/2000/svg"
+      className="fill-[none] stroke-[1px] box-border align-middle overflow-hidden"
+    >
+      <path
+        d="M14.9951 14.1025C14.9438 14.6067 14.5177 15 14 15H2L1.89746 14.9951C1.42703 14.9472 1.05278 14.573 1.00488 14.1025L1 14V2L1.00488 1.89746C1.05278 1.42703 1.42703 1.05278 1.89746 1.00488L2 1H14C14.5177 1 14.9438 1.39333 14.9951 1.89746L15 2V14L14.9951 14.1025ZM2.5 2.5V13.5H13.5V2.5H2.5ZM10.333 12.375V3.625H11.7334V12.375H10.333Z"
+        className="fill-zinc-400 stroke-[1px] inline box-border"
+      ></path>
+    </svg>
+  </svg>
+);
+
+export const PaddingHorizontalIcon = (
+  <svg
+    height="16"
+    strokeLinejoin="round"
+    viewBox="0 0 16 16"
+    width="16"
+    className="text-zinc-400 fill-black stroke-[1px] box-border align-middle overflow-hidden size-4"
+  >
+    <path
+      d="M14.9951 14.1025C14.9438 14.6067 14.5177 15 14 15H2L1.89746 14.9951C1.42703 14.9472 1.05278 14.573 1.00488 14.1025L1 14V2L1.00488 1.89746C1.05278 1.42703 1.42703 1.05278 1.89746 1.00488L2 1H14C14.5177 1 14.9438 1.39333 14.9951 1.89746L15 2V14L14.9951 14.1025ZM2.5 2.5V13.5H13.5V2.5H2.5ZM4.2666 12.375V3.625H5.66699V12.375H4.2666ZM10.333 12.375V3.625H11.7334V12.375H10.333Z"
+      className="fill-zinc-400 stroke-[1px] inline box-border"
+    ></path>
+  </svg>
+);
+
+export const PaddingVerticalIcon = (
+  <svg
+    height="16"
+    strokeLinejoin="round"
+    viewBox="0 0 16 16"
+    width="16"
+    className="text-zinc-400 fill-black stroke-[1px] box-border align-middle overflow-hidden size-4"
+  >
+    <path
+      d="M14.1025 1.00488C14.6067 1.05621 15 1.48232 15 2V14L14.9951 14.1025C14.9472 14.573 14.573 14.9472 14.1025 14.9951L14 15H2L1.89746 14.9951C1.42703 14.9472 1.05278 14.573 1.00488 14.1025L1 14V2C1 1.48232 1.39333 1.05621 1.89746 1.00488L2 1H14L14.1025 1.00488ZM2.5 13.5H13.5V2.5H2.5V13.5ZM12.375 11.7334H3.625V10.333H12.375V11.7334ZM12.375 5.66699H3.625V4.2666H12.375V5.66699Z"
+      className="fill-zinc-400 stroke-[1px] inline box-border"
+    ></path>
+  </svg>
+);
+
+export const MarginVerticalIcon = (
+  <svg
+    height="16"
+    strokeLinejoin="round"
+    viewBox="0 0 16 16"
+    width="16"
+    className="text-zinc-400 fill-black stroke-[1px] box-border align-middle overflow-hidden size-4"
+  >
+    <path
+      d="M15 14H1V12.5H15V14ZM10.1025 5.00488C10.6067 5.05621 11 5.48232 11 6V10L10.9951 10.1025C10.9472 10.573 10.573 10.9472 10.1025 10.9951L10 11H6L5.89746 10.9951C5.42703 10.9472 5.05278 10.573 5.00488 10.1025L5 10V6C5 5.48232 5.39333 5.05621 5.89746 5.00488L6 5H10L10.1025 5.00488ZM6.5 9.5H9.5V6.5H6.5V9.5ZM15 3.5H1V2H15V3.5Z"
       className="fill-zinc-400 stroke-[1px] inline box-border"
     ></path>
   </svg>

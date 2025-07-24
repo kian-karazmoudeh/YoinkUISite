@@ -32,13 +32,8 @@ interface RenderComponentProps {
   cssProp: string;
   config: PropertyConfigType[string];
   value: string;
-  styleValues: any;
   updateComponentStyle: (property: string, value: string) => void;
-  handleSliderChange: (
-    property: string,
-    value: string,
-    displayProperty?: string
-  ) => void;
+  handleSliderChange: (property: string, value: string) => void;
   getLabel: (prop: string) => string;
   containerClassName?: string;
   labelClassName?: string;
@@ -92,13 +87,7 @@ export function RenderComponent({
             min={config.min}
             max={config.max}
             value={[Number(numericValue) || 0]}
-            onValueChange={([val]) =>
-              handleSliderChange(
-                cssProp,
-                String(val),
-                config.displayProperty || cssProp
-              )
-            }
+            onValueChange={([val]) => handleSliderChange(cssProp, String(val))}
           />
           <div className="text-xs text-gray-500 text-center">
             {numericValue}

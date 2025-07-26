@@ -142,8 +142,8 @@ export function colorToHex(colorString: string): string {
   // Check if it's oklch format
   if (cleaned.startsWith("oklch")) {
     let alpha;
-    let parts = cleaned.replace("oklch(", "").replace(")", "").split("/");
-    let main = parts[0].split("_").map((v) => v.replace("_", "").trim());
+    const parts = cleaned.replace("oklch(", "").replace(")", "").split("/");
+    const main = parts[0].split("_").map((v) => v.replace("_", "").trim());
     if (parts.length == 2) {
       alpha = parseFloat(parts[1].replace("_", ""));
     }
@@ -157,8 +157,8 @@ export function colorToHex(colorString: string): string {
 
   if (cleaned.startsWith("oklab")) {
     let alpha;
-    let parts = cleaned.replace("oklab(", "").replace(")", "").split("/");
-    let main = parts[0].split("_").map((v) => v.replace("_", "").trim());
+    const parts = cleaned.replace("oklab(", "").replace(")", "").split("/");
+    const main = parts[0].split("_").map((v) => v.replace("_", "").trim());
     if (parts.length == 2) {
       alpha = parseFloat(parts[1].replace("_", ""));
     }

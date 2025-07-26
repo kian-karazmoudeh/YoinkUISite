@@ -14,7 +14,7 @@ import { useEditorStore } from "../../../store";
 import { getMergedComponentStyles } from "../../../utils/helpers";
 
 function cssToTailwind(cssJson: Record<string, string>) {
-  let tailwindClasses: string[] = [];
+  const tailwindClasses: string[] = [];
   let value;
 
   for (const [cssProp, twPrefix] of Object.entries(propsToArbitraryMap)) {
@@ -128,7 +128,7 @@ export function convertNodeToTailwindLgRecurse(node: Component) {
     }
 
     let lgTailwindClasses: string[] = cssToTailwind(lgStyles);
-    let mdTailwindClasses: string[] = cssToTailwind(mdStyles);
+    const mdTailwindClasses: string[] = cssToTailwind(mdStyles);
 
     lgTailwindClasses = lgTailwindClasses.filter(
       (cls) => !mdTailwindClasses.includes(cls)
@@ -169,7 +169,7 @@ export function convertNodeToTailwindMdRecurse(node: Component) {
     }
 
     let mdTailwindClasses: string[] = cssToTailwind(mdStyles);
-    let smTailwindClasses: string[] = cssToTailwind(smStyles);
+    const smTailwindClasses: string[] = cssToTailwind(smStyles);
 
     mdTailwindClasses = mdTailwindClasses.filter(
       (cls) => !smTailwindClasses.includes(cls)
@@ -212,7 +212,7 @@ export async function convertNodeToTailwindBaseRecurse(
       return;
     }
 
-    let cleanedStyles = removeInheritedStyles(smStyles, inherited);
+    const cleanedStyles = removeInheritedStyles(smStyles, inherited);
 
     let smTailwindClasses: string[] = cssToTailwind(cleanedStyles);
     let defaultTailwindClasses: string[] = [];

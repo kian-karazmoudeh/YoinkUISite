@@ -1,5 +1,5 @@
 import { create } from "zustand";
-import { Component, Device, Editor } from "grapesjs";
+import { Button, Component, Device, Editor } from "grapesjs";
 import grapesjs from "grapesjs";
 import "grapesjs/dist/css/grapes.min.css";
 import { getEditorConfig } from "../config/editorConfig";
@@ -116,7 +116,7 @@ export const useEditorStore = create<EditorStore>((set, get) => ({
           const deviceManager = editor.DeviceManager;
           const desktopDevice = deviceManager
             .getAll()
-            .find((device: any) => device.get("name") === "Desktop");
+            .find((device: Device) => device.get("name") === "Desktop");
           if (desktopDevice) {
             deviceManager.select(desktopDevice);
           }
@@ -128,7 +128,7 @@ export const useEditorStore = create<EditorStore>((set, get) => ({
           const deviceManager = editor.DeviceManager;
           const tabletDevice = deviceManager
             .getAll()
-            .find((device: any) => device.get("name") === "Tablet");
+            .find((device: Device) => device.get("name") === "Tablet");
           if (tabletDevice) {
             deviceManager.select(tabletDevice);
           }
@@ -140,7 +140,7 @@ export const useEditorStore = create<EditorStore>((set, get) => ({
           const deviceManager = editor.DeviceManager;
           const mobileDevice = deviceManager
             .getAll()
-            .find((device: any) => device.get("name") === "Mobile");
+            .find((device: Device) => device.get("name") === "Mobile");
           if (mobileDevice) {
             deviceManager.select(mobileDevice);
           }
@@ -307,7 +307,7 @@ export const useEditorStore = create<EditorStore>((set, get) => ({
       if (panel) {
         const buttons = panel.get("buttons");
         if (buttons) {
-          buttons.each((btn: any) => {
+          buttons.each((btn: Button) => {
             btn.set(
               "active",
               btn.get("id") === `device-${device.toLowerCase()}`
@@ -330,7 +330,7 @@ export const useEditorStore = create<EditorStore>((set, get) => ({
     const deviceManager = editor.DeviceManager;
     const devices = deviceManager.getAll();
     const targetDevice = devices.find(
-      (device: any) => device.get("name") === deviceName
+      (device: Device) => device.get("name") === deviceName
     );
 
     if (targetDevice) {

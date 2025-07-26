@@ -13,7 +13,6 @@ function convertClassColorToTailwind(match: string) {
   // step 1, convert it into hex
   const hex = colorToHex(match);
   let alphaHex, alphaDec;
-  let mainHex;
 
   // step 2, if there's alpha,
   if (hex.length > 6) {
@@ -23,7 +22,7 @@ function convertClassColorToTailwind(match: string) {
       return "transparent";
     }
   }
-  mainHex = hex.substring(0, 6);
+  const mainHex = hex.substring(0, 6);
 
   // step 3, convert hex to closest tailwind
   const { tailwind, diff } = closestTailwindToHex(mainHex);
@@ -37,7 +36,7 @@ function convertClassColorToTailwind(match: string) {
 
 // main method. It takes in the class of an element and replaces all the colors with tailwind equivalents.
 export function simplifyColors(classes: string[]) {
-  let classesJoined = classes.join(" ").trim();
+  const classesJoined = classes.join(" ").trim();
   return classesJoined
     .replace(colorRegex, convertClassColorToTailwind)
     .split(" ");

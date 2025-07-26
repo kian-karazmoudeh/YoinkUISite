@@ -1,5 +1,4 @@
 import { LaptopMinimal, Monitor, Smartphone } from "lucide-react";
-import { DeviceName } from "../../types";
 import { useEditorStore } from "../../store";
 import { useShallow } from "zustand/react/shallow";
 

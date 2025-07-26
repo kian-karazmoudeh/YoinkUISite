@@ -1,6 +1,5 @@
 export function simplifySVGSpecific(el: Element, tailwindClasses: string[]) {
-  
-  let tailwindClassSet = new Set(tailwindClasses);
+  const tailwindClassSet = new Set(tailwindClasses);
 
   if (!(el instanceof SVGElement)) {
     for (const cls of tailwindClassSet) {

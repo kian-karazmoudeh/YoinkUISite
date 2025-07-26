@@ -14,7 +14,7 @@ const formatterOptions: HTMLBeautifyOptions = {
 };
 
 export function formatJsxString(htmlString: string) {
-  let formatted = addExtraIndents(
+  const formatted = addExtraIndents(
     beautify(replace(htmlString), formatterOptions)
   );
 

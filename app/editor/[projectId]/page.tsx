@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState } from "react";
 import { useEditorStore } from "./store";
 import Navbar from "./components/Navbar";
 import Sidebar from "./components/Sidebar";

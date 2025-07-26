@@ -3,7 +3,6 @@
 import { useState, useRef, useEffect } from "react";
 import { HexColorPicker, RgbaColorPicker } from "react-colorful";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { cn } from "@/lib/utils";
 import { useEditorStore } from "@/app/editor/[projectId]/store";
 import { useShallow } from "zustand/react/shallow";
@@ -14,10 +13,22 @@ interface ColorPickerProps {
   className?: string;
 }
 
+interface RgbColor {
+  r: number;
+  g: number;
+  b: number;
+}
+
+interface RgbaColor extends RgbColor {
+  a: number;
+}
+
+type ColorValue = string | RgbColor | RgbaColor;
+
 // Helper functions to parse and format colors
 function parseColor(color: string): {
   type: "hex" | "rgb" | "rgba";
-  value: any;
+  value: ColorValue;
 } {
   if (typeof color !== "string") {
     return { type: "hex", value: "#000000" };
@@ -51,31 +62,33 @@ function parseColor(color: string): {
   return { type: "hex", value: "#000000" };
 }
 
-function formatColor(type: "hex" | "rgb" | "rgba", value: any): string {
+function formatColor(type: "hex" | "rgb" | "rgba", value: ColorValue): string {
   switch (type) {
     case "hex":
       return typeof value === "string" ? value : "#000000";
     case "rgb":
-      return `rgb(${value.r}, ${value.g}, ${value.b})`;
+      const rgbValue = value as RgbColor;
+      return `rgb(${rgbValue.r}, ${rgbValue.g}, ${rgbValue.b})`;
     case "rgba":
-      return `rgba(${value.r}, ${value.g}, ${value.b}, ${value.a})`;
+      const rgbaValue = value as RgbaColor;
+      return `rgba(${rgbaValue.r}, ${rgbaValue.g}, ${rgbaValue.b}, ${rgbaValue.a})`;
     default:
       return "#000000";
   }
 }
 
-function hexToRgb(hex: string) {
-  if (typeof hex !== "string") return { r: 0, g: 0, b: 0 };
+// function hexToRgb(hex: string) {
+//   if (typeof hex !== "string") return { r: 0, g: 0, b: 0 };
 
-  const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
-  return result
-    ? {
-        r: parseInt(result[1], 16),
-        g: parseInt(result[2], 16),
-        b: parseInt(result[3], 16),
-      }
-    : { r: 0, g: 0, b: 0 };
-}
+//   const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+//   return result
+//     ? {
+//         r: parseInt(result[1], 16),
+//         g: parseInt(result[2], 16),
+//         b: parseInt(result[3], 16),
+//       }
+//     : { r: 0, g: 0, b: 0 };
+// }
 
 function rgbToHex(r: number, g: number, b: number) {
   return "#" + ((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1);
@@ -84,7 +97,7 @@ function rgbToHex(r: number, g: number, b: number) {
 export function ColorPicker({ value, onChange, className }: ColorPickerProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [colorType, setColorType] = useState<"hex" | "rgb" | "rgba">("hex");
-  const [colorValue, setColorValue] = useState<any>("#000000");
+  const [colorValue, setColorValue] = useState<ColorValue>("#000000");
   const [inputValue, setInputValue] = useState(value);
   const popoverRef = useRef<HTMLDivElement>(null);
 
@@ -122,7 +135,7 @@ export function ColorPicker({ value, onChange, className }: ColorPickerProps) {
     };
   }, [isOpen]);
 
-  const handleColorChange = (newColor: any) => {
+  const handleColorChange = (newColor: ColorValue) => {
     if (!newColor) return;
 
     setColorValue(newColor);
@@ -159,14 +172,16 @@ export function ColorPicker({ value, onChange, className }: ColorPickerProps) {
     }
   };
 
-  const getDisplayColor = () => {
+  const getDisplayColor = (): string => {
     try {
       if (colorType === "hex") {
         return typeof colorValue === "string" ? colorValue : "#000000";
       } else if (colorType === "rgb") {
-        return rgbToHex(colorValue.r, colorValue.g, colorValue.b);
+        const rgbValue = colorValue as RgbColor;
+        return rgbToHex(rgbValue.r, rgbValue.g, rgbValue.b);
       } else if (colorType === "rgba") {
-        return rgbToHex(colorValue.r, colorValue.g, colorValue.b);
+        const rgbaValue = colorValue as RgbaColor;
+        return rgbToHex(rgbaValue.r, rgbaValue.g, rgbaValue.b);
       }
     } catch (error) {
       console.error("Error getting display color:", error);
@@ -236,7 +251,7 @@ export function ColorPicker({ value, onChange, className }: ColorPickerProps) {
 
                 {(colorType === "rgb" || colorType === "rgba") && (
                   <RgbaColorPicker
-                    color={colorValue}
+                    color={colorValue as RgbaColor}
                     onChange={handleColorChange}
                   />
                 )}

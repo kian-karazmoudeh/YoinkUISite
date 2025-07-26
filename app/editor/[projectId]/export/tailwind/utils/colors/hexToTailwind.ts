@@ -1,7 +1,7 @@
 import colors from "./tailwindDefaultColors";
 import type { DefaultColors } from "./tailwindDefaultColors";
 
-// @ts-ignore
+// @ts-expect-error
 import { closest, diff } from "color-diff";
 
 type Rgb = { R: number; G: number; B: number };
@@ -19,7 +19,7 @@ export const hexToRgb: (hex: string) => Rgb = (hex) => {
 };
 
 const rgbToTailwindMap: (colors: DefaultColors) => RgbMap = (colors) => {
-  let importedColors = JSON.parse(JSON.stringify(colors));
+  const importedColors = JSON.parse(JSON.stringify(colors));
 
   delete importedColors.inherit;
   delete importedColors.transparent;
@@ -71,7 +71,7 @@ const RgbToTailwindMap = rgbToTailwindMap(colors);
 const TailwindRgbColors = Array.from(RgbToTailwindMap.keys());
 
 function componentToHex(c: number) {
-  var hex = c.toString(16);
+  const hex = c.toString(16);
   return hex.length == 1 ? "0" + hex : hex;
 }
 

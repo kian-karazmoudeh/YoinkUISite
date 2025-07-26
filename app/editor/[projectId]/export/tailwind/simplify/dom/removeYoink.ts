@@ -15,7 +15,7 @@ export function swapYoinkClasses(root: Element) {
 }
 
 export function removeYoinkAttributes(root: Element) {
-  let attributes = root.getAttributeNames();
+  const attributes = root.getAttributeNames();
 
   attributes.forEach((attribute) => {
     if (attribute.startsWith("data-yoink-")) {
@@ -29,7 +29,7 @@ export function removeYoinkAttributes(root: Element) {
 }
 
 export function removeYoinkAttributesFromCanvas(root: Component) {
-  let attributes = root.getAttributes();
+  const attributes = root.getAttributes();
 
   Object.keys(attributes).forEach((attribute) => {
     if (
@@ -48,7 +48,7 @@ export function removeYoinkAttributesFromCanvas(root: Component) {
 }
 
 export function removeYoinkElements(root: Element) {
-  let els = root.querySelectorAll("*");
+  const els = root.querySelectorAll("*");
 
   els.forEach((el) => {
     if (el.id.startsWith("yoink-")) {

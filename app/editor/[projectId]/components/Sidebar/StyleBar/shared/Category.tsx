@@ -1,5 +1,3 @@
-import { Children } from "react";
-
 const Category = ({
   children,
   title,

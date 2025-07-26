@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Upload, Download, Copy, Loader2 } from "lucide-react";
+import { Upload, Download, Copy } from "lucide-react";
 import { mapResponsivePage } from "../../export/tailwind";
 import {
   Dialog,
@@ -111,7 +111,7 @@ const ExportBtn = () => {
                   ) : (
                     <>
                       <Download className="size-4 text-blue-400" />
-                      Download as HTML"
+                      Download as HTML
                     </>
                   )}
                 </Button>

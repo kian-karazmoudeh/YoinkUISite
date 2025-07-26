@@ -1,5 +1,3 @@
-import Navbar from "./components/Navbar";
-
 const Layout = ({ children }: { children: React.ReactNode }) => {
   return (
     <div className="bg-neutral-950 size-screen">

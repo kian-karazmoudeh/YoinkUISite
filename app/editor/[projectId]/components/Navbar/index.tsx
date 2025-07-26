@@ -8,8 +8,6 @@ import { Skeleton } from "@/components/ui/skeleton";
 import FileName from "./FileName";
 import SaveBtn from "./SaveBtn";
 import Link from "next/link";
-import { ChevronsUpDown } from "lucide-react";
-import { Badge } from "@/components/ui/badge";
 import UserPopover from "./UserPopover";
 
 type EditorNavbarProps = {

@@ -10,7 +10,7 @@ function getTagStyles(
   const defaultEl = doc.createElement(tagname);
   doc.body.appendChild(defaultEl);
   //   let stylesComp = iframe.contentWindow!.getComputedStyle(defaultEl);
-  let stylesMap = defaultEl.computedStyleMap();
+  const stylesMap = defaultEl.computedStyleMap();
 
   const defaultCSS: Record<string, string> = {
     "margin-top": stylesMap.get("margin-top")?.toString() || "0px",
@@ -206,7 +206,7 @@ export function getAllTagStylesNonBlocking(
   onComplete: (defaultCSS?: Record<string, Record<string, string>>) => void
 ) {
   let index = 0;
-  let defaultCSS: Record<string, Record<string, string>> = {};
+  const defaultCSS: Record<string, Record<string, string>> = {};
 
   function processNextBatch(deadline: IdleDeadline) {
     while (deadline.timeRemaining() > 0 && index < tags.length) {

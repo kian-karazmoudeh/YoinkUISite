@@ -17,7 +17,7 @@ const Blocks = () => {
   };
 
   // Group blocks by category
-  let blocks = editor?.BlockManager.getAll() || [];
+  const blocks = editor?.BlockManager.getAll() || [];
   const categories: { [key: string]: Block[] } = {};
   blocks.forEach((block: Block) => {
     const categoryRaw = block.get("category");

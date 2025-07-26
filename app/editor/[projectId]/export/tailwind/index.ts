@@ -41,7 +41,7 @@ function convertToComponent(root: Element): HTMLElement {
 export async function mapResponsivePage() {
   return new Promise<HTMLElement>((resolve) => {
     const editor = useEditorStore.getState().editor;
-    let root = editor?.getWrapper() as Component | undefined;
+    const root = editor?.getWrapper() as Component | undefined;
     if (!root) return;
     addCSSAttributesRecursivelyResponsive(root, "Desktop");
     addCSSAttributesRecursivelyResponsive(root, "Tablet");
@@ -51,7 +51,7 @@ export async function mapResponsivePage() {
     convertNodeToTailwindMdRecurse(root);
     convertNodeToTailwindBaseRecurse(root);
 
-    let converted = convertToComponent(root.getEl()!);
+    const converted = convertToComponent(root.getEl()!);
 
     removeYoinkAttributesFromCanvas(root);
     resolve(converted);

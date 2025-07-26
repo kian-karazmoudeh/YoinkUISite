@@ -46,14 +46,6 @@ function cssToTailwind(cssJson: Record<string, string>) {
 
 function getCssObject(component: Component, device: DeviceName) {
   const { editor, defaultBaseStyles } = useEditorStore.getState();
-  // console.log(
-  //   getMergedComponentStyles({
-  //     component,
-  //     device,
-  //     editor,
-  //     defaultBaseStyles,
-  //   })
-  // );
   return getMergedComponentStyles({
     component,
     device,

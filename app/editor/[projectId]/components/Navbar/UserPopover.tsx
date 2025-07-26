@@ -76,7 +76,7 @@ export default function UserPopover({
           <div className="border-t border-zinc-800 my-2" />
           <Button
             variant="outline"
-            className="w-full justify-start gap-2 bg-zinc-800 border-zinc-700 text-zinc-100 hover:bg-zinc-700"
+            className="w-full justify-start gap-2 bg-zinc-800 border-zinc-700 text-zinc-100 hover:bg-zinc- hover:text-zinc-100"
             onClick={handleSignOut}
           >
             <LogOut className="size-4" /> Sign out

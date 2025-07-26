@@ -37,7 +37,7 @@ const Blocks = () => {
   const categoryNames = Object.keys(categories);
 
   return (
-    <div className="flex-1 p-4 overflow-hidden flex flex-col h-full min-h-0">
+    <div className="flex-1 p-6 overflow-hidden flex flex-col h-full min-h-0">
       <div
         className="flex-1 overflow-y-auto"
         style={{

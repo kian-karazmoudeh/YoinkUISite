@@ -111,7 +111,7 @@ const DashboardHomePage = () => {
                             <YoinkFileSkeleton />
                             <YoinkFileSkeleton />
                           </>
-                        ) : (
+                        ) : yoinkFiles.length > 0 ? (
                           yoinkFiles
                             .slice()
                             .sort(
@@ -122,6 +122,10 @@ const DashboardHomePage = () => {
                             .map((yoinkFile) => (
                               <YoinkFile key={yoinkFile.id} {...yoinkFile} />
                             ))
+                        ) : (
+                          <div className="text-zinc-500 leading-[1.42857] text-sm italic">
+                            No yoinks found. Go out there and start Yoinking!
+                          </div>
                         )}
                         {loadingMore && (
                           <>

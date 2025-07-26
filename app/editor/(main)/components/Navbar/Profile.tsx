@@ -15,21 +15,41 @@ import { useEffect, useState } from "react";
 
 const Profile = ({ user }: { user: User | null }) => {
   const [membership, setMembership] = useState<string | null>(null);
+  const [yoinksLeft, setYoinksLeft] = useState<number | null>(null);
   const supabase = createClient();
 
   useEffect(() => {
-    const getMembership = async () => {
-      if (user) {
+    const getProfile = async () => {
+      const { data } = await supabase.auth.getUser();
+      if (data.user) {
         const { data: profileData } = await supabase
           .from("profiles")
           .select("*")
-          .eq("id", user.id)
+          .eq("id", data.user.id)
           .single();
         setMembership(profileData?.membership);
+        return data.user;
       }
+      return null;
     };
 
-    getMembership();
+    getProfile().then(async (user) => {
+      if (user) {
+        const startOfMonth = new Date();
+        startOfMonth.setDate(1);
+        startOfMonth.setHours(0, 0, 0, 0);
+
+        const { count } = await supabase
+          .from("yoinks")
+          .select("*", { count: "exact", head: true })
+          .eq("user_id", user.id)
+          .gte("created_at", startOfMonth.toISOString());
+
+        if (count) {
+          setYoinksLeft(5 - count);
+        }
+      }
+    });
   }, [user]);
 
   if (!user) {
@@ -64,12 +84,12 @@ const Profile = ({ user }: { user: User | null }) => {
         </div>
       </PopoverTrigger>
       <PopoverContent
-        align="start"
-        className="bg-zinc-900 border-zinc-800 text-zinc-100 w-56 p-3"
+        align="end"
+        className="bg-zinc-900 border-zinc-800 text-zinc-100 w-70 p-3"
       >
         <div className="flex flex-col gap-2">
           <div className="flex items-center gap-2 mb-2">
-            <span className="relative flex size-8 shrink-0 overflow-hidden rounded-full border border-zinc-700">
+            <span className="relative flex size-10 shrink-0 overflow-hidden rounded-full border border-zinc-700">
               <img
                 className="aspect-[1_/_1] size-full"
                 alt={user.user_metadata.name || "Anonymous"}
@@ -79,19 +99,30 @@ const Profile = ({ user }: { user: User | null }) => {
                 }
               />
             </span>
-            <div>
-              <div className="font-semibold text-sm text-zinc-100">
-                {user.user_metadata.name || "Anonymous"}
+            <div className="overflow-hidden">
+              <div className="font-semibold text-sm text-zinc-100 overflow-hidden text-ellipsis whitespace-nowrap">
+                {user.email || "Anonymous"}
               </div>
-              <Badge className="capitalize mt-1" variant="secondary">
-                {membership}
-              </Badge>
+              <div className="space-x-2">
+                <Badge className="capitalize mt-1" variant="secondary">
+                  {membership}
+                </Badge>
+                {!isPremium ? (
+                  <Badge className="capitalize mt-1" variant="default">
+                    {yoinksLeft} left this month
+                  </Badge>
+                ) : (
+                  <Badge className="capitalize mt-1" variant="default">
+                    Unlimited yoinks
+                  </Badge>
+                )}
+              </div>
             </div>
           </div>
           <div className="border-t border-zinc-800 my-2" />
           <Button
             variant="outline"
-            className="w-full justify-start gap-2 bg-zinc-800 border-zinc-700 text-zinc-100 hover:bg-zinc-700"
+            className="w-full justify-start gap-2 bg-zinc-800 border-zinc-700 text-zinc-100 hover:bg-zinc-700 hover:text-zinc-100"
             onClick={handleSignOut}
           >
             <LogOut className="size-4" /> Sign out

@@ -149,7 +149,7 @@ const Navbar = () => {
                 </span>
               </Link>
             </div>
-            <div className="md:hidden">
+            <div className="md:hidden flex justify-center content-center">
               <button
                 type="button"
                 onClick={() => setShowSidebar(true)}
@@ -190,7 +190,6 @@ const Navbar = () => {
                   href="/editor"
                 >
                   Dashboard
-                  {ArrowIcon}
                 </Link>
               ) : (
                 <Link

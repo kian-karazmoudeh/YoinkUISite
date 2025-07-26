@@ -9,7 +9,7 @@ const Features = () => {
         className="py-20 max-w-7xl overflow-hidden mx-auto  lg:py-20 lg:border-x-[0.8px] lg:border-x-zinc-700 text-zinc-50"
       >
         <div className="max-w-2xl mx-auto px-5 md:text-center lg:px-0">
-          <p className="mt-2 text-zinc-50 leading-[1.11111] tracking-[-0.9px] text-4xl text-pretty font-semibold md:leading-[1] md:tracking-[-1.2px] md:text-5xl md:text-center md:text-balance">
+          <p className="mt-2 text-zinc-50 leading-[1.11111] tracking-[-0.9px] text-4xl text-pretty font-semibold md:leading-[1] md:tracking-[-1.2px] md:text-5xl text-center md:text-balance">
             How it works
           </p>
         </div>
@@ -23,7 +23,7 @@ const Features = () => {
               src="/landing/Select.png"
               style={{ width: "auto", height: "auto" }}
             />
-            <div className="mt-[-144px] w-full bottom-16 left-10 px-8  lg:mt-0 lg:pl-0 lg:w-auto lg:absolute">
+            <div className="mt-[-100px] w-full bottom-16 left-10 px-8  lg:mt-0 lg:pl-0 lg:w-auto lg:absolute">
               <h2 className="leading-[1.33333] text-2xl font-semibold">
                 1. Select a component
               </h2>
@@ -43,7 +43,7 @@ const Features = () => {
               alt="Tailwind"
               src="/landing/Editor.png"
             />
-            <div className="mt-[-144px] w-full bottom-16 left-10 px-8  lg:mt-0 lg:pl-0 lg:w-auto lg:absolute">
+            <div className="mt-[-100px] w-full bottom-16 left-10 px-8  lg:mt-0 lg:pl-0 lg:w-auto lg:absolute">
               <h2 className="leading-[1.33333] text-2xl font-semibold">
                 2. Make it yours
               </h2>
@@ -60,7 +60,17 @@ const Features = () => {
             height={0}
             sizes="100vw"
             style={{ width: "auto", height: "auto" }}
+            className="hidden md:block"
             src="/landing/Large-Layout.png"
+            alt="Clean Code"
+          />
+          <Image
+            width={0}
+            height={0}
+            sizes="100vw"
+            style={{ width: "auto", height: "auto" }}
+            className="block md:hidden"
+            src="/landing/Small-Layout.png"
             alt="Clean Code"
           />
           <div className="mt-8 pl-8 w-full bottom-16 left-10  lg:mt-0 lg:pl-0 lg:w-auto lg:absolute">

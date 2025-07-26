@@ -1,7 +1,6 @@
 "use client";
 import Squares from "./Squares";
 import AddToChrome from "@/components/AddToChromeBtn";
-import AddToEdgeBtn from "@/components/AddToEdgeBtn";
 import Image from "next/image";
 import { motion, Variants } from "framer-motion";
 
@@ -50,7 +49,7 @@ const Header = () => {
         />
       </motion.div>
 
-      <div className="max-w-3xl z-[1] relative text-center mx-auto pointer-events-none lg:pb-20 py-32 md:py-48 lg:pt-33 ">
+      <div className="max-w-3xl z-[1] relative text-center mx-auto pointer-events-none lg:pb-30 py-32 md:py-48 lg:pt-33 ">
         <motion.div
           custom={0}
           variants={fadeUpVariants}
@@ -95,14 +94,6 @@ const Header = () => {
             animate="visible"
           >
             <AddToChrome />
-          </motion.div>
-          <motion.div
-            custom={3}
-            variants={fadeUpVariants}
-            initial="hidden"
-            animate="visible"
-          >
-            <AddToEdgeBtn />
           </motion.div>
         </div>
       </div>

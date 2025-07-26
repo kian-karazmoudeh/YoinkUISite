@@ -1,5 +1,4 @@
 import AddToChrome from "@/components/AddToChromeBtn";
-import AddToEdgeBtn from "@/components/AddToEdgeBtn";
 import Image from "next/image";
 
 const CTA = () => {
@@ -23,7 +22,6 @@ const CTA = () => {
         </h1>
         <div className="mt-10 ml-2 gap-y-[10px] grid text-center justify-start items-center  lg:ml-0 lg:justify-center">
           <AddToChrome />
-          <AddToEdgeBtn />
         </div>
       </div>
     </div>

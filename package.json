@@ -29,6 +29,7 @@
     "grapesjs": "^0.22.9",
     "js-beautify": "^1.15.4",
     "lucide-react": "^0.525.0",
+    "motion": "^12.23.9",
     "next": "15.3.2",
     "openai": "^5.5.0",
     "react": "^19.0.0",

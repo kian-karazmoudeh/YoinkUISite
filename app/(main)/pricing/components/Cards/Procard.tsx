@@ -96,9 +96,9 @@ const ProCard = ({ type, userMembership, loading, setLoading }: CardProps) => {
         For serious builders who want full power, speed, and control.
       </p>
       {loading ? (
-        <LoadingBtn className="text-zinc-900 bg-amber-400" />
+        <LoadingBtn className="text-zinc-900 bg-sky-800" />
       ) : userMembership == "premium" ? (
-        <CurrentPlanBtn className="text-zinc-900 bg-amber-400" />
+        <CurrentPlanBtn className="text-zinc-900 bg-sky-800" />
       ) : (
         <SubscribeBtn
           href={paymentLinks[type]}

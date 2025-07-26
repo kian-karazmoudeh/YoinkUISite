@@ -4,6 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import Sidebar from "./Sidebar";
 import { useEffect, useState } from "react";
+import { motion, useScroll, useMotionValueEvent } from "framer-motion";
 
 const links: { href: string; label: string }[] = [
   { label: "Features", href: "/#features" },
@@ -14,6 +15,28 @@ const links: { href: string; label: string }[] = [
 
 const Navbar = () => {
   const [showSidebar, setShowSidebar] = useState(false);
+  const [isVisible, setIsVisible] = useState(true);
+  const [lastScrollY, setLastScrollY] = useState(0);
+  const [isAtTop, setIsAtTop] = useState(true);
+  const { scrollY } = useScroll();
+
+  useMotionValueEvent(scrollY, "change", (latest) => {
+    const current = latest;
+    const previous = lastScrollY;
+
+    // Check if at top of page
+    setIsAtTop(current <= 10);
+
+    if (current > previous && current > 100) {
+      // Scrolling down and past 100px
+      setIsVisible(false);
+    } else {
+      // Scrolling up
+      setIsVisible(true);
+    }
+
+    setLastScrollY(current);
+  });
 
   useEffect(() => {
     const mediaQuery = window.matchMedia("(min-width: 1024px)");
@@ -39,7 +62,19 @@ const Navbar = () => {
 
   return (
     <>
-      <div className="w-full max-w-304 top-0 z-[12] flex absolute justify-between items-center [translate:0px] mx-auto inset-x-0  lg:mt-5">
+      <motion.div
+        className={`w-full max-w-304 top-0 z-[12] flex fixed justify-between items-center [translate:0px] mx-auto inset-x-0 lg:mt-5 rounded-full transition-all duration-300 `}
+        style={{
+          backgroundColor: isAtTop ? "transparent" : "rgba(255, 255, 255, 0.3)",
+          boxShadow: isAtTop ? "none" : "0 0 10px 0 rgba(0, 0, 0, 0.1)",
+          backdropFilter: isAtTop ? "none" : "blur(10px)",
+          maxWidth: isAtTop ? "1216px" : "1190px",
+          top: isAtTop ? "10px" : "20px",
+        }}
+        initial={{ y: -100 }}
+        animate={{ y: isVisible ? 0 : -100 }}
+        transition={{ duration: 0.3, ease: "easeInOut" }}
+      >
         <header className="w-full relative">
           <nav className="text-stone-950 leading-[1.5] font-[Aeonik,_sans-serif] flex justify-between items-center p-2">
             <div className="mt-[-2px] ml-2 grow-[1] flex">
@@ -140,7 +175,7 @@ const Navbar = () => {
             </div>
           </nav>
         </header>
-      </div>
+      </motion.div>
       <Sidebar
         show={showSidebar}
         onClose={() => setShowSidebar(false)}

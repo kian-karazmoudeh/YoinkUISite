@@ -37,6 +37,7 @@ const Padding = () => {
           {isExpanded ? (
             <>
               <DraggableInput
+                key="p-top"
                 value={styleValues["padding-top"]}
                 onChange={(value) =>
                   updateComponentStyle("padding-top", value.toString())
@@ -44,6 +45,7 @@ const Padding = () => {
                 icon={PaddingTopIcon}
               />
               <DraggableInput
+                key="p-bottom"
                 value={styleValues["padding-bottom"]}
                 onChange={(value) =>
                   updateComponentStyle("padding-bottom", value.toString())
@@ -51,6 +53,7 @@ const Padding = () => {
                 icon={PaddingBottomIcon}
               />
               <DraggableInput
+                key="p-left"
                 value={styleValues["padding-left"]}
                 onChange={(value) =>
                   updateComponentStyle("padding-left", value.toString())
@@ -58,6 +61,7 @@ const Padding = () => {
                 icon={PaddingLeftIcon}
               />
               <DraggableInput
+                key="p-right"
                 value={styleValues["padding-right"]}
                 onChange={(value) =>
                   updateComponentStyle("padding-right", value.toString())
@@ -68,17 +72,29 @@ const Padding = () => {
           ) : (
             <>
               <DraggableInput
-                value={styleValues["padding-left"]}
-                onChange={(value) =>
-                  updateComponentStyle("padding-left", value.toString())
+                key="p-horizontal"
+                value={
+                  styleValues["padding-left"] == styleValues["padding-right"]
+                    ? styleValues["padding-left"]
+                    : undefined
                 }
+                onChange={(value) => {
+                  updateComponentStyle("padding-left", value.toString());
+                  updateComponentStyle("padding-right", value.toString());
+                }}
                 icon={PaddingHorizontalIcon}
               />
               <DraggableInput
-                value={styleValues["padding-right"]}
-                onChange={(value) =>
-                  updateComponentStyle("padding-right", value.toString())
+                key="p-vertical"
+                value={
+                  styleValues["padding-top"] == styleValues["padding-bottom"]
+                    ? styleValues["padding-top"]
+                    : undefined
                 }
+                onChange={(value) => {
+                  updateComponentStyle("padding-top", value.toString());
+                  updateComponentStyle("padding-bottom", value.toString());
+                }}
                 icon={PaddingVerticalIcon}
               />
             </>

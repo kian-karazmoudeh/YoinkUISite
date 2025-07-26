@@ -1,4 +1,3 @@
-// import { twMerge } from "tailwind-merge";
 import {
   addCSSAttributesRecursivelyResponsive,
   convertNodeToTailwindLgRecurse,
@@ -6,11 +5,6 @@ import {
   convertNodeToTailwindBaseRecurse,
 } from "./CSS/css";
 import { cleanRedundantTags } from "./HTML/dom";
-// import {
-//   changeImgTagSrc,
-//   changeSourceTagSrc,
-//   changeVideoTagSrc,
-// } from "./HTML/placeholder";
 import { removeCommentsFromDOM } from "./simplify/dom/removeComments";
 import {
   removeYoinkAttributes,
@@ -35,17 +29,6 @@ function convertToComponent(root: Element): HTMLElement {
   // let bodyClasses = docBody?.getAttribute("data-yoink-classes");
   // create a new div to hold the children of body
 
-  // const componentContainer = document.createElement("div");
-  // componentContainer.setAttribute(
-  //   "data-yoink-classes",
-  //   twMerge(htmlClasses, bodyClasses)
-  // );
-
-  // Move all children from body to component div
-  // while (docBody!.firstChild) {
-  //   componentContainer.appendChild(docBody!.firstChild);
-  // }
-
   removeInvisibleNodesRecurse(rootClone);
   swapYoinkClasses(rootClone);
   removeYoinkAttributes(rootClone);
@@ -55,20 +38,22 @@ function convertToComponent(root: Element): HTMLElement {
   return rootClone;
 }
 
-export function mapResponsivePage() {
-  const editor = useEditorStore.getState().editor;
-  let root = editor?.getWrapper() as Component | undefined;
-  if (!root) return;
-  addCSSAttributesRecursivelyResponsive(root, "Desktop");
-  addCSSAttributesRecursivelyResponsive(root, "Tablet");
-  addCSSAttributesRecursivelyResponsive(root, "Mobile");
+export async function mapResponsivePage() {
+  return new Promise<HTMLElement>((resolve) => {
+    const editor = useEditorStore.getState().editor;
+    let root = editor?.getWrapper() as Component | undefined;
+    if (!root) return;
+    addCSSAttributesRecursivelyResponsive(root, "Desktop");
+    addCSSAttributesRecursivelyResponsive(root, "Tablet");
+    addCSSAttributesRecursivelyResponsive(root, "Mobile");
 
-  convertNodeToTailwindLgRecurse(root);
-  convertNodeToTailwindMdRecurse(root);
-  convertNodeToTailwindBaseRecurse(root);
+    convertNodeToTailwindLgRecurse(root);
+    convertNodeToTailwindMdRecurse(root);
+    convertNodeToTailwindBaseRecurse(root);
 
-  let converted = convertToComponent(root.getEl()!);
+    let converted = convertToComponent(root.getEl()!);
 
-  removeYoinkAttributesFromCanvas(root);
-  console.log(converted);
+    removeYoinkAttributesFromCanvas(root);
+    resolve(converted);
+  });
 }

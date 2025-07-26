@@ -15,7 +15,7 @@ const Navbar = ({ user }: { user: User | null }) => {
           >
             <div className="relative size-full cursor-pointer">
               <Image
-                src="/logo/YoinkUI.png"
+                src="/logo/YoinkUI transparent logo.png"
                 alt="logo"
                 fill
                 className="size-full rounded-full"

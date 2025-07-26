@@ -301,3 +301,136 @@ export const BorderWidthIcon = (
     ></path>
   </svg>
 );
+
+export const BorderTop = (
+  <svg
+    height="16"
+    strokeLinejoin="round"
+    viewBox="0 0 16 16"
+    width="16"
+    className="text-zinc-400 fill-black stroke-[1px] box-border align-middle overflow-hidden size-4"
+  >
+    <path
+      d="M3.60938 13.25H4.00977V14.75H2.10938V13H3.60938V13.25ZM7.46094 14.75H5.16016V13.25H7.46094V14.75ZM10.9121 14.75H8.61133V13.25H10.9121V14.75ZM13.9619 14.75H12.0615V13.25H12.4619V13H13.9619V14.75ZM3.60938 12H2.10938V10H3.60938V12ZM13.9629 12H12.4629V10H13.9629V12ZM3.60938 9H2.10938V7H3.60938V9ZM13.9629 9H12.4629V7H13.9629V9ZM15 6H1V2H15V6ZM2.5 4.5H13.5V3.5H2.5V4.5Z"
+      className="fill-zinc-400 stroke-[1px] inline box-border"
+    ></path>
+  </svg>
+);
+
+export const BorderBottom = (
+  <svg
+    height="16"
+    strokeLinejoin="round"
+    viewBox="0 0 16 16"
+    width="16"
+    className="text-zinc-400 fill-black stroke-[1px] box-border align-middle overflow-hidden size-4"
+  >
+    <path
+      d="M3.60938 3.5H4.00977V2H2.10938V3.75H3.60938V3.5ZM7.46094 2H5.16016V3.5H7.46094V2ZM10.9121 2H8.61133V3.5H10.9121V2ZM13.9619 2H12.0615V3.5H12.4619V3.75H13.9619V2ZM3.60938 4.75H2.10938V6.75H3.60938V4.75ZM13.9629 4.75H12.4629V6.75H13.9629V4.75ZM3.60938 7.75H2.10938V9.75H3.60938V7.75ZM13.9629 7.75H12.4629V9.75H13.9629V7.75ZM15 10.75H1V14.75H15V10.75ZM2.5 12.25H13.5V13.25H2.5V12.25Z"
+      className="fill-zinc-400 stroke-[1px] inline box-border"
+    ></path>
+  </svg>
+);
+
+export const BorderLeft = (
+  <svg
+    height="16"
+    strokeLinejoin="round"
+    viewBox="0 0 16 16"
+    width="16"
+    className="text-zinc-400 fill-black stroke-[1px] box-border align-middle overflow-hidden size-4"
+  >
+    <path
+      d="M13.25 3.60937V4.00977H14.75V2.10937H13V3.60937H13.25ZM14.75 7.46094V5.16016H13.25V7.46094H14.75ZM14.75 10.9121V8.61133H13.25V10.9121L14.75 10.9121ZM14.75 13.9619L14.75 12.0615L13.25 12.0615V12.4619H13L13 13.9619L14.75 13.9619ZM12 3.60937V2.10937L10 2.10937V3.60937L12 3.60937ZM12 13.9629L12 12.4629H10L10 13.9629H12ZM9 3.60937V2.10937L7 2.10937L7 3.60937L9 3.60937ZM9 13.9629V12.4629H7V13.9629H9ZM6 15L6 1L2 1L2 15H6ZM4.5 2.5L4.5 13.5H3.5L3.5 2.5H4.5Z"
+      className="fill-zinc-400 stroke-[1px] inline box-border"
+    ></path>
+  </svg>
+);
+
+export const BorderRight = (
+  <svg
+    height="16"
+    strokeLinejoin="round"
+    viewBox="0 0 16 16"
+    width="16"
+    className="text-zinc-400 fill-black stroke-[1px] box-border align-middle overflow-hidden size-4"
+  >
+    <path
+      d="M3.5 3.60937V4.00977H2V2.10937H3.75V3.60937H3.5ZM2 7.46094V5.16016H3.5V7.46094H2ZM2 10.9121V8.61133H3.5V10.9121L2 10.9121ZM2 13.9619L2 12.0615L3.5 12.0615V12.4619H3.75L3.75 13.9619L2 13.9619ZM4.75 3.60937V2.10937L6.75 2.10937V3.60937L4.75 3.60937ZM4.75 13.9629L4.75 12.4629H6.75L6.75 13.9629H4.75ZM7.75 3.60937L7.75 2.10937L9.75 2.10937V3.60937L7.75 3.60937ZM7.75 13.9629V12.4629H9.75V13.9629H7.75ZM10.75 15L10.75 1L14.75 1L14.75 15H10.75ZM12.25 2.5L12.25 13.5H13.25L13.25 2.5H12.25Z"
+      className="fill-zinc-400 stroke-[1px] inline box-border"
+    ></path>
+  </svg>
+);
+
+export const BoxShadow = (
+  <svg
+    height="16"
+    strokeLinejoin="round"
+    viewBox="0 0 16 16"
+    width="16"
+    className="text-zinc-400 shrink-0 fill-black stroke-[1px] box-border align-middle cursor-pointer overflow-hidden size-4"
+  >
+    <svg
+      width="16"
+      height="16"
+      viewBox="0 0 16 16"
+      xmlns="http://www.w3.org/2000/svg"
+      className="shrink-0 fill-[none] stroke-[1px] box-border align-middle cursor-pointer overflow-hidden"
+    >
+      <g className="fill-[none] stroke-[1px] inline box-border cursor-pointer">
+        <path
+          d="M15.25 12C15.25 13.7949 13.7949 15.25 12 15.25H4C2.20508 15.25 0.750002 13.7949 0.75 12V11.9492C1.63982 13.0724 3.00385 13.7499 4.47168 13.75H11.2832C12.8846 13.7499 14.3732 12.9417 15.25 11.6074V12Z"
+          className="opacity-[0.33] fill-zinc-400 stroke-[1.5px] stroke-zinc-400 inline box-border cursor-pointer"
+        ></path>
+        <rect
+          x="0.75"
+          y="0.75"
+          width="14.5"
+          height="11.5"
+          rx="3.25"
+          className="w-[14.5px] h-[11.5px] fill-[none] stroke-[1.5px] stroke-zinc-400 inline box-border cursor-pointer"
+        ></rect>
+      </g>
+    </svg>
+  </svg>
+);
+
+export const Opacity = (
+  <svg
+    height="16"
+    strokeLinejoin="round"
+    viewBox="0 0 16 16"
+    width="16"
+    className="text-zinc-400 fill-black stroke-[1px] box-border align-middle overflow-hidden size-4"
+  >
+    <circle
+      cx="8"
+      cy="8"
+      r="7.25"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className="fill-transparent stroke-[1.5px] stroke-zinc-400 inline box-border"
+    ></circle>
+    <path
+      fillRule="evenodd"
+      clipRule="evenodd"
+      d="M5 1H7V3H5V1ZM5 5V3H3V5H1V7H3V9H1V11H3V13H5V15H7V13H9V15H11V13H13V11H15V9H13V7H15V5H13V3H11V1H9V3H7V5H5ZM5 7H3V5H5V7ZM7 7V5H9V7H7ZM7 9V7H5V9H3V11H5V13H7V11H9V13H11V11H13V9H11V7H13V5H11V3H9V5H11V7H9V9H7ZM9 9H11V11H9V9ZM7 9V11H5V9H7Z"
+      className="opacity-[0.33] fill-zinc-400 stroke-[1px] inline box-border"
+    ></path>
+  </svg>
+);
+
+export const GapIcon = (
+  <svg
+    height="16"
+    strokeLinejoin="round"
+    viewBox="0 0 16 16"
+    width="16"
+    className="text-zinc-400 fill-black stroke-[1px] box-border align-middle overflow-hidden size-4"
+  >
+    <path
+      d="M4.11621 14C4.11621 14.5522 3.6684 14.9999 3.11621 15H0.0078125V13.5H2.61621V2.5H0.0078125V1H3.11621C3.66831 1.00021 4.11621 1.44785 4.11621 2V14ZM7.08203 12.5V3.5H8.58203V12.5H7.08203ZM13.3887 2.5V13.5H15.9971V15H12.8887C12.3365 14.9999 11.8887 14.5522 11.8887 14V2C11.8887 1.44785 12.3366 1.00021 12.8887 1H15.9971V2.5H13.3887Z"
+      className="fill-zinc-400 stroke-[1px] inline box-border"
+    ></path>
+  </svg>
+);

@@ -87,10 +87,7 @@ const DashboardHomePage = () => {
     <>
       <Navbar user={user} />
 
-      <div
-        className='text-zinc-900 leading-[1.5] h-full min-w-74 font-[GeistSans,_"GeistSans_Fallback",_ui-sans-serif,_system-ui,_sans-serif,_"Apple_Color_Emoji",_"Segoe_UI_Emoji",_"Segoe_UI_Symbol",_"Noto_Color_Emoji"] bg-zinc-50  shadow-[_#0000000a_0px_2px_2px_0px,_#0000000a_0px_8px_8px_-8px] grow bg-clip-padding relative overflow-hidden border-zinc-800 border-[0.8px] rounded-lg'
-        id="block-panel-left"
-      >
+      <div className='text-zinc-50 leading-[1.5] h-full min-w-74 font-[GeistSans,_"GeistSans_Fallback",_ui-sans-serif,_system-ui,_sans-serif,_"Apple_Color_Emoji",_"Segoe_UI_Emoji",_"Segoe_UI_Symbol",_"Noto_Color_Emoji"] bg-[#0F0E11]  shadow-[_#0000000a_0px_2px_2px_0px,_#0000000a_0px_8px_8px_-8px] grow bg-clip-padding relative overflow-hidden border-zinc-800 border-[0.8px] rounded-lg'>
         <div className="h-full flex relative flex-col">
           <div className="h-full flex flex-col justify-center items-center gap-8">
             <div className="w-full z-0 grow flex overflow-auto flex-col px-6 gap-24">

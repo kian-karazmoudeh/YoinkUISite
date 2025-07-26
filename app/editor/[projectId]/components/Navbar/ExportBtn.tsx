@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Upload, Download, Copy } from "lucide-react";
+import { Upload, Download, Copy, Loader2 } from "lucide-react";
 import { mapResponsivePage } from "../../export/tailwind";
 import {
   Dialog,
@@ -13,22 +13,62 @@ import {
   DialogClose,
 } from "@/components/ui/dialog";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
+import {
+  downloadStringAsFile,
+  formatHTMLString,
+  formatJsxString,
+} from "../../export/shared/format";
 
 const ExportBtn = () => {
   const [open, setOpen] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const [tab, setTab] = useState("download");
 
   // type: 'html-download' | 'jsx-download' | 'html-copy' | 'jsx-copy'
-  const handleExport = async (type: string) => {
-    mapResponsivePage();
-    setOpen(false);
-    // TODO: Implement export logic based on type
+  const handleExport = (type: string) => {
+    setIsLoading(true);
+
+    // Use setTimeout to defer the heavy work to the next tick
+    // This allows React to update the UI and show the loading state first
+    setTimeout(() => {
+      mapResponsivePage()
+        .then((converted) => {
+          let content = "";
+          switch (type) {
+            case "html-download":
+              content = formatHTMLString(converted?.outerHTML ?? "");
+              downloadStringAsFile(content, "export.html");
+              break;
+            case "jsx-download":
+              content = formatJsxString(converted?.outerHTML ?? "");
+              downloadStringAsFile(content, "export.jsx");
+              break;
+            case "html-copy":
+              content = formatHTMLString(converted?.outerHTML ?? "");
+              navigator.clipboard.writeText(content);
+              alert("Copied to clipboard");
+              break;
+            case "jsx-copy":
+              content = formatJsxString(converted?.outerHTML ?? "");
+              navigator.clipboard.writeText(content);
+              alert("Copied to clipboard");
+              break;
+          }
+          setOpen(false);
+          setIsLoading(false);
+        })
+        .catch((error) => {
+          console.error("Export failed:", error);
+          setIsLoading(false);
+          setOpen(false);
+        });
+    }, 0);
   };
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button className="cursor-pointer text-zinc-50 bg-zinc-900 hover:bg-zinc-800 border border-zinc-700">
+        <Button className="cursor-pointer text-zinc-900 bg-zinc-50 hover:bg-zinc-100 border border-zinc-200">
           <Upload className="size-4 mr-2" /> Export
         </Button>
       </DialogTrigger>
@@ -64,15 +104,31 @@ const ExportBtn = () => {
                   variant="outline"
                   className="justify-start gap-3 text-base bg-zinc-800 border-zinc-700 text-zinc-100 hover:bg-zinc-700 hover:text-blue-400"
                   onClick={() => handleExport("html-download")}
+                  disabled={isLoading}
                 >
-                  <Download className="size-4 text-blue-400" /> Download as HTML
+                  {isLoading ? (
+                    <>Loading...</>
+                  ) : (
+                    <>
+                      <Download className="size-4 text-blue-400" />
+                      Download as HTML"
+                    </>
+                  )}
                 </Button>
                 <Button
                   variant="outline"
                   className="justify-start gap-3 text-base bg-zinc-800 border-zinc-700 text-zinc-100 hover:bg-zinc-700 hover:text-green-400"
                   onClick={() => handleExport("jsx-download")}
+                  disabled={isLoading}
                 >
-                  <Download className="size-4 text-green-400" /> Download as JSX
+                  {isLoading ? (
+                    <>Loading...</>
+                  ) : (
+                    <>
+                      <Download className="size-4 text-green-400" />
+                      Download as JSX
+                    </>
+                  )}
                 </Button>
               </div>
             </TabsContent>
@@ -82,15 +138,31 @@ const ExportBtn = () => {
                   variant="outline"
                   className="justify-start gap-3 text-base bg-zinc-800 border-zinc-700 text-zinc-100 hover:bg-zinc-700 hover:text-blue-400"
                   onClick={() => handleExport("html-copy")}
+                  disabled={isLoading}
                 >
-                  <Copy className="size-4 text-blue-400" /> Copy as HTML
+                  {isLoading ? (
+                    <>Loading...</>
+                  ) : (
+                    <>
+                      <Copy className="size-4 text-blue-400" />
+                      Copy as HTML
+                    </>
+                  )}
                 </Button>
                 <Button
                   variant="outline"
                   className="justify-start gap-3 text-base bg-zinc-800 border-zinc-700 text-zinc-100 hover:bg-zinc-700 hover:text-green-400"
                   onClick={() => handleExport("jsx-copy")}
+                  disabled={isLoading}
                 >
-                  <Copy className="size-4 text-green-400" /> Copy as JSX
+                  {isLoading ? (
+                    <>Loading...</>
+                  ) : (
+                    <>
+                      <Copy className="size-4 text-green-400" />
+                      Copy as JSX
+                    </>
+                  )}
                 </Button>
               </div>
             </TabsContent>

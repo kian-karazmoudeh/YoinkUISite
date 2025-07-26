@@ -37,6 +37,7 @@ const Margin = () => {
           {isExpanded ? (
             <>
               <DraggableInput
+                key="m-top"
                 value={styleValues["margin-top"]}
                 onChange={(value) =>
                   updateComponentStyle("margin-top", value.toString())
@@ -45,6 +46,7 @@ const Margin = () => {
               />
 
               <DraggableInput
+                key="m-bottom"
                 value={styleValues["margin-bottom"]}
                 onChange={(value) =>
                   updateComponentStyle("margin-bottom", value.toString())
@@ -52,6 +54,7 @@ const Margin = () => {
                 icon={MarginBottomIcon}
               />
               <DraggableInput
+                key="m-left"
                 value={styleValues["margin-left"]}
                 onChange={(value) =>
                   updateComponentStyle("margin-left", value.toString())
@@ -60,6 +63,7 @@ const Margin = () => {
               />
 
               <DraggableInput
+                key="m-right"
                 value={styleValues["margin-right"]}
                 onChange={(value) =>
                   updateComponentStyle("margin-right", value.toString())
@@ -70,18 +74,30 @@ const Margin = () => {
           ) : (
             <>
               <DraggableInput
-                value={styleValues["margin-left"]}
-                onChange={(value) =>
-                  updateComponentStyle("margin-left", value.toString())
+                key="m-horizontal"
+                value={
+                  styleValues["margin-left"] == styleValues["margin-right"]
+                    ? styleValues["margin-left"]
+                    : undefined
                 }
+                onChange={(value) => {
+                  updateComponentStyle("margin-left", value.toString());
+                  updateComponentStyle("margin-right", value.toString());
+                }}
                 icon={MarginHorizontalIcon}
               />
 
               <DraggableInput
-                value={styleValues["margin-right"]}
-                onChange={(value) =>
-                  updateComponentStyle("margin-right", value.toString())
+                key="m-vertical"
+                value={
+                  styleValues["margin-top"] == styleValues["margin-bottom"]
+                    ? styleValues["margin-top"]
+                    : undefined
                 }
+                onChange={(value) => {
+                  updateComponentStyle("margin-top", value.toString());
+                  updateComponentStyle("margin-bottom", value.toString());
+                }}
                 icon={MarginVerticalIcon}
               />
             </>

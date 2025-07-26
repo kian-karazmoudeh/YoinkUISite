@@ -46,6 +46,14 @@ function cssToTailwind(cssJson: Record<string, string>) {
 
 function getCssObject(component: Component, device: DeviceName) {
   const { editor, defaultBaseStyles } = useEditorStore.getState();
+  // console.log(
+  //   getMergedComponentStyles({
+  //     component,
+  //     device,
+  //     editor,
+  //     defaultBaseStyles,
+  //   })
+  // );
   return getMergedComponentStyles({
     component,
     device,
@@ -103,7 +111,7 @@ export function convertNodeToTailwindLgRecurse(node: Component) {
   if (node.getType() == "textnode") {
     return;
   }
-  // const el = node.getEl()!;
+  const el = node.getEl()!;
   const lgData = node.getAttributes()["data-yoink-lg"];
   const mdData = node.getAttributes()["data-yoink-md"];
 
@@ -125,14 +133,13 @@ export function convertNodeToTailwindLgRecurse(node: Component) {
     lgTailwindClasses = lgTailwindClasses.filter(
       (cls) => !mdTailwindClasses.includes(cls)
     );
-    // lgTailwindClasses = simplifySVGSpecific(el, lgTailwindClasses);
+    lgTailwindClasses = simplifySVGSpecific(el, lgTailwindClasses);
     lgTailwindClasses = simplifyClasses(lgTailwindClasses);
 
     lgTailwindClasses = lgTailwindClasses
       .filter((cls) => cls.length > 0)
       .map((cls) => `lg:${cls}`);
 
-    console.log(lgTailwindClasses);
     node.addAttributes({
       "data-yoink-classes": lgTailwindClasses.join(" "),
     });
@@ -167,7 +174,7 @@ export function convertNodeToTailwindMdRecurse(node: Component) {
     mdTailwindClasses = mdTailwindClasses.filter(
       (cls) => !smTailwindClasses.includes(cls)
     );
-    // mdTailwindClasses = simplifySVGSpecific(el, mdTailwindClasses);
+    mdTailwindClasses = simplifySVGSpecific(el, mdTailwindClasses);
     mdTailwindClasses = simplifyClasses(mdTailwindClasses);
 
     mdTailwindClasses = mdTailwindClasses
@@ -218,7 +225,7 @@ export async function convertNodeToTailwindBaseRecurse(
     smTailwindClasses = smTailwindClasses.filter(
       (cls) => !defaultTailwindClasses.includes(cls)
     );
-    // smTailwindClasses = simplifySVGSpecific(el, smTailwindClasses);
+    smTailwindClasses = simplifySVGSpecific(el, smTailwindClasses);
     // for explanation on why border patterns is only checked in sm, go to the function definition
     smTailwindClasses = simplifyBorderPatterns(smTailwindClasses);
     smTailwindClasses = simplifyClasses(smTailwindClasses);

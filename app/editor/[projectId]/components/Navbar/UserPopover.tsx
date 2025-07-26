@@ -2,8 +2,8 @@
 
 import {
   Popover,
-  PopoverContent,
   PopoverTrigger,
+  PopoverContent,
 } from "@/components/ui/popover";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -11,34 +11,19 @@ import { ChevronsUpDown, LogOut, ArrowUpRight } from "lucide-react";
 import Link from "next/link";
 import { User } from "@supabase/supabase-js";
 import { createClient } from "@/utils/supabase/client";
-import { useEffect, useState } from "react";
+import React from "react";
 
-const Profile = ({ user }: { user: User | null }) => {
-  const [membership, setMembership] = useState<string | null>(null);
-  const supabase = createClient();
-
-  useEffect(() => {
-    const getMembership = async () => {
-      if (user) {
-        const { data: profileData } = await supabase
-          .from("profiles")
-          .select("*")
-          .eq("id", user.id)
-          .single();
-        setMembership(profileData?.membership);
-      }
-    };
-
-    getMembership();
-  }, [user]);
-
-  if (!user) {
-    return <div>Loading...</div>;
-  }
-
+export default function UserPopover({
+  user,
+  membership,
+}: {
+  user: User;
+  membership: string | null;
+}) {
   const isPremium = membership === "pro" || membership === "premium";
 
   const handleSignOut = async () => {
+    const supabase = createClient();
     await supabase.auth.signOut();
     window.location.reload();
   };
@@ -122,6 +107,4 @@ const Profile = ({ user }: { user: User | null }) => {
       </PopoverContent>
     </Popover>
   );
-};
-
-export default Profile;
+}

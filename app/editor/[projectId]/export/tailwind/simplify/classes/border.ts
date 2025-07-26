@@ -18,11 +18,84 @@ const borderWidthProps = [
   "outline-",
 ];
 
+export function simplifyVerboseBorderPatterns(classes: string[]) {
+  // Find all border style patterns
+  const borderStylePatterns = classes.filter((cls) =>
+    cls.match(/\[border-(top|right|bottom|left)-style:[^\]]+\]/)
+  );
+
+  if (borderStylePatterns.length === 0) {
+    return classes;
+  }
+
+  // Extract values for each side
+  const sideValues: Record<string, string> = {};
+
+  borderStylePatterns.forEach((cls) => {
+    const match = cls.match(
+      /\[border-(top|right|bottom|left)-style:([^\]]+)\]/
+    );
+    if (match) {
+      const side = match[1];
+      const value = match[2];
+      sideValues[side] = value;
+    }
+  });
+
+  // Check if all four sides have the same value
+  const sides = ["top", "right", "bottom", "left"];
+  const allSidesPresent = sides.every((side) => sideValues[side] !== undefined);
+
+  if (allSidesPresent) {
+    const firstValue = sideValues.top;
+    const allSameValue = sides.every((side) => sideValues[side] === firstValue);
+
+    if (allSameValue) {
+      // Convert to single Tailwind class
+      let tailwindClass = "";
+
+      if (firstValue === "solid") {
+        tailwindClass = "border-solid";
+      } else if (firstValue === "none") {
+        tailwindClass = "border-none";
+      } else if (firstValue === "dashed") {
+        tailwindClass = "border-dashed";
+      } else if (firstValue === "dotted") {
+        tailwindClass = "border-dotted";
+      } else if (firstValue === "double") {
+        tailwindClass = "border-double";
+      } else if (firstValue === "hidden") {
+        tailwindClass = "border-hidden";
+      } else if (firstValue === "groove") {
+        tailwindClass = "border-groove";
+      } else if (firstValue === "ridge") {
+        tailwindClass = "border-ridge";
+      } else if (firstValue === "inset") {
+        tailwindClass = "border-inset";
+      } else if (firstValue === "outset") {
+        tailwindClass = "border-outset";
+      }
+
+      if (tailwindClass) {
+        // Remove the individual border style patterns and add the unified class
+        const filteredClasses = classes.filter(
+          (cls) => !cls.match(/\[border-(top|right|bottom|left)-style:[^\]]+\]/)
+        );
+        return [...filteredClasses, tailwindClass];
+      }
+    }
+  }
+
+  // If not all sides are present or values don't match, return original classes
+  return classes;
+}
+
 // const outlineWidthProp = "outline-";
 
 // only use this in sm. The reason for it is because if border style is found in md or lg, that means it was changed in sm and
 // is being reverted in md or lg. But if its found in sm, then its redundent.
 export function simplifyBorderPatterns(classes: string[]) {
+  classes = simplifyVerboseBorderPatterns(classes);
   return classes.filter(
     (cls) => cls !== borderStyleProp && cls !== outlineStyleProp
   );

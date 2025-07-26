@@ -69,7 +69,7 @@ const BGPattern = ({
   variant = "grid",
   mask = "none",
   size = 24,
-  fill = "rgba(12, 140, 233, 0.5)",
+  fill = "#27272a",
   className,
   style,
   ...props

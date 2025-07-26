@@ -36,7 +36,7 @@ const YoinkFile = (props: YoinkFile) => {
   return (
     <Link
       href={`/editor/${props.id}`}
-      className="leading-[1.42857] w-full min-w-0 text-sm flex relative flex-col gap-2 p-3 rounded-md cursor-pointer border border-zinc-300 hover:border-l-4 hover:border-l-sky-400 transition-all duration-300"
+      className="leading-[1.42857] w-full min-w-0 text-sm flex relative flex-col gap-2 p-3 rounded-md cursor-pointer border border-zinc-800 hover:border-l-4 hover:border-l-sky-400 transition-all duration-300"
     >
       <div className="pr-1 flex items-center gap-3">
         <div className="flex items-center cursor-pointer gap-3">

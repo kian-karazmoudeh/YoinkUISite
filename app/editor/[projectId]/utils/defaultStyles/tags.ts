@@ -56,9 +56,9 @@ function getTagStyles(
       stylesMap.get("border-bottom-right-radius")?.toString() || "0px",
     "border-bottom-left-radius":
       stylesMap.get("border-bottom-left-radius")?.toString() || "0px",
-    "border-radius": stylesMap.get("border-radius")?.toString() || "0px",
+    // "border-radius": stylesMap.get("border-radius")?.toString() || "0px",
     // "border-width": "0px",
-    "border-style": stylesMap.get("border-style")?.toString() || "none",
+    // "border-style": stylesMap.get("border-style")?.toString() || "none",
     // "border-top-width": "0px",
     "border-top-style": stylesMap.get("border-top-style")?.toString() || "none",
     // "border-right-width": "0px",

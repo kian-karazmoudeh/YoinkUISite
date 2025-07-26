@@ -2,7 +2,7 @@ import { useShallow } from "zustand/react/shallow";
 import RadioGroup, { Option } from "../shared/RadioGroup";
 import Category from "../shared/Category";
 import { useEditorStore } from "@/app/editor/[projectId]/store";
-import { Ban } from "lucide-react";
+import { Ban, Type } from "lucide-react";
 import {
   Select,
   SelectContent,
@@ -10,6 +10,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import DraggableInput from "../shared/DraggableInput";
 
 const DECORATION_BUTTONS: Option[] = [
   {
@@ -90,8 +91,8 @@ const Typography = () => {
   );
   return (
     <Category title="Typography">
-      <div className="w-full flex flex-wrap gap-3">
-        <div title="Font weight" className="grow flex">
+      <div className="w-full grid grid-cols-2 gap-3">
+        <div title="Font weight" className="flex">
           <div className="w-full flex flex-col gap-[6px]">
             <label className="text-zinc-400 leading-[16px] text-xs capitalize cursor-default">
               Weight
@@ -123,42 +124,18 @@ const Typography = () => {
             </Select>
           </div>
         </div>
-        <div title="Font size" className="grow flex">
+        <div title="Font size" className="flex">
           <div className="w-full flex flex-col gap-[6px]">
             <label className="text-zinc-400 leading-[16px] text-xs capitalize cursor-default">
               Font size
             </label>
-            <Select
+            <DraggableInput
               value={styleValues["font-size"]}
-              onValueChange={(val) => updateComponentStyle("font-size", val)}
-            >
-              <SelectTrigger className="w-full">
-                <SelectValue placeholder="select" />
-              </SelectTrigger>
-              <SelectContent>
-                {[
-                  "12px",
-                  "14px",
-                  "16px",
-                  "18px",
-                  "20px",
-                  "22px",
-                  "24px",
-                  "26px",
-                  "28px",
-                  "30px",
-                  "32px",
-                  "34px",
-                  "36px",
-                  "38px",
-                  "40px",
-                ].map((opt) => (
-                  <SelectItem value={opt} key={opt}>
-                    {opt}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+              onChange={(val) => updateComponentStyle("font-size", val)}
+              icon={
+                <Type className="text-zinc-400 align-middle overflow-hidden size-4" />
+              }
+            />
           </div>
         </div>
       </div>

@@ -152,6 +152,7 @@ export const useEditorStore = create<EditorStore>((set, get) => ({
       // Component selection events
       editor.on("component:selected", () => {
         get().setSelectedComponents();
+        console.log(get().selectedComponents[0].getStyle());
       });
 
       editor.on("component:deselected", () => {

@@ -258,13 +258,13 @@ export const directMappings: { [key: string]: { [subkey: string]: string } } = {
     "800": "font-extrabold",
     "900": "font-black",
   },
-  "border-style": {
-    none: "border-none",
-    // "solid": "border-solid",
-    dashed: "border-dashed",
-    dotted: "border-dotted",
-    double: "border-double",
-  },
+  // "border-style": {
+  //   none: "border-none",
+  //   // solid: "border-solid",
+  //   dashed: "border-dashed",
+  //   dotted: "border-dotted",
+  //   double: "border-double",
+  // },
   "text-transform": {
     none: "normal-case",
     capitalize: "capitalize",
@@ -642,8 +642,11 @@ export const directMappings: { [key: string]: { [subkey: string]: string } } = {
 
 export const unmappableProps = [
   "translate",
-  "clear",
   "filter",
   "clip-path",
   "backdrop-filter",
+  "border-top-style",
+  "border-right-style",
+  "border-bottom-style",
+  "border-left-style",
 ];

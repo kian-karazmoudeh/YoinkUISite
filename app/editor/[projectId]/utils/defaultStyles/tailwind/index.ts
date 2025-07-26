@@ -1,6 +1,7 @@
 import { Component } from "grapesjs";
 import { useEditorStore } from "../../../store";
 import { tags } from "./tags";
+import { preflightStyles } from "./preflight";
 
 export function initTailwindDefaultStyles() {
   const setDefaultTailwindStyles =
@@ -26,7 +27,8 @@ export function initTailwindDefaultStyles() {
           );
           setDefaultTailwindStyles(defaultStyles);
         }
-      }
+      },
+      preflightStyles
     );
   });
 }

@@ -8,9 +8,13 @@ import { Skeleton } from "@/components/ui/skeleton";
 import FileName from "./FileName";
 import SaveBtn from "./SaveBtn";
 import Link from "next/link";
+import { ChevronsUpDown } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
+import UserPopover from "./UserPopover";
 
 type EditorNavbarProps = {
   user: User | null;
+  membership: string | null;
 };
 
 const LoadingUser = () => {
@@ -26,7 +30,7 @@ const LoadingUser = () => {
   );
 };
 
-const Navbar = ({ user }: EditorNavbarProps) => {
+const Navbar = ({ user, membership }: EditorNavbarProps) => {
   return (
     <div className="flex items-center justify-between">
       <div className="flex items-center gap-2">
@@ -64,23 +68,7 @@ const Navbar = ({ user }: EditorNavbarProps) => {
           {!user ? (
             <LoadingUser />
           ) : (
-            <div className="flex min-w-0 items-center gap-2">
-              <div className="block cursor-pointer">
-                <span className="relative flex size-[22px] shrink-0 cursor-pointer overflow-hidden rounded-full shadow-[_#27272a_0px_0px_0px_1px]">
-                  <img
-                    className="aspect-[1_/_1] size-full cursor-pointer"
-                    alt="tigran tumasov"
-                    src={
-                      user.user_metadata.avatar_url ||
-                      "https://placehold.co/460x460"
-                    }
-                  />
-                </span>
-              </div>
-              <p className="text-sm font-medium text-nowrap whitespace-nowrap">
-                {user.user_metadata.name || "Anonymous"}
-              </p>
-            </div>
+            <UserPopover user={user} membership={membership} />
           )}
         </div>
         <div className="flex items-center gap-2">

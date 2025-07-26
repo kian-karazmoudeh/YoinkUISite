@@ -14,6 +14,7 @@ export default function EditorPage() {
   const router = useRouter();
   const { projectId } = useParams();
   const [user, setUser] = useState<User | null>(null);
+  const [membership, setMembership] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const supabase = createClient();
   const [yoinkContent, setYoinkContent] = useState<string | null>(null);
@@ -36,6 +37,12 @@ export default function EditorPage() {
       if (data.user) {
         setUser(data.user);
         setYoinkCreatorId(data.user.id);
+        const { data: profileData } = await supabase
+          .from("profiles")
+          .select("*")
+          .eq("id", data.user.id)
+          .single();
+        setMembership(profileData?.membership);
         return data.user;
       }
       return null;
@@ -126,7 +133,7 @@ export default function EditorPage() {
   return (
     <>
       {isLoading && <LoadingScreen />}
-      <Navbar user={user} />
+      <Navbar user={user} membership={membership} />
       <div className="flex h-full min-h-0">
         <div className="flex h-full flex-1 gap-4 min-h-0">
           {editor && <Sidebar />}

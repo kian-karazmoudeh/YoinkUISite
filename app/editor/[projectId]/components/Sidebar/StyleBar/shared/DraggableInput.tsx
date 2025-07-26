@@ -28,6 +28,7 @@ const DraggableInput = ({
       currentDevice: state.currentDevice,
     }))
   );
+
   const [localValue, setLocalValue] = useState(value);
   const [isDragging, setIsDragging] = useState(false);
   const [startX, setStartX] = useState(0);
@@ -137,7 +138,7 @@ const DraggableInput = ({
           value={localValue}
           onChange={handleInputChange}
           onBlur={handleBlur}
-          className="leading-[20px] w-full text-sm fill-black stroke-[1px] box-border cursor-text overflow-clip bg-transparent text-white outline-none"
+          className="leading-[20px] w-full text-sm box-border cursor-text overflow-clip bg-transparent text-white outline-none"
         />
       </div>
     </div>

@@ -3,7 +3,6 @@ import Features from "./components/Features";
 import Footer from "../../components/Footer";
 import Header from "./components/Header";
 import Navbar from "../../components/Navbar";
-import HowItWorks from "./components/HowItWorks";
 import Usage from "./components/Usage";
 
 export const metadata = {

@@ -1,0 +1,43 @@
+/* GrapeJS Editor Styles */
+.gjs-cv-canvas,
+.gjs-cv-canvas-wrapper {
+  box-sizing: border-box !important;
+  border: none !important;
+  margin: 0 !important;
+  overflow: hidden !important;
+}
+
+.gjs-cv-canvas {
+  top: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.block-preview {
+  pointer-events: none;
+}
+
+/* Device Manager Styles */
+.gjs-cv-canvas {
+  transition: all 0.3s ease;
+}
+
+/* Hide default device manager panel */
+.gjs-pn-devices {
+  display: none !important;
+}
+
+/* Device preview styles */
+.gjs-cv-canvas {
+  transition: all 0.3s ease;
+}
+
+/* Responsive canvas wrapper */
+.gjs-cv-canvas-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  min-height: 100%;
+  /* Remove padding here, will be set dynamically */
+  background: #f9fafb;
+}

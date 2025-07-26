@@ -9,6 +9,8 @@ export async function POST(req: NextRequest) {
   const authHeader = req.headers.get("Authorization");
   const token = authHeader?.startsWith("Bearer ") ? authHeader.slice(7) : null;
 
+  let yoink_id;
+
   if (!token) {
     return NextResponse.json(
       { error: "Authorization token missing" },
@@ -21,6 +23,24 @@ export async function POST(req: NextRequest) {
 
   if (error || !data.user) {
     return NextResponse.json({ error: "Invalid token" }, { status: 401 });
+  }
+
+  // Parse request body to get the text content
+  let body;
+  try {
+    body = await req.json();
+  } catch (error) {
+    return NextResponse.json(
+      { error: "Invalid JSON in request body" },
+      { status: 400 }
+    );
+  }
+
+  let name = body.name;
+  let content_url = body.content_url || null;
+
+  if (!name || typeof name !== "string") {
+    name = "Untitled";
   }
 
   // get the user's membership. If they are premium, then increment yoink.
@@ -36,11 +56,16 @@ export async function POST(req: NextRequest) {
 
   if (profile.membership == "premium") {
     // increment yoink
-    const { error: insertError } = await supabase
+    const { data: newYoink, error: insertError } = await supabase
       .from("yoinks")
-      .insert([{ user_id: data.user.id }]);
+      .insert([{ user_id: data.user.id, content_url, name }])
+      .select()
+      .single();
+
+    yoink_id = newYoink.id;
 
     if (insertError) {
+      console.log(insertError);
       return NextResponse.json(
         { error: "Failed to add yoink" },
         { status: 500 }
@@ -68,9 +93,13 @@ export async function POST(req: NextRequest) {
         { status: 403 }
       );
     } else {
-      const { error: insertError } = await supabase
+      const { data: newYoink, error: insertError } = await supabase
         .from("yoinks")
-        .insert([{ user_id: data.user.id }]);
+        .insert([{ user_id: data.user.id, content_url, name }])
+        .select()
+        .single();
+
+      yoink_id = newYoink.id;
 
       if (insertError) {
         return NextResponse.json(
@@ -81,5 +110,5 @@ export async function POST(req: NextRequest) {
     }
   }
 
-  return NextResponse.json({});
+  return NextResponse.json({ yoink_id });
 }

@@ -2,7 +2,7 @@ import Image from "next/image";
 
 const HowItWorks = () => {
   return (
-    <div className="bg-zinc-900" id="howitworks">
+    <div className="bg-zinc-900" id="blah">
       <div className="pt-18 max-w-6xl mx-auto md:text-center lg:pt-26">
         <div className="max-w-xs mx-auto md:text-center lg:max-w-6xl">
           <h2 className="mt-2 text-white leading-[1.2] tracking-[-0.75px] text-3xl font-medium md:leading-[1] md:tracking-[-1.2px] md:text-5xl md:text-center md:text-balance">

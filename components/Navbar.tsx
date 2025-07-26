@@ -5,20 +5,63 @@ import Link from "next/link";
 import Sidebar from "./Sidebar";
 import { useEffect, useState } from "react";
 import { motion, useScroll, useMotionValueEvent } from "framer-motion";
+import { createClient } from "@/utils/supabase/client";
+import { User } from "@supabase/supabase-js";
 
 const links: { href: string; label: string }[] = [
-  { label: "Features", href: "/#features" },
+  // { label: "Features", href: "/#features" },
   { label: "How it works", href: "/#howitworks" },
   { label: "Pricing", href: "/pricing" },
   { label: "Contact us", href: "/contact-us" },
 ];
 
+const ArrowIcon = (
+  <svg
+    width="20"
+    height="21"
+    viewBox="0 0 20 21"
+    xmlns="http://www.w3.org/2000/svg"
+    className="w-5 h-[21px] fill-[none] stroke-[1px] overflow-hidden cursor-pointer"
+  >
+    <circle
+      cx="10"
+      cy="10.9469"
+      r="10"
+      className="fill-neutral-800 stroke-[1px] inline cursor-pointer"
+    ></circle>
+    <mask
+      id="mask0_1_567"
+      x="0"
+      y="0"
+      width="20"
+      height="21"
+      className="w-5 h-[21px] fill-[none] stroke-[1px] inline cursor-pointer"
+    >
+      <circle
+        cx="10"
+        cy="10.9469"
+        r="10"
+        className="fill-neutral-800 stroke-[1px] inline cursor-pointer"
+      ></circle>
+    </mask>
+    <g className="fill-[none] stroke-[1px] inline cursor-pointer">
+      <path
+        d="M4.78544 8.12311L12.8231 8.12311M12.8231 8.12311L12.8231 16.1608M12.8231 8.12311L3.1779 17.7683"
+        strokeLinecap="square"
+        className="fill-[none] stroke-[1.3px] stroke-white inline cursor-pointer"
+      ></path>
+    </g>
+  </svg>
+);
+
 const Navbar = () => {
   const [showSidebar, setShowSidebar] = useState(false);
   const [isVisible, setIsVisible] = useState(true);
   const [lastScrollY, setLastScrollY] = useState(0);
+  const [user, setUser] = useState<User | null>(null);
   const [isAtTop, setIsAtTop] = useState(true);
   const { scrollY } = useScroll();
+  const supabase = createClient();
 
   useMotionValueEvent(scrollY, "change", (latest) => {
     const current = latest;
@@ -39,6 +82,17 @@ const Navbar = () => {
   });
 
   useEffect(() => {
+    const getUser = async () => {
+      const { data } = await supabase.auth.getUser();
+      if (data.user) {
+        setUser(data.user);
+        return data.user;
+      }
+      return null;
+    };
+
+    getUser();
+
     const mediaQuery = window.matchMedia("(min-width: 1024px)");
 
     const handleMediaChange = (e: MediaQueryListEvent) => {
@@ -130,48 +184,23 @@ const Navbar = () => {
               ))}
             </div>
             <div className="gap-x-5 grow-[1] md:flex hidden justify-end items-center">
-              <Link
-                className="text-white leading-[24px] gap-x-1 text-sm bg-black flex font-semibold cursor-pointer px-4 py-1 rounded-[2.68435e+07px]"
-                href="https://chromewebstore.google.com/detail/yoinkui/ihlkclcengelgcfkkmpkhgadepmgijkk"
-              >
-                Add to Chrome / Edge
-                <svg
-                  width="20"
-                  height="21"
-                  viewBox="0 0 20 21"
-                  xmlns="http://www.w3.org/2000/svg"
-                  className="w-5 h-[21px] fill-[none] stroke-[1px] overflow-hidden cursor-pointer"
+              {user ? (
+                <Link
+                  className="text-white leading-[24px] gap-x-1 text-sm bg-black flex font-semibold cursor-pointer px-4 py-1 rounded-[2.68435e+07px]"
+                  href="/editor"
                 >
-                  <circle
-                    cx="10"
-                    cy="10.9469"
-                    r="10"
-                    className="fill-neutral-800 stroke-[1px] inline cursor-pointer"
-                  ></circle>
-                  <mask
-                    id="mask0_1_567"
-                    x="0"
-                    y="0"
-                    width="20"
-                    height="21"
-                    className="w-5 h-[21px] fill-[none] stroke-[1px] inline cursor-pointer"
-                  >
-                    <circle
-                      cx="10"
-                      cy="10.9469"
-                      r="10"
-                      className="fill-neutral-800 stroke-[1px] inline cursor-pointer"
-                    ></circle>
-                  </mask>
-                  <g className="fill-[none] stroke-[1px] inline cursor-pointer">
-                    <path
-                      d="M4.78544 8.12311L12.8231 8.12311M12.8231 8.12311L12.8231 16.1608M12.8231 8.12311L3.1779 17.7683"
-                      strokeLinecap="square"
-                      className="fill-[none] stroke-[1.3px] stroke-white inline cursor-pointer"
-                    ></path>
-                  </g>
-                </svg>
-              </Link>
+                  Dashboard
+                  {ArrowIcon}
+                </Link>
+              ) : (
+                <Link
+                  className="text-white leading-[24px] gap-x-1 text-sm bg-black flex font-semibold cursor-pointer px-4 py-1 rounded-[2.68435e+07px]"
+                  href="https://chromewebstore.google.com/detail/yoinkui/ihlkclcengelgcfkkmpkhgadepmgijkk"
+                >
+                  Add to Chrome / Edge
+                  {ArrowIcon}
+                </Link>
+              )}
             </div>
           </nav>
         </header>

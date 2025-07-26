@@ -108,19 +108,12 @@ export function ColorPicker({ value, onChange, className }: ColorPickerProps) {
     }))
   );
 
-  const parsedColor = parseColor(value);
-
   useEffect(() => {
+    const parsedColor = parseColor(value);
     setColorType(parsedColor.type);
     setColorValue(parsedColor.value);
     setInputValue(value);
-  }, [
-    selectedComponents,
-    currentDevice,
-    parsedColor.type,
-    parsedColor.value,
-    value,
-  ]);
+  }, [value, selectedComponents, currentDevice]);
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {

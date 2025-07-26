@@ -1,7 +1,7 @@
 import colors from "./tailwindDefaultColors";
 import type { DefaultColors } from "./tailwindDefaultColors";
 
-// @ts-expect-error
+// @ts-expect-error: color-diff does not provide TypeScript type definitions
 import { closest, diff } from "color-diff";
 
 type Rgb = { R: number; G: number; B: number };

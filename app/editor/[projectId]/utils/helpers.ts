@@ -1,4 +1,5 @@
 import { DeviceKey, DeviceName } from "../types";
+import { Component, Editor } from "grapesjs";
 
 // Helper function to validate CSS values
 export const isValidCssValue = (value: string): boolean => {
@@ -85,7 +86,7 @@ export const getDeviceWidth = (deviceName: DeviceName): string => {
 };
 
 // Helper function to parse style values from component
-export const parseStyleValues = (styles: any) => {
+export const parseStyleValues = (styles: Record<string, string>) => {
   return {
     width: styles["width"] || "",
     height: styles.height || "",
@@ -401,13 +402,13 @@ export function getMergedComponentStyles({
   editor,
   defaultBaseStyles,
 }: {
-  component: any; // GrapesJS Component
+  component: Component; // GrapesJS Component
   device: DeviceName;
-  editor: any;
+  editor: Editor | null;
   defaultBaseStyles: Record<string, Record<string, string>> | undefined;
 }): Record<string, string> {
   const styles = editor?.Css.getComponentRules(component);
-  if (!styles) return {};
+  if (!styles || !editor) return {};
 
   let desktopStyles = {};
   let tabletStyles = {};

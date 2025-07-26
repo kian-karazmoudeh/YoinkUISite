@@ -20,7 +20,7 @@ const visibilityRules = [
       const style = getComputedStyle(el);
       return style.display === "none";
     },
-    childCondition: (_childEl: Element) => false,
+    childCondition: () => false,
   },
   {
     parentCondition: (el: Element) => {
@@ -30,7 +30,7 @@ const visibilityRules = [
         getComputedStyle(el).opacity === "0"
       );
     },
-    childCondition: (_childEl: Element) => false,
+    childCondition: () => false,
   },
   {
     parentCondition: (el: Element) => {
@@ -163,7 +163,7 @@ export function setVisibilityRootAttr(
   node: HTMLElement,
   viewport: "base" | "md" | "lg"
 ) {
-  let visibleRoot: boolean = isElementInisibleRoot(node);
+  const visibleRoot = isElementInisibleRoot(node);
 
   if (visibleRoot) {
     node.setAttribute(`data-yoink-invisible-root-${viewport}`, "");
@@ -176,7 +176,7 @@ export function setVisibilityTerminateAttrResponsive(node: HTMLElement) {
     node.hasAttribute("data-yoink-invisible-root-md") &&
     node.hasAttribute("data-yoink-invisible-root-lg")
   ) {
-    let childConditions = getApplicableChildCondition(node);
+    const childConditions = getApplicableChildCondition(node);
     if (childConditions != null) {
       let visibleChild = false;
 
@@ -198,7 +198,7 @@ export function setVisibilityTerminateAttrResponsive(node: HTMLElement) {
 
 export function setVisibilityTerminateAttrComponent(node: HTMLElement) {
   if (node.hasAttribute("data-yoink-invisible-root-sm")) {
-    let childConditions = getApplicableChildCondition(node);
+    const childConditions = getApplicableChildCondition(node);
     if (childConditions != null) {
       let visibleChild = false;
 

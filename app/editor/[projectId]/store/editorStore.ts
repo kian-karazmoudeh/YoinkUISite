@@ -209,12 +209,11 @@ export const useEditorStore = create<EditorStore>((set, get) => ({
             console.log("Updated yoink in database");
 
             return { result: "success", filePath };
-          } catch (err: any) {
-            console.error(
-              "Unexpected error uploading project:",
-              err?.message || err
-            );
-            return { error: err?.message || "Unknown error" };
+          } catch (err: unknown) {
+            const errorMessage =
+              err instanceof Error ? err.message : String(err);
+            console.error("Unexpected error uploading project:", errorMessage);
+            return { error: errorMessage };
           }
         },
         // This method will be called when loading the project
@@ -232,11 +231,10 @@ export const useEditorStore = create<EditorStore>((set, get) => ({
             const textContent = JSON.parse(await fileData.text());
             // console.log(textContent);
             return textContent;
-          } catch (err: any) {
-            console.error(
-              "Unexpected error loading project:",
-              err?.message || err
-            );
+          } catch (err: unknown) {
+            const errorMessage =
+              err instanceof Error ? err.message : String(err);
+            console.error("Unexpected error loading project:", errorMessage);
             return {};
           }
         },

@@ -1,86 +1,99 @@
+import TextCursor from "@/components/ui/TextCursor";
 import Image from "next/image";
 
 const HowItWorks = () => {
   return (
-    <div className="bg-zinc-900" id="blah">
-      <div className="pt-18 max-w-6xl mx-auto md:text-center lg:pt-26">
-        <div className="max-w-xs mx-auto md:text-center lg:max-w-6xl">
-          <h2 className="mt-2 text-white leading-[1.2] tracking-[-0.75px] text-3xl font-medium md:leading-[1] md:tracking-[-1.2px] md:text-5xl md:text-center md:text-balance">
+    <div className="bg-[#0F0F10]">
+      <div
+        id="howitworks"
+        className="py-20 max-w-7xl overflow-hidden mx-auto  lg:py-20 lg:border-x-[0.8px] lg:border-x-zinc-700 text-zinc-50"
+      >
+        <div className="max-w-2xl mx-auto px-5 md:text-center lg:px-0">
+          <p className="mt-2 text-zinc-50 leading-[1.11111] tracking-[-0.9px] text-4xl text-pretty font-semibold md:leading-[1] md:tracking-[-1.2px] md:text-5xl text-center md:text-balance">
             How it works
-          </h2>
-          <p className="mt-4 text-zinc-400 leading-[24px] tracking-[-0.45px] max-w-lg text-lg mx-auto md:text-center lg:tracking-[-0.5px] lg:text-xl">
-            Everything you need in two clicks
           </p>
         </div>
-        <div className="mt-12 md:text-center">
-          <div className="gap-y-16 gap-x-12 grid-cols-[repeat(1,_minmax(0px,_1fr))] grid items-center mx-auto py-16 md:gap-y-20 md:text-center lg:grid-cols-[repeat(5,_minmax(0px,_1fr))] lg:mx-0">
-            <div className="pl-8 col-span-2 md:text-center lg:pr-8 lg:pl-0">
-              <div className="text-left">
-                <h2 className="mb-4 text-white leading-[1.33333] tracking-[-0.6px] text-2xl font-medium">
-                  Select the Component Tool
-                </h2>
-                <p className="text-zinc-300">That&apos;s one click</p>
-              </div>
+        <div className="mt-20 mb-16 grid  lg:mb-0 lg:grid-cols-[repeat(2,_minmax(0px,_1fr))] lg:border-y-[0.8px] lg:border-y-zinc-700">
+          <div className="relative  lg:border-r-[0.8px] lg:border-r-zinc-700">
+            <Image
+              width={0}
+              height={0}
+              sizes="100vw"
+              alt="YoinkUI Layout"
+              src="/landing/Select.png"
+              style={{ width: "auto", height: "auto" }}
+            />
+            <div className="mt-[-100px] w-full bottom-16 left-10 px-8  lg:mt-0 lg:pl-0 lg:w-auto lg:absolute">
+              <h2 className="leading-[1.33333] text-2xl font-semibold">
+                1. Select a component
+              </h2>
+              <p className="mt-3 text-zinc-400 leading-[20px] w-full lg:w-100">
+                Whenever you spot a component you like, just fire up YoinkUI and
+                click on it
+              </p>
             </div>
-            <div className="mt-[-56px] col-span-3 p-8 md:text-center lg:mt-0 lg:order-[2] lg:p-0">
-              <Image
-                width={0}
-                height={0}
-                sizes="100vw"
-                style={{ width: "100%", height: "auto" }}
-                alt="Select the tool"
-                src="/landing/Step 1.png"
-                className="w-full max-w-[none] rounded-[18px] md:text-center"
-              />
-            </div>
+            <div className="w-1 h-[34px] bottom-[114px] left-[-1px] bg-[#0055fe] hidden absolute  lg:block"></div>
           </div>
-          <div className="gap-y-16 gap-x-12 grid-cols-[repeat(1,_minmax(0px,_1fr))] grid items-center mx-auto py-16 md:gap-y-20 md:text-center lg:grid-cols-[repeat(5,_minmax(0px,_1fr))] lg:mx-0">
-            <div className="pl-8 col-span-2 md:text-center lg:ml-auto lg:order-[2]">
-              <div className="text-left">
-                <h2 className="mb-4 text-white leading-[1.33333] tracking-[-0.6px] text-2xl font-medium">
-                  Select the component
-                </h2>
-                <p className="text-zinc-300">
-                  Click on the component you want to yoink
-                </p>
-              </div>
+          <div className="relative">
+            <Image
+              width={0}
+              height={0}
+              sizes="100vw"
+              style={{ width: "auto", height: "auto" }}
+              alt="Tailwind"
+              src="/landing/Editor.png"
+            />
+            <div className="mt-[-100px] w-full bottom-16 left-10 px-8  lg:mt-0 lg:pl-0 lg:w-auto lg:absolute">
+              <h2 className="leading-[1.33333] text-2xl font-semibold">
+                2. Make it yours
+              </h2>
+              <p className="mt-3 text-zinc-400 leading-[20px] w-full lg:w-110">
+                Edit the component in the YoinkUI editor and make it yours
+              </p>
             </div>
-            <div className="mt-[-56px] col-span-3 p-8 md:text-center lg:mt-0 lg:order-[1] lg:p-0">
-              <Image
-                width={0}
-                height={0}
-                sizes="100vw"
-                style={{ width: "100%", height: "auto" }}
-                alt="Select the component"
-                src="/landing/Step 2.png"
-                className="w-full max-w-[none] bg-[#1d2025] rounded-[18px] md:text-center"
-              />
-            </div>
+            <div className="w-1 h-[34px] bottom-[114px] left-[-1px] bg-[#0055fe] hidden absolute  lg:block"></div>
           </div>
-          <div className="gap-y-16 gap-x-12 grid-cols-[repeat(1,_minmax(0px,_1fr))] grid items-center mx-auto py-16 md:gap-y-20 md:text-center lg:grid-cols-[repeat(5,_minmax(0px,_1fr))] lg:mx-0">
-            <div className="pl-8 col-span-2 md:text-center lg:pr-8 lg:pl-0">
-              <div className="text-left">
-                <h2 className="mb-4 text-white leading-[1.33333] tracking-[-0.6px] text-2xl font-medium">
-                  Done!
-                </h2>
-                <p className="text-zinc-300">
-                  Choose where you want to save your component - it&apos;s that
-                  simple!
-                </p>
-              </div>
-            </div>
-            <div className="mt-[-56px] col-span-3 p-8 md:text-center lg:mt-0 lg:order-[2] lg:p-0">
-              <Image
-                width={0}
-                height={0}
-                sizes="100vw"
-                style={{ width: "100%", height: "auto" }}
-                alt="Download your component"
-                src="/landing/Step 3.png"
-                className="w-full max-w-[none] rounded-[18px] md:text-center"
-              />
-            </div>
+        </div>
+        <div className="relative  lg:border-b-[0.8px] lg:border-b-zinc-700">
+          <Image
+            width={0}
+            height={0}
+            sizes="100vw"
+            style={{ width: "auto", height: "auto" }}
+            className="hidden md:block"
+            src="/landing/Large-Layout.png"
+            alt="Clean Code"
+          />
+          <Image
+            width={0}
+            height={0}
+            sizes="100vw"
+            style={{ width: "auto", height: "auto" }}
+            className="block md:hidden"
+            src="/landing/Small-Layout.png"
+            alt="Clean Code"
+          />
+          <div className="mt-8 pl-8 w-full bottom-16 left-10  lg:mt-0 lg:pl-0 lg:w-auto lg:absolute">
+            <h2 className="leading-[1.33333] text-2xl font-semibold">
+              3. Export
+            </h2>
+            <p className="mt-3 text-zinc-400 leading-[20px] w-full lg:w-100">
+              Export the component and start using it in your project!
+            </p>
           </div>
+        </div>
+
+        <div className="text-zinc-50  leading-[1.5] max-w-7xl font-[Aeonik,_sans-serif] text-center mx-auto py-36 relative">
+          <TextCursor
+            text="Yoink!"
+            delay={0.01}
+            spacing={100}
+            followMouseDirection={true}
+            randomFloat={true}
+          />
+          <p className="mt-2 text-zinc-50 leading-[1] tracking-[-1.2px] text-5xl text-balance font-semibold">
+            Yes, its that simple!
+          </p>
         </div>
       </div>
     </div>

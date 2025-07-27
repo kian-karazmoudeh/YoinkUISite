@@ -14,10 +14,7 @@ const CTA = () => {
         src="/landing/CTA-bg.png"
       />
       <div className="ml-8 z-[1] relative  lg:text-center">
-        <span className="text-zinc-500 leading-[1.55556] tracking-[-0.45px] text-lg uppercase  lg:text-center">
-          Bridging inspiration and creation
-        </span>
-        <h1 className="mt-2 text-zinc-900 leading-[1] tracking-[-1.2px] text-5xl text-balance font-medium md:tracking-[-1.5px] md:text-6xl lg:text-center">
+        <h1 className="mt-2 text-zinc-900 leading-[1] tracking-[-1.2px] text-5xl text-balance font-semibold md:tracking-[-1.5px] md:text-6xl lg:text-center">
           Ship faster than ever.
         </h1>
         <div className="mt-10 ml-2 gap-y-[10px] grid text-center justify-start items-center  lg:ml-0 lg:justify-center">

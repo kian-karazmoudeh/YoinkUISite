@@ -8,7 +8,7 @@ const AddToChrome = () => {
       href="https://chromewebstore.google.com/detail/yoinkui/ihlkclcengelgcfkkmpkhgadepmgijkk"
     >
       <ChromeIcon />
-      <span className="block cursor-pointer">Add to chrome / Edge</span>
+      <span className="block cursor-pointer">Get started for Free</span>
     </Link>
   );
 };

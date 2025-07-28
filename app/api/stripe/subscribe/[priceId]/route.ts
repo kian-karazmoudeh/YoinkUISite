@@ -47,6 +47,7 @@ export async function GET(
       ],
       customer_email: user.email,
       client_reference_id: user.id,
+      allow_promotion_codes: true,
       success_url: `${DOMAIN}/thanks`,
       cancel_url: `${DOMAIN}/pricing`,
     });

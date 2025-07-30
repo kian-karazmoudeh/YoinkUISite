@@ -5,8 +5,8 @@ import { DOMAIN } from "@/utils/getDomain";
 
 const priceIds =
   process.env.NODE_ENV === "development"
-    ? ["price_1RfeKRF3W42U01iFyeGDGH6J", "price_1RfeKRF3W42U01iFbTRrmxLo"] // testing
-    : ["price_1RiW9rF3W42U01iFzsB1BqWz", "price_1RiWAGF3W42U01iFMuTsNX88"]; // production
+    ? ["price_1RqRWsF3W42U01iFUv4A23H6", "price_1RqRXfF3W42U01iFKTZTQSBY"] // testing
+    : ["price_1RqSANF3W42U01iFUUpEJuSf", "price_1RqSAsF3W42U01iFrXVDLXrj"]; // production
 
 export async function GET(
   request: NextRequest,
@@ -48,6 +48,9 @@ export async function GET(
       customer_email: user.email,
       client_reference_id: user.id,
       allow_promotion_codes: true,
+      subscription_data: {
+        trial_period_days: 7,
+      },
       success_url: `${DOMAIN}/thanks`,
       cancel_url: `${DOMAIN}/pricing`,
     });

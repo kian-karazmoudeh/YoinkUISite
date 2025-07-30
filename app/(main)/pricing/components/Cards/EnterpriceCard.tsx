@@ -1,7 +1,5 @@
 import { ReactNode } from "react";
-import SubscribeBtn from "../Btns/SubscribeBtn";
-import LoadingBtn from "../Btns/LoadingBtn";
-import CurrentPlanBtn from "../Btns/CurrentPlanBtn";
+import TalkToSalesBtn from "../Btns/TalkToSalesBtn";
 
 const CheckIcon = () => {
   return (
@@ -38,22 +36,7 @@ const PlusIcon = () => {
 const features: { icon: ReactNode; label: ReactNode }[] = [
   {
     icon: <CheckIcon />,
-    label: <>Unlimited Yoinks</>,
-  },
-  {
-    icon: <CheckIcon />,
-    label: <>Full page Responsive Yoinks</>,
-  },
-  {
-    icon: <CheckIcon />,
-    label: (
-      <>
-        Modularized code
-        <span className="mt-1 h-4 text-[10px] bg-zinc-800 flex justify-center items-center px-[6px] rounded-[2.68435e+07px]">
-          Coming soon
-        </span>
-      </>
-    ),
+    label: <>Custom numer of accounts</>,
   },
   {
     icon: <PlusIcon />,
@@ -61,20 +44,7 @@ const features: { icon: ReactNode; label: ReactNode }[] = [
   },
 ];
 
-const paymentLinks: Record<"Monthly" | "Annual", string> = {
-  Monthly: `/api/stripe/subscribe/${
-    process.env.NODE_ENV === "development"
-      ? "price_1RfeKRF3W42U01iFbTRrmxLo" // dev
-      : "price_1RiW9rF3W42U01iFzsB1BqWz" // production
-  }`,
-  Annual: `/api/stripe/subscribe/${
-    process.env.NODE_ENV === "development"
-      ? "price_1RfeKRF3W42U01iFyeGDGH6J" // dev
-      : "price_1RiWAGF3W42U01iFMuTsNX88" // production
-  }`,
-};
-
-const ProCard = ({ type, userMembership, loading, setLoading }: CardProps) => {
+const EnterpriseCard = () => {
   // console.log(session);
   return (
     <div className="bg-zinc-900 shadow-[_oklch(0.21_0.006_285.885)_0px_0px_0px_1px] p-[26px] rounded-lg">
@@ -82,29 +52,17 @@ const ProCard = ({ type, userMembership, loading, setLoading }: CardProps) => {
         id="tier-enterprise"
         className="text-white leading-[32px] text-[40px]"
       >
-        Premium
+        Enterprise
       </h3>
       <p className="mt-3 gap-x-1 flex items-baseline">
         <span className="text-zinc-400 leading-[1.11111] tracking-[-0.9px] text-4xl block">
-          {type == "Monthly" ? "$15" : "$95"}
-        </span>
-        <span className="text-zinc-400 leading-[24px] text-3xl block">
-          /{type == "Monthly" ? "mo" : "yr"}
+          custom
         </span>
       </p>
       <p className="mt-16 text-zinc-300 leading-[18px] text-sm">
-        For serious builders who want full power, speed, and control.
+        For Teams who want full control.
       </p>
-      {loading ? (
-        <LoadingBtn className="text-zinc-900 bg-sky-800" />
-      ) : userMembership == "premium" ? (
-        <CurrentPlanBtn className="text-zinc-900 bg-sky-800" />
-      ) : (
-        <SubscribeBtn
-          href={paymentLinks[type]}
-          onClick={() => setLoading!(true)}
-        />
-      )}
+      <TalkToSalesBtn />
       <ul className="mt-8 text-zinc-300 leading-[24px] text-sm [translate:0px]">
         {features.map((feature, idx) => (
           <li className="mb-3 gap-x-3 flex text-left" key={idx}>
@@ -117,4 +75,4 @@ const ProCard = ({ type, userMembership, loading, setLoading }: CardProps) => {
   );
 };
 
-export default ProCard;
+export default EnterpriseCard;

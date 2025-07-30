@@ -1,7 +1,7 @@
 "use client";
 
 import BasicCard from "./Cards/BasicCard";
-import ProCard from "./Cards/Procard";
+import EnterpriseCard from "./Cards/EnterpriceCard";
 import { useEffect, useState } from "react";
 import { createClient } from "@/utils/supabase/client";
 import MembershipTypeBtn from "./Btns/MembershipTypeBtn";
@@ -94,13 +94,9 @@ const PricingSection = () => {
           type={membershipType}
           userMembership={userMembership}
           loading={loading}
-        />
-        <ProCard
-          type={membershipType}
-          userMembership={userMembership}
-          loading={loading}
           setLoading={setLoading}
         />
+        <EnterpriseCard />
       </div>
     </div>
   );

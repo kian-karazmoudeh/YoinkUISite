@@ -43,6 +43,9 @@ export default function EditorPage() {
           .eq("id", data.user.id)
           .single();
         setMembership(profileData?.membership);
+        if (profileData?.membership != "premium") {
+          router.push("/editor");
+        }
         return data.user;
       }
       return null;
@@ -125,7 +128,13 @@ export default function EditorPage() {
         });
 
       editor?.load().then(() => setIsLoading(false));
-    } else if (projectId == "new" && user && editor && yoinkContent) {
+    } else if (
+      projectId == "new" &&
+      user &&
+      membership == "premium" &&
+      editor &&
+      yoinkContent
+    ) {
       createNewYoink(user);
     }
   }, [projectId, user, isEditorReady, yoinkContent, editor]);

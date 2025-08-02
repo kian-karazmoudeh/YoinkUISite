@@ -36,7 +36,7 @@ const PlusIcon = () => {
 const features: { icon: ReactNode; label: ReactNode }[] = [
   {
     icon: <CheckIcon />,
-    label: <>Custom numer of accounts</>,
+    label: <>Custom number of accounts</>,
   },
   {
     icon: <PlusIcon />,

@@ -128,13 +128,7 @@ export default function EditorPage() {
         });
 
       editor?.load().then(() => setIsLoading(false));
-    } else if (
-      projectId == "new" &&
-      user &&
-      membership == "premium" &&
-      editor &&
-      yoinkContent
-    ) {
+    } else if (projectId == "new" && user && editor && yoinkContent) {
       createNewYoink(user);
     }
   }, [projectId, user, isEditorReady, yoinkContent, editor]);

@@ -106,6 +106,7 @@ export const cssProperties = [
   "grid-auto-flow",
   "grid-column-start",
   "grid-column-end",
+  "grid-template-areas",
   "grid-row-start",
   "grid-row-end",
   "outline-style",

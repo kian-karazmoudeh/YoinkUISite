@@ -28,8 +28,12 @@ function cssToTailwind(cssJson: Record<string, string>) {
   for (const [prop, map] of Object.entries(directMappings)) {
     value = cssJson[prop]?.trim();
 
-    if (value && map[value]) {
-      tailwindClasses.push(map[value]);
+    if (value) {
+      if (map[value]) {
+        tailwindClasses.push(map[value]);
+      } else {
+        tailwindClasses.push(`[${prop}:${value}]`);
+      }
     }
   }
 

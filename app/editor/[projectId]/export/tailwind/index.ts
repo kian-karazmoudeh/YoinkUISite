@@ -4,7 +4,6 @@ import {
   convertNodeToTailwindMdRecurse,
   convertNodeToTailwindBaseRecurse,
 } from "./CSS/css";
-import { cleanRedundantTags } from "./HTML/dom";
 import { removeCommentsFromDOM } from "./simplify/dom/removeComments";
 import {
   removeYoinkAttributes,
@@ -15,19 +14,13 @@ import {
 import { removeInvisibleNodesRecurse } from "../shared/elementVisibility";
 import { useEditorStore } from "../../store";
 import { Component } from "grapesjs";
+import { cleanRedundantTags } from "./HTML/dom";
 
 function convertToComponent(root: Element): HTMLElement {
   const rootClone = root.cloneNode(true) as HTMLElement;
 
-  // console.log(rootClone);
-
   cleanRedundantTags(rootClone);
-  // const docBody = rootClone.querySelector("body");
-
-  // // changeTrackTagSrc(htmlDoc);
-  // let htmlClasses = rootClone.getAttribute("data-yoink-classes");
-  // let bodyClasses = docBody?.getAttribute("data-yoink-classes");
-  // create a new div to hold the children of body
+  // removeGrapeJsIdsRecurse(rootClone);
 
   removeInvisibleNodesRecurse(rootClone);
   swapYoinkClasses(rootClone);

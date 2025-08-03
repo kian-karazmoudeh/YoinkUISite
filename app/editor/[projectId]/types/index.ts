@@ -51,6 +51,7 @@ export interface StyleValues {
   "column-gap": string;
   "grid-template-columns": string;
   "grid-template-rows": string;
+  "grid-template-areas": string;
   "background-position": string;
   "background-repeat": string;
   "background-size": string;

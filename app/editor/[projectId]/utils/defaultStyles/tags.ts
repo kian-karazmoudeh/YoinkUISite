@@ -82,6 +82,8 @@ function getTagStyles(
       stylesMap.get("grid-template-columns")?.toString() || "none",
     "grid-template-rows":
       stylesMap.get("grid-template-rows")?.toString() || "none",
+    "grid-template-areas":
+      stylesMap.get("grid-template-areas")?.toString() || "none",
     "background-position":
       stylesMap.get("background-position")?.toString() || "0% 0%",
     "background-repeat":
@@ -98,6 +100,7 @@ function getTagStyles(
     "text-wrap": stylesMap.get("text-wrap")?.toString() || "wrap",
     "text-align": stylesMap.get("text-align")?.toString() || "start",
     opacity: stylesMap.get("opacity")?.toString() || "1",
+    // fill: stylesMap.get("fill")?.toString() || "",
     "fill-opacity": stylesMap.get("fill-opacity")?.toString() || "",
     "stroke-opacity": stylesMap.get("stroke-opacity")?.toString() || "",
     stroke: stylesMap.get("stroke")?.toString() || "none",

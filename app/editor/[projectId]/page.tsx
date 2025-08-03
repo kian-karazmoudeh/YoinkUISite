@@ -29,6 +29,8 @@ export default function EditorPage() {
     setYoinkName,
     setYoinkCreatorId,
     resetStore,
+    setDefaultBgColor,
+    defaultBgColor,
   } = useEditorStore();
 
   useEffect(() => {
@@ -62,9 +64,10 @@ export default function EditorPage() {
         event.data.type == "NEW_YOINK"
       ) {
         console.log("Message from parent:", event.data);
-        // alert("New Yoink");
+
         setYoinkName(event.data.name);
         setYoinkContent(event.data.content);
+        setDefaultBgColor(event.data.background);
 
         // Send response back to the source
         (event.source as Window)?.postMessage(
@@ -104,10 +107,7 @@ export default function EditorPage() {
             supabase
               .from("yoinks")
               .update({ content_url: `${currentUser.id}/${data.id}.json` })
-              .eq("id", data.id)
-              .then((response) => {
-                console.log("Yoink updated:", response);
-              });
+              .eq("id", data.id);
           });
         }
       }
@@ -131,7 +131,15 @@ export default function EditorPage() {
     } else if (projectId == "new" && user && editor && yoinkContent) {
       createNewYoink(user);
     }
-  }, [projectId, user, isEditorReady, yoinkContent, editor]);
+
+    if (defaultBgColor && editor) {
+      console.log("Setting default background color:", editor.getWrapper());
+
+      editor.getWrapper()?.setStyle({
+        "background-color": defaultBgColor,
+      });
+    }
+  }, [projectId, user, isEditorReady, yoinkContent, editor, defaultBgColor]);
 
   return (
     <>

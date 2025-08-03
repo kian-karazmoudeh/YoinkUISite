@@ -19,6 +19,7 @@ interface EditorState {
   yoinkId: string | null;
   yoinkName: string | null;
   yoinkCreatorId: string | null;
+  defaultBgColor: string | undefined;
 
   // Component management
   selectedComponents: Component[];
@@ -45,7 +46,7 @@ interface EditorActions {
   setYoinkId: (id: string) => void;
   setYoinkName: (name: string) => void;
   setYoinkCreatorId: (id: string) => void;
-
+  setDefaultBgColor: (color: string) => void;
   // Component management
   setSelectedComponents: () => void;
 
@@ -88,6 +89,7 @@ export const useEditorStore = create<EditorStore>((set, get) => ({
   yoinkId: null,
   yoinkName: null,
   yoinkCreatorId: null,
+  defaultBgColor: undefined,
   // Editor initialization
   initializeEditor: async () => {
     // const { defaultBaseStyles } = get();
@@ -152,7 +154,7 @@ export const useEditorStore = create<EditorStore>((set, get) => ({
       // Component selection events
       editor.on("component:selected", () => {
         get().setSelectedComponents();
-        console.log(get().styleValues);
+        console.log(get().selectedComponents[0].getStyle());
       });
 
       editor.on("component:deselected", () => {
@@ -176,7 +178,6 @@ export const useEditorStore = create<EditorStore>((set, get) => ({
       editor.Storage.add("remote", {
         // This method will be called when saving the project
         async store(data) {
-          console.log("Saving project to Supabase Storage...", data);
           try {
             const supabase = createClient();
             // IMPORTANT: window.projectId must be set by the main page before initializing the editor
@@ -185,8 +186,6 @@ export const useEditorStore = create<EditorStore>((set, get) => ({
             // Convert data to string if needed
             const fileContent =
               typeof data === "string" ? data : JSON.stringify(data);
-            // console.log(fileContent);
-            console.log(filePath);
             const { error } = await supabase.storage
               .from("yoink-content")
               .upload(filePath, fileContent, {
@@ -205,8 +204,6 @@ export const useEditorStore = create<EditorStore>((set, get) => ({
                 content_url: filePath,
               })
               .eq("id", get().yoinkId);
-
-            console.log("Updated yoink in database");
 
             return { result: "success", filePath };
           } catch (err: unknown) {
@@ -229,7 +226,6 @@ export const useEditorStore = create<EditorStore>((set, get) => ({
               return {};
             }
             const textContent = JSON.parse(await fileData.text());
-            // console.log(textContent);
             return textContent;
           } catch (err: unknown) {
             const errorMessage =
@@ -276,6 +272,7 @@ export const useEditorStore = create<EditorStore>((set, get) => ({
       selectedComponents: [],
       styleValues: {},
       activeTab: "blocks",
+      defaultBgColor: undefined,
     });
   },
 
@@ -283,7 +280,7 @@ export const useEditorStore = create<EditorStore>((set, get) => ({
   setYoinkId: (id: string) => set({ yoinkId: id }),
   setYoinkName: (name: string) => set({ yoinkName: name }),
   setYoinkCreatorId: (id: string) => set({ yoinkCreatorId: id }),
-
+  setDefaultBgColor: (color: string) => set({ defaultBgColor: color }),
   // Component management
   setSelectedComponents: () => {
     const { editor } = get();

@@ -1,13 +1,17 @@
 import { type NextRequest } from "next/server";
 import { updateSession } from "./utils/supabase/middleware";
+import { premiumUpdateSession } from "./utils/supabase/premiumMiddleare";
 
-const privateRoutes: string[] = ["/editor"];
+const premiumRoutes: string[] = ["/editor"];
+const privateRoutes: string[] = [];
 
 export async function middleware(request: NextRequest) {
   const requestPath = request.nextUrl.pathname;
 
   if (privateRoutes.some((route) => requestPath.startsWith(route))) {
     return await updateSession(request, requestPath);
+  } else if (premiumRoutes.some((route) => requestPath.startsWith(route))) {
+    return await premiumUpdateSession(request, requestPath);
   }
 }
 

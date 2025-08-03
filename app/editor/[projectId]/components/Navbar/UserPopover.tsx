@@ -10,8 +10,8 @@ import { Badge } from "@/components/ui/badge";
 import { ChevronsUpDown, LogOut, ArrowUpRight } from "lucide-react";
 import Link from "next/link";
 import { User } from "@supabase/supabase-js";
-import { createClient } from "@/utils/supabase/client";
 import React from "react";
+import { useRouter } from "next/navigation";
 
 export default function UserPopover({
   user,
@@ -20,12 +20,11 @@ export default function UserPopover({
   user: User;
   membership: string | null;
 }) {
-  const isPremium = membership === "pro" || membership === "premium";
+  const isPremium = membership === "premium";
+  const router = useRouter();
 
   const handleSignOut = async () => {
-    const supabase = createClient();
-    await supabase.auth.signOut();
-    window.location.reload();
+    router.push("/signout");
   };
 
   return (

@@ -125,7 +125,6 @@ export const tags = [
 
 export const essentialAttributes = new Set([
   // Global
-  "id",
   "title",
   "hidden",
   // Links
@@ -145,6 +144,7 @@ export const essentialAttributes = new Set([
   "fill-rule",
   "clip-rule",
   "clip-path",
+  "stroke-width",
   "stroke-linecap",
   "stroke-linejoin",
   "stroke-dasharray",

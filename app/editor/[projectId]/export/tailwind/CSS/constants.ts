@@ -88,11 +88,11 @@ export const propsToArbitraryMap = {
   "outline-color": "outline", // this gets checked twice
   "outline-width": "outline",
   "outline-style": "outline",
-  fill: "fill", // this gets checked twice
-  "stroke-width": "stroke",
-  stroke: "stroke",
-  "stroke-opacity": "stroke-opacity",
-  "fill-opacity": "fill-opacity",
+  // fill: "fill", // this gets checked twice
+  // "stroke-width": "stroke",
+  // stroke: "stroke",
+  // "stroke-opacity": "stroke-opacity",
+  // "fill-opacity": "fill-opacity",
   "mask-image": "mask",
   "mask-size": "mask-size",
   "mask-position": "mask-position",

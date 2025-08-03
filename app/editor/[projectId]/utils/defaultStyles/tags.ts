@@ -9,7 +9,6 @@ function getTagStyles(
   const doc = iframe.contentDocument || iframe.contentWindow!.document;
   const defaultEl = doc.createElement(tagname);
   doc.body.appendChild(defaultEl);
-  //   let stylesComp = iframe.contentWindow!.getComputedStyle(defaultEl);
   const stylesMap = defaultEl.computedStyleMap();
 
   const defaultCSS: Record<string, string> = {
@@ -101,9 +100,9 @@ function getTagStyles(
     "text-align": stylesMap.get("text-align")?.toString() || "start",
     opacity: stylesMap.get("opacity")?.toString() || "1",
     // fill: stylesMap.get("fill")?.toString() || "",
-    "fill-opacity": stylesMap.get("fill-opacity")?.toString() || "",
-    "stroke-opacity": stylesMap.get("stroke-opacity")?.toString() || "",
-    stroke: stylesMap.get("stroke")?.toString() || "none",
+    // "fill-opacity": stylesMap.get("fill-opacity")?.toString() || "",
+    // "stroke-opacity": stylesMap.get("stroke-opacity")?.toString() || "",
+    // stroke: stylesMap.get("stroke")?.toString() || "none",
     "object-fit": stylesMap.get("object-fit")?.toString() || "fill",
     "text-indent": stylesMap.get("text-indent")?.toString() || "0px",
     columns: stylesMap.get("columns")?.toString() || "auto auto",
@@ -156,6 +155,9 @@ function getTagStyles(
     "grid-row-start": stylesMap.get("grid-row-start")?.toString() || "auto",
     "grid-row-end": stylesMap.get("grid-row-end")?.toString() || "auto",
     "outline-style": stylesMap.get("outline-style")?.toString() || "none",
+    "outline-width": stylesMap.get("outline-width")?.toString() || "0px",
+    "outline-color": stylesMap.get("outline-color")?.toString() || "",
+    "outline-offset": stylesMap.get("outline-offset")?.toString() || "",
     "letter-spacing": stylesMap.get("letter-spacing")?.toString() || "normal",
     "white-space": stylesMap.get("white-space")?.toString() || "normal",
     "font-weight": stylesMap.get("font-weight")?.toString() || "400",

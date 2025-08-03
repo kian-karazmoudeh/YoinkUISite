@@ -1,3 +1,4 @@
+import { defaultStyleVersion } from "./defaultStyleVersion";
 import { getAllTagStylesNonBlocking } from "./tags";
 
 export async function initDefaultStyles(
@@ -40,6 +41,7 @@ export async function initDefaultStyles(
   }
 
   getAllTagStylesNonBlocking(tags, iframe, (defaultStyles) => {
+    localStorage.setItem("defaultStyleVersion", defaultStyleVersion.toString());
     cb(defaultStyles);
   });
 }

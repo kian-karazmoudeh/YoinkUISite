@@ -12,11 +12,13 @@ import Link from "next/link";
 import { User } from "@supabase/supabase-js";
 import { createClient } from "@/utils/supabase/client";
 import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 
 const Profile = ({ user }: { user: User | null }) => {
   const [membership, setMembership] = useState<string | null>(null);
   const [yoinksLeft, setYoinksLeft] = useState<number | null>(null);
   const supabase = createClient();
+  const router = useRouter();
 
   useEffect(() => {
     const getProfile = async () => {
@@ -59,8 +61,7 @@ const Profile = ({ user }: { user: User | null }) => {
   const isPremium = membership === "pro" || membership === "premium";
 
   const handleSignOut = async () => {
-    await supabase.auth.signOut();
-    window.location.reload();
+    router.push("/signout");
   };
 
   return (

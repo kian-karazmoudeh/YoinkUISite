@@ -1,12 +1,15 @@
 import { useEditorStore } from "../../../store";
+import { defaultStyleVersion } from "../defaultStyleVersion";
 import { tags } from "./tags";
 
 export function initBaseDefaultStyles(): Promise<
   Record<string, Record<string, string>> | undefined
 > {
   const { setDefaultBaseStyles } = useEditorStore.getState();
+  const version = localStorage.getItem("defaultStyleVersion");
   const stored = localStorage.getItem("baseDefaultStyles");
-  if (stored) {
+
+  if (version && version == defaultStyleVersion.toString() && stored) {
     try {
       const parsed = JSON.parse(stored);
       setDefaultBaseStyles(parsed);

@@ -20,7 +20,6 @@ function convertToComponent(root: Element): HTMLElement {
   const rootClone = root.cloneNode(true) as HTMLElement;
 
   cleanRedundantTags(rootClone);
-  // removeGrapeJsIdsRecurse(rootClone);
 
   removeInvisibleNodesRecurse(rootClone);
   swapYoinkClasses(rootClone);

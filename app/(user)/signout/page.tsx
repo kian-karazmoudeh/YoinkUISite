@@ -16,7 +16,7 @@ const SignOutPage = () => {
       <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
         <div className="flex space-x-5 items-center mx-auto">
           <h1 className="md:text-4xl text-2xl font-bold text-center w-full">
-            You've been Signed out
+            You&apos;ve been Signed out
           </h1>
         </div>
         <p className="text-zinc-700 text-center w-full">

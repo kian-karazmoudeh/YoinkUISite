@@ -82,8 +82,8 @@ const LayerManager = () => {
             animateExpand={false}
             defaultExpandedIds={["1"]}
             onNodeClick={(node) => {
-              if (editor) {
-                const comp: Component = node.data;
+              const comp: Component | undefined = node.data;
+              if (editor && comp) {
                 editor.select(comp);
                 const el = comp.view?.el;
                 if (el) {

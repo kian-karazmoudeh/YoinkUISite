@@ -4,8 +4,6 @@ import React, { useState, useCallback } from "react";
 import { ChevronRight, Folder, File, FolderOpen } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { cn } from "@/lib/utils";
-import { useEditorStore } from "@/app/editor/[projectId]/store";
-import { useShallow } from "zustand/react/shallow";
 import { Component } from "grapesjs";
 
 // Types
@@ -14,7 +12,7 @@ export type TreeNode = {
   label: string;
   icon?: React.ReactNode;
   children?: TreeNode[];
-  data?: any;
+  data?: Component;
 };
 
 export type TreeViewProps = {
@@ -49,9 +47,6 @@ export function TreeView({
   indent = 20,
   animateExpand = true,
 }: TreeViewProps) {
-  const { editor } = useEditorStore(
-    useShallow((state) => ({ editor: state.editor }))
-  );
   const [expandedIds, setExpandedIds] = useState<Set<string>>(
     new Set(defaultExpandedIds)
   );
@@ -139,12 +134,6 @@ export function TreeView({
             handleSelection(node.id, e.ctrlKey || e.metaKey);
             onNodeClick?.(node);
           }}
-          // onHoverStart={() => {
-          //   if (editor) {
-          //     let comp: Component = node.data;
-          //     comp.addClass("gjs-hovered");
-          //   }
-          // }}
           whileTap={{ scale: 0.98, transition: { duration: 0.1 } }}
         >
           {/* Tree Lines */}

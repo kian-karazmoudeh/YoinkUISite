@@ -41,3 +41,7 @@
   /* Remove padding here, will be set dynamically */
   background: #f9fafb;
 }
+
+.gjs-hovered {
+  background: red;
+}

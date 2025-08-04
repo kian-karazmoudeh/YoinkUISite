@@ -3,6 +3,7 @@
 import { Block } from "grapesjs";
 import { useEditorStore } from "../../store";
 import { useShallow } from "zustand/react/shallow";
+import { motion } from "framer-motion";
 
 const Blocks = () => {
   const { editor } = useEditorStore(
@@ -38,12 +39,15 @@ const Blocks = () => {
 
   return (
     <div className="flex-1 p-6 overflow-hidden flex flex-col h-full min-h-0">
-      <div
+      <motion.div
         className="flex-1 overflow-y-auto"
         style={{
           scrollbarWidth: "thin",
           scrollbarColor: "#26272B #18191A",
         }}
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.3, ease: "easeOut" }}
       >
         {categoryNames.map((cat) => (
           <div key={cat} className="mb-6">
@@ -64,7 +68,7 @@ const Blocks = () => {
             </div>
           </div>
         ))}
-      </div>
+      </motion.div>
     </div>
   );
 };

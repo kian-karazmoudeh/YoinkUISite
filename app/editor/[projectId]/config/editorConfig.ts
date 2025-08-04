@@ -10,7 +10,10 @@ export const getEditorConfig: () => EditorConfig = () => ({
   },
   blockManager: {
     blocks: blocks,
-    appendTo: undefined,
+    custom: true,
+  },
+  layerManager: {
+    custom: true,
   },
   storageManager: {
     type: "remote", // You can name it anything (remote, custom, etc.)
@@ -21,9 +24,9 @@ export const getEditorConfig: () => EditorConfig = () => ({
   assetManager: {
     upload: false,
   },
-  // layerManager: {
-  //   appendTo: "layers-container",
-  // },
+  pluginsOpts: {
+    "gjs-layers": { appendTo: "#layers-container" },
+  },
   // Don't initialize with content - we'll load it after editor is ready
   components: "",
   deviceManager: {

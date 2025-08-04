@@ -161,7 +161,7 @@ export const useEditorStore = create<EditorStore>((set, get) => ({
         set({
           selectedComponents: [],
           styleValues: {},
-          activeTab: "blocks",
+          // activeTab: "blocks",
         });
       });
 
@@ -283,10 +283,13 @@ export const useEditorStore = create<EditorStore>((set, get) => ({
   setDefaultBgColor: (color: string) => set({ defaultBgColor: color }),
   // Component management
   setSelectedComponents: () => {
-    const { editor } = get();
+    const { editor, activeTab } = get();
     if (!editor) return;
     const selected = editor.getSelectedAll();
-    set({ selectedComponents: selected, activeTab: "styles" });
+    set({
+      selectedComponents: selected,
+      activeTab: activeTab == "layers" ? "layers" : "styles",
+    });
     get().changeStyleState();
   },
 

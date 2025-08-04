@@ -1,6 +1,7 @@
 "use client";
 
 import { useShallow } from "zustand/react/shallow";
+import { motion } from "framer-motion";
 import { useEditorStore } from "../../../store";
 import Typography from "./Typography";
 import Layout from "./Layout";
@@ -507,12 +508,15 @@ export default function StylesBar() {
 
   return (
     <div className="flex-1 overflow-hidden flex flex-col h-full min-h-0">
-      <div
+      <motion.div
         className="overflow-y-auto"
         style={{
           scrollbarWidth: "thin",
           scrollbarColor: "#26272B #18191A",
         }}
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.3, ease: "easeOut" }}
       >
         <div className="space-y-2">
           {selectedComponents.length > 0 &&
@@ -537,7 +541,7 @@ export default function StylesBar() {
             </div>
           )}
         </div>
-      </div>
+      </motion.div>
     </div>
   );
 }

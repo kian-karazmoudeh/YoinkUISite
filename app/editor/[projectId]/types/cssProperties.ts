@@ -50,6 +50,7 @@ export const cssProperties = [
   "column-gap",
   "grid-template-columns",
   "grid-template-rows",
+  "grid-template-areas",
   "background-position",
   "background-repeat",
   "background-size",

@@ -6,12 +6,6 @@ import { TreeNode, TreeView } from "@/components/tree-view";
 import { Component, Components } from "grapesjs";
 import { Box, Code, Image, Link, Type } from "lucide-react";
 
-// interface TreeNode {
-//   id: string;
-//   label: string;
-//   children?: TreeNode[];
-// }
-
 function generateTreeData(components: Components, parentId = "") {
   let counter = 1;
 

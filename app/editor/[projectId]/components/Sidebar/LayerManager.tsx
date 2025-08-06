@@ -7,8 +7,6 @@ import { Component, Components } from "grapesjs";
 import { Box, Code, Image, Link, Type } from "lucide-react";
 
 function generateTreeData(components: Components) {
-  let counter = 1;
-
   const traverse = (comps: Components): TreeNode[] => {
     return comps.map((comp: Component) => {
       const id = comp.getId();
@@ -39,7 +37,6 @@ function generateTreeData(components: Components) {
       const node: TreeNode = { id, label, data, icon };
       if (children) node.children = children;
 
-      counter++;
       return node;
     });
   };

@@ -51,7 +51,10 @@ interface EditorActions {
   setCurrentDevice: (deviceName: DeviceName) => void;
 
   // Style management
-  updateComponentStyle: (property: string, value: string) => void;
+  updateComponentStyleProperty: (property: string, value: string) => void;
+  updateComponentStyles: (
+    changes: { component: Component; styles: Record<string, string> }[]
+  ) => void;
 
   // UI state
   setActiveTab: (tab: string) => void;
@@ -266,13 +269,20 @@ export const useEditorStore = create<EditorStore>((set, get) => {
     },
 
     // Style management
-    updateComponentStyle: (property: string, value: string) => {
+    updateComponentStyleProperty: (property: string, value: string) => {
       const { selectedComponents } = get();
       if (!selectedComponents || selectedComponents.length === 0) return;
       selectedComponents.forEach((component) => {
         component.setStyle({ [property]: value });
       });
       updateStyleState();
+    },
+    updateComponentStyles: (
+      changes: { component: Component; styles: Record<string, string> }[]
+    ) => {
+      for (const change of changes) {
+        change.component.setStyle(change.styles);
+      }
     },
 
     // UI state

@@ -1,3 +1,4 @@
+import { useEditorStore } from "../store";
 import { DeviceKey, DeviceName } from "../types";
 import { Component, Editor } from "grapesjs";
 
@@ -130,4 +131,28 @@ export function getMergedComponentStyles({
     mergedStyles = { ...mergedStyles, ...tabletStyles, ...mobileStyles };
   }
   return mergedStyles;
+}
+
+export function getViewportComponentStyles({
+  component,
+  device,
+}: {
+  component: Component;
+  device: DeviceName;
+}): Record<string, string> {
+  const editor = useEditorStore.getState().editor;
+  const styles = editor?.Css.getComponentRules(component);
+
+  if (!styles || !editor) return {};
+
+  let viewportStyles = {};
+
+  for (const rule of styles) {
+    const deviceName = rule.getDevice().getName();
+    if (deviceName === device) {
+      viewportStyles = rule.getStyle();
+    }
+  }
+
+  return viewportStyles;
 }

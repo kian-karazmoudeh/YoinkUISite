@@ -3,54 +3,56 @@
 import { motion } from "framer-motion";
 import PromptInput from "./PromptInput";
 import { useChat } from "@ai-sdk/react";
-import { ChangeEvent, FormEvent, useEffect, useState } from "react";
+import { ChangeEvent, FormEvent, useState } from "react";
 import { lastAssistantMessageIsCompleteWithToolCalls } from "ai";
-import { useEditorStore } from "../../../store";
-import { useShallow } from "zustand/react/shallow";
-import { setComponentStyle } from "./tools";
+import { getCanvas, getComponentsByQuery, setComponentStyles } from "./tools";
 
 const Agent = () => {
-  const { editor } = useEditorStore(
-    useShallow((state) => ({ editor: state.editor }))
-  );
   const [input, setInput] = useState("");
   const { messages, sendMessage, addToolResult } = useChat({
     sendAutomaticallyWhen: lastAssistantMessageIsCompleteWithToolCalls,
 
     onToolCall: async ({ toolCall }) => {
-      if (toolCall.toolName == "alert") {
-        const input: { msg: string } = toolCall.input as { msg: string };
-
-        alert(input.msg);
+      if (toolCall.toolName == "setComponentStyles") {
+        console.log(toolCall.input);
+        const {
+          changes,
+        }: {
+          changes: { componentId: string; styles: Record<string, string> }[];
+        } = toolCall.input as {
+          changes: {
+            componentId: string;
+            styles: Record<string, string>;
+          }[];
+        };
+        setComponentStyles(changes);
 
         addToolResult({
-          tool: "alert",
+          tool: "setComponentStyles",
           toolCallId: toolCall.toolCallId,
           output: { status: "success" },
         });
-      } else if (toolCall.toolName == "setComponentStyle") {
-        const input: { componentId: string; property: string; value: string } =
-          toolCall.input as {
-            componentId: string;
-            property: string;
-            value: string;
-          };
-        setComponentStyle(input.componentId, input.property, input.value);
+      } else if (toolCall.toolName == "getComponentsByQuery") {
+        const { query } = toolCall.input as { query: string };
+
+        const components = getComponentsByQuery(query);
 
         addToolResult({
-          tool: "setComponentStyle",
+          tool: "getComponent",
           toolCallId: toolCall.toolCallId,
-          output: { status: "success" },
+          output: components,
+        });
+      } else if (toolCall.toolName == "getCanvas") {
+        const canvas = getCanvas();
+
+        addToolResult({
+          tool: "getCanvas",
+          toolCallId: toolCall.toolCallId,
+          output: canvas,
         });
       }
     },
   });
-
-  useEffect(() => {
-    if (editor) {
-      console.log(editor.getWrapper());
-    }
-  }, [editor]);
 
   return (
     <div className="flex-1 p-6 overflow-hidden flex flex-col h-full min-h-0">
@@ -89,14 +91,56 @@ const Agent = () => {
                     }
                   }
                   break;
-                case "tool-setComponentStyle":
+                case "tool-setComponentStyles":
                   {
                     const callId = part.toolCallId;
 
                     switch (part.state) {
                       case "input-streaming":
                         return (
-                          <div key={callId}>componentStyle tool loading...</div>
+                          <div key={callId}>
+                            componentStyles tool loading...
+                          </div>
+                        );
+                        break;
+                      case "input-available":
+                        return <div key={callId}>loading...</div>;
+                        break;
+                      case "output-available":
+                        return <div key={callId}>success</div>;
+                        break;
+                    }
+                  }
+                  break;
+                case "tool-getCanvas":
+                  {
+                    const callId = part.toolCallId;
+
+                    switch (part.state) {
+                      case "input-streaming":
+                        return (
+                          <div key={callId}>getCanvas tool loading...</div>
+                        );
+                        break;
+                      case "input-available":
+                        return <div key={callId}>loading...</div>;
+                        break;
+                      case "output-available":
+                        return <div key={callId}>success</div>;
+                        break;
+                    }
+                  }
+                  break;
+                case "tool-getComponentsByQuery":
+                  {
+                    const callId = part.toolCallId;
+
+                    switch (part.state) {
+                      case "input-streaming":
+                        return (
+                          <div key={callId}>
+                            getComponentsByQuery tool loading...
+                          </div>
                         );
                         break;
                       case "input-available":

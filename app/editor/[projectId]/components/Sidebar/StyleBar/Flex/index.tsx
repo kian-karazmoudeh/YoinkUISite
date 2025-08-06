@@ -20,7 +20,7 @@ const Flex = () => {
   const { styleValues, updateComponentStyle } = useEditorStore(
     useShallow((state) => ({
       styleValues: state.styleValues,
-      updateComponentStyle: state.updateComponentStyle,
+      updateComponentStyle: state.updateComponentStyleProperty,
     }))
   );
   return (

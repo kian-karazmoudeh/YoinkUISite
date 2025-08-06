@@ -6,7 +6,7 @@ const Devices = () => {
   const { currentDevice, handleDeviceChange } = useEditorStore(
     useShallow((state) => ({
       currentDevice: state.currentDevice,
-      handleDeviceChange: state.handleDeviceChange,
+      handleDeviceChange: state.setCurrentDevice,
     }))
   );
   return (

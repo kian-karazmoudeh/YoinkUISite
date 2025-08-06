@@ -22,7 +22,6 @@ export default function EditorPage() {
   // Zustand store
   const {
     editor,
-    isEditorReady,
     yoinkName,
     initializeEditor,
     setYoinkId,
@@ -113,7 +112,7 @@ export default function EditorPage() {
       }
     };
 
-    if (projectId != "new" && user && isEditorReady) {
+    if (projectId != "new" && user) {
       setYoinkId(projectId as string);
       supabase
         .from("yoinks")
@@ -139,7 +138,7 @@ export default function EditorPage() {
         "background-color": defaultBgColor,
       });
     }
-  }, [projectId, user, isEditorReady, yoinkContent, editor, defaultBgColor]);
+  }, [projectId, user, yoinkContent, editor, defaultBgColor]);
 
   return (
     <>

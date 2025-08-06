@@ -24,9 +24,6 @@ export const getEditorConfig: () => EditorConfig = () => ({
   assetManager: {
     upload: false,
   },
-  pluginsOpts: {
-    "gjs-layers": { appendTo: "#layers-container" },
-  },
   // Don't initialize with content - we'll load it after editor is ready
   components: "",
   deviceManager: {

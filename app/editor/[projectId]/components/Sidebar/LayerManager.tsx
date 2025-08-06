@@ -6,12 +6,13 @@ import { TreeNode, TreeView } from "@/components/tree-view";
 import { Component, Components } from "grapesjs";
 import { Box, Code, Image, Link, Type } from "lucide-react";
 
-function generateTreeData(components: Components, parentId = "") {
+function generateTreeData(components: Components) {
   let counter = 1;
 
-  const traverse = (comps: Components, parentId: string): TreeNode[] => {
+  const traverse = (comps: Components): TreeNode[] => {
     return comps.map((comp: Component) => {
-      const id = parentId ? `${parentId}-${counter}` : `${counter}`;
+      const id = comp.getId();
+
       const label = (
         comp.get("tagName") ||
         comp.get("type") ||
@@ -32,7 +33,7 @@ function generateTreeData(components: Components, parentId = "") {
         );
 
       const children: TreeNode[] | undefined = comp.components().length
-        ? traverse(comp.components(), id)
+        ? traverse(comp.components())
         : undefined;
 
       const node: TreeNode = { id, label, data, icon };
@@ -43,7 +44,7 @@ function generateTreeData(components: Components, parentId = "") {
     });
   };
 
-  return traverse(components, parentId);
+  return traverse(components);
 }
 
 const LayerManager = () => {
@@ -56,7 +57,7 @@ const LayerManager = () => {
     if (editor) {
       const component = editor.getComponents();
       setData(generateTreeData(component));
-      console.log(data);
+      // console.log(data);
     }
   }, [editor]);
 
@@ -80,7 +81,7 @@ const LayerManager = () => {
               if (editor && comp) {
                 editor.select(comp);
                 const el = comp.view?.el;
-                if (el) {
+                if (el && el.nodeType != Node.TEXT_NODE) {
                   el.scrollIntoView({ behavior: "smooth", block: "nearest" });
                 }
               }

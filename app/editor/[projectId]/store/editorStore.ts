@@ -52,9 +52,6 @@ interface EditorActions {
 
   // Style management
   updateComponentStyleProperty: (property: string, value: string) => void;
-  updateComponentStyles: (
-    changes: { component: Component; styles: Record<string, string> }[]
-  ) => void;
 
   // UI state
   setActiveTab: (tab: string) => void;
@@ -276,13 +273,6 @@ export const useEditorStore = create<EditorStore>((set, get) => {
         component.setStyle({ [property]: value });
       });
       updateStyleState();
-    },
-    updateComponentStyles: (
-      changes: { component: Component; styles: Record<string, string> }[]
-    ) => {
-      for (const change of changes) {
-        change.component.setStyle(change.styles);
-      }
     },
 
     // UI state

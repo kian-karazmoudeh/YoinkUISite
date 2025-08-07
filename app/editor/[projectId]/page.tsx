@@ -23,13 +23,15 @@ export default function EditorPage() {
   const {
     editor,
     yoinkName,
+    defaultBgColor,
+    themes,
     initializeEditor,
     setYoinkId,
     setYoinkName,
     setYoinkCreatorId,
     resetStore,
     setDefaultBgColor,
-    defaultBgColor,
+    calculateThemes,
   } = useEditorStore();
 
   useEffect(() => {
@@ -85,7 +87,10 @@ export default function EditorPage() {
   useEffect(() => {
     const createNewYoink = async (currentUser: User) => {
       if (yoinkContent) {
-        editor?.once("component:mount", () => setIsLoading(false));
+        editor?.once("component:mount", () => {
+          setIsLoading(false);
+          calculateThemes();
+        });
         editor?.setComponents(yoinkContent);
 
         const { data, error } = await supabase
@@ -126,7 +131,10 @@ export default function EditorPage() {
           setYoinkName(data?.name || "Untitled");
         });
 
-      editor?.load().then(() => setIsLoading(false));
+      editor?.load().then(() => {
+        setIsLoading(false);
+        calculateThemes();
+      });
     } else if (projectId == "new" && user && editor && yoinkContent) {
       createNewYoink(user);
     }

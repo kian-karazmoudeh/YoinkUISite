@@ -4,12 +4,13 @@ import grapesjs from "grapesjs";
 import "grapesjs/dist/css/grapes.min.css";
 import { getEditorConfig } from "../config/editorConfig";
 import "../styles/editor.css";
-import { DeviceName } from "../types";
+import { DeviceName, Theme, ThemeValue } from "../types";
 import { initBaseDefaultStyles } from "../utils/defaultStyles/base";
 import { initTailwindDefaultStyles } from "../utils/defaultStyles/tailwind";
 import { objectToUniversalCss } from "../utils/objectToUniversalCss";
 import { createClient } from "@/utils/supabase/client";
 import { getMergedComponentStyles } from "../utils/helpers";
+import { colorToHex } from "../export/tailwind/utils/colors/colorToHex";
 
 interface EditorState {
   // Editor instance
@@ -20,6 +21,9 @@ interface EditorState {
   yoinkName: string | null;
   yoinkCreatorId: string | null;
   defaultBgColor: string | undefined;
+
+  // Theme Management
+  themes: Theme[];
 
   // Component management
   selectedComponents: Component[];
@@ -52,6 +56,7 @@ interface EditorActions {
 
   // Style management
   updateComponentStyleProperty: (property: string, value: string) => void;
+  calculateThemes: () => void;
 
   // UI state
   setActiveTab: (tab: string) => void;
@@ -104,7 +109,7 @@ export const useEditorStore = create<EditorStore>((set, get) => {
     // Initial state
     editor: null,
     selectedComponents: [],
-    currentDevice: "Desktop",
+    currentDevice: "Desktop" as DeviceName,
     styleValues: {},
     activeTab: "blocks",
     defaultBaseStyles: undefined,
@@ -112,6 +117,7 @@ export const useEditorStore = create<EditorStore>((set, get) => {
     yoinkId: null,
     yoinkName: null,
     yoinkCreatorId: null,
+    themes: [],
     defaultBgColor: undefined,
     // Editor initialization
     initializeEditor: async () => {
@@ -229,6 +235,7 @@ export const useEditorStore = create<EditorStore>((set, get) => {
         yoinkId: null,
         yoinkName: null,
         yoinkCreatorId: null,
+        themes: [],
         currentDevice: "Desktop",
         selectedComponents: [],
         styleValues: {},
@@ -273,6 +280,109 @@ export const useEditorStore = create<EditorStore>((set, get) => {
         component.setStyle({ [property]: value });
       });
       updateStyleState();
+    },
+
+    calculateThemes: () => {
+      const editor = get().editor;
+      if (editor) {
+        const themeMap = new Map<string, Theme>();
+
+        const wrapper = editor.getWrapper();
+        if (wrapper) {
+          function recurse(component: Component) {
+            const el = component.getEl();
+            if (!el || el.nodeType === Node.TEXT_NODE) return;
+
+            const styles = el.computedStyleMap();
+
+            // Extract background color and convert to hex
+            let background = colorToHex(
+              styles.get("background-color")?.toString() || ""
+            );
+            if (background && background != "00000000") {
+              background = background.slice(0, 6);
+              // Calculate volume
+              const width = el.offsetWidth;
+              const height = el.offsetHeight;
+              const volume = width * height;
+
+              // Extract typography styles
+              const fontFamily = styles.get("font-family")?.toString() || "";
+              const fontSize = styles.get("font-size")?.toString() || "";
+              const fontWeight = styles.get("font-weight")?.toString() || "";
+              const fontColor = colorToHex(
+                styles.get("color")?.toString() || ""
+              );
+
+              // Helper to update typography list
+              const updateThemeValueList = (
+                list: ThemeValue[],
+                value: string,
+                volume: number
+              ): ThemeValue[] => {
+                const existing = list.find((item) => item.value === value);
+                if (existing) {
+                  existing.priority += volume;
+                } else {
+                  list.push({ value, priority: volume });
+                }
+                return list;
+              };
+
+              // Update or create theme entry
+              if (!themeMap.has(background)) {
+                themeMap.set(background, {
+                  background,
+                  priority: volume,
+                  typography: {
+                    fontFamilies: [{ value: fontFamily, priority: volume }],
+                    fontSizes: [{ value: fontSize, priority: volume }],
+                    fontWeights: [{ value: fontWeight, priority: volume }],
+                    fontColors: [{ value: fontColor, priority: volume }],
+                  },
+                });
+              } else {
+                const theme = themeMap.get(background)!;
+                theme.priority += volume;
+                theme.typography.fontFamilies = updateThemeValueList(
+                  theme.typography.fontFamilies,
+                  fontFamily,
+                  volume
+                );
+                theme.typography.fontSizes = updateThemeValueList(
+                  theme.typography.fontSizes,
+                  fontSize,
+                  volume
+                );
+                theme.typography.fontWeights = updateThemeValueList(
+                  theme.typography.fontWeights,
+                  fontWeight,
+                  volume
+                );
+                theme.typography.fontColors = updateThemeValueList(
+                  theme.typography.fontColors,
+                  fontColor,
+                  volume
+                );
+              }
+            }
+
+            // Recurse into children
+            component
+              .components()
+              .forEach((child: Component) => recurse(child));
+          }
+
+          recurse(wrapper);
+        }
+
+        // Convert map to Theme[]
+        const themes = Array.from(themeMap.values());
+
+        console.log(themes);
+
+        set({ themes });
+      }
     },
 
     // UI state

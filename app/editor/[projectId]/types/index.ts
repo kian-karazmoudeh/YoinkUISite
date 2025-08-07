@@ -3,6 +3,7 @@ export type DeviceName = "Desktop" | "Tablet" | "Mobile";
 
 export type Theme = {
   background: string;
+  color: string;
   // typography: Typography;
   priority: number;
 };

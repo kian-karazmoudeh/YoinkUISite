@@ -63,6 +63,7 @@ interface EditorActions {
   // Style management
   updateComponentStyleProperty: (property: string, value: string) => void;
   calculateThemes: () => void;
+  setTheme: (newTheme: Theme) => void;
 
   // UI state
   setActiveTab: (tab: string) => void;
@@ -112,165 +113,6 @@ export const useEditorStore = create<EditorStore>((set, get) => {
       // activeTab: "blocks",
     });
   };
-
-  // function updateThemeMapWithValues(updatedThemes: Map<string, Theme>) {
-  //   const themeMap = get().themes;
-  //   if (!themeMap) return;
-
-  //   // Step 1: Convert themeMap to array and sort by priority descending
-  //   const sortedThemes = Array.from(themeMap.entries()).sort(
-  //     (a, b) => b[1].priority - a[1].priority
-  //   );
-
-  //   // Step 2: Sort updatedThemes by priority descending
-  //   const sortedUpdatedThemes = Array.from(updatedThemes.entries()).sort(
-  //     (a, b) => b[1].priority - a[1].priority
-  //   );
-
-  //   // Step 3: Update the highest priority themes first
-  //   for (
-  //     let i = 0;
-  //     i < sortedThemes.length && i < sortedUpdatedThemes.length;
-  //     i++
-  //   ) {
-  //     const [themeId, originalTheme] = sortedThemes[i];
-  //     const [, updatedTheme] = sortedUpdatedThemes[i];
-
-  //     themeMap.set(themeId, {
-  //       ...originalTheme,
-  //       background: updatedTheme.background,
-  //       color: updatedTheme.color,
-  //       priority: updatedTheme.priority,
-  //     });
-  //   }
-
-  //   // Step 4: Commit update
-  //   set({ themes: themeMap });
-  // }
-
-  // function applyThemesToCanvasFromThemeMap() {
-  //   const editor = get().editor;
-  //   const themeMap = get().themes;
-
-  //   if (!editor || !componentToThemeMap || !themeMap) return;
-
-  //   // Sort themes by priority to determine which is main, primary, accent
-  //   const sortedThemes = Array.from(themeMap.entries()).sort(
-  //     (a, b) => b[1].priority - a[1].priority
-  //   );
-
-  //   // Assign semantic roles based on priority
-  //   const mainTheme = sortedThemes[0]?.[1]; // Highest priority = main background
-  //   const primaryTheme = sortedThemes[1]?.[1]; // Second priority = primary elements
-  //   const accentTheme = sortedThemes[2]?.[1]; // Third priority = accent elements
-
-  //   // First, apply themes to components that have direct theme mappings
-  //   componentToThemeMap.forEach(({ colorId }, componentId) => {
-  //     const component = editor.getWrapper()?.find(`#${componentId}`)[0];
-  //     if (component && colorId) {
-  //       const theme = themeMap.get(colorId);
-  //       if (component && theme) {
-  //         component.setStyle({
-  //           "background-color": theme.background,
-  //         });
-  //         component.setStyle({
-  //           color: theme.color,
-  //         });
-  //       }
-  //     }
-  //   });
-
-  //   // Then, intelligently apply semantic theme colors to components
-  //   function applySemanticThemeColors(component: Component) {
-  //     const el = component.getEl();
-  //     if (!el || el.nodeType === Node.TEXT_NODE) return;
-
-  //     const tagName = el.tagName?.toLowerCase();
-  //     const componentId = component.getId();
-
-  //     // Check if this component already has a direct theme mapping
-  //     const hasDirectTheme = componentToThemeMap.has(componentId);
-
-  //     if (!hasDirectTheme) {
-  //       // Apply semantic colors based on component characteristics
-  //       const styles = el.computedStyleMap();
-  //       const backgroundColor = colorToHex(
-  //         styles.get("background-color")?.toString() || ""
-  //       );
-  //       const hasBackground = Boolean(
-  //         backgroundColor && backgroundColor !== "00000000"
-  //       );
-
-  //       // Determine component type and apply appropriate theme
-  //       let themeToApply = null;
-
-  //       // Main background components (large containers, body-like elements)
-  //       if (isMainBackgroundComponent(component, tagName, hasBackground)) {
-  //         themeToApply = mainTheme;
-  //       }
-  //       // Primary components (buttons, important CTAs, main content areas)
-  //       else if (isPrimaryComponent(component, tagName)) {
-  //         themeToApply = primaryTheme;
-  //       }
-  //       // Accent components (highlights, secondary buttons, decorative elements)
-  //       else if (isAccentComponent(component, tagName)) {
-  //         themeToApply = accentTheme;
-  //       }
-  //       // Text components inherit from their parent's theme
-  //       else if (isTextComponent(tagName) && !hasBackground) {
-  //         themeToApply = getParentTheme(component);
-  //       }
-
-  //       if (themeToApply) {
-  //         // Apply background if component doesn't have one
-  //         if (!hasBackground) {
-  //           component.setStyle({
-  //             "background-color": themeToApply.background,
-  //           });
-  //         }
-
-  //         // Apply text color
-  //         component.setStyle({
-  //           color: themeToApply.color,
-  //         });
-  //       }
-  //     }
-
-  //     // Recurse to children
-  //     component
-  //       .components()
-  //       .forEach((child: Component) => applySemanticThemeColors(child));
-  //   }
-
-  //   const wrapper = editor.getWrapper();
-  //   if (wrapper) {
-  //     applySemanticThemeColors(wrapper);
-  //   }
-  // }
-
-  // Helper functions to determine component types
-  // function isMainBackgroundComponent(
-  //   component: Component,
-  //   tagName: string,
-  //   hasBackground: boolean
-  // ): boolean {
-  //   // Large containers, body-like elements, or components with significant area
-  //   const el = component.getEl();
-  //   if (!el) return false;
-
-  //   const width = el.offsetWidth;
-  //   const height = el.offsetHeight;
-  //   const area = width * height;
-
-  //   // Consider it main background if it's a large container or body-like element
-  //   return (
-  //     tagName === "body" ||
-  //     tagName === "main" ||
-  //     tagName === "section" ||
-  //     (tagName === "div" && area > 50000) || // Large divs
-  //     (hasBackground === true && area > 30000) // Large components with backgrounds
-  //   );
-  // }
 
   return {
     // Initial state
@@ -555,7 +397,63 @@ export const useEditorStore = create<EditorStore>((set, get) => {
       // Update the store with the calculated theme
       set({ theme });
 
+      // Populate componentToThemeMap with component-to-theme mappings
+      componentToThemeMap.clear();
+
+      function mapComponentsToThemes(
+        component: Component,
+        background: string = ""
+      ) {
+        const element = component.getEl();
+        const isTextNode = component.getType() === "textnode";
+
+        let componentBgColor = background;
+
+        if (!isTextNode && element) {
+          const componentStyles = element.computedStyleMap();
+          const rawBgColor = String(
+            componentStyles.get("background-color")?.toString() || background
+          );
+
+          // Filter out transparent backgrounds
+          if (
+            rawBgColor &&
+            rawBgColor !== background &&
+            rawBgColor !== "transparent" &&
+            rawBgColor !== "rgba(0, 0, 0, 0)" &&
+            !rawBgColor.includes("rgba(0, 0, 0, 0)") &&
+            !rawBgColor.includes("transparent")
+          ) {
+            componentBgColor = colorToHex(rawBgColor);
+          }
+        }
+
+        // Find which palette this component belongs to
+        const paletteIndex = pallets.findIndex((palette) =>
+          palette.background.includes(componentBgColor)
+        );
+
+        if (paletteIndex !== -1) {
+          const componentId = component.getId();
+          const componentTheme: ComponentTheme = {
+            background: { palletIndex: paletteIndex },
+            color: { palletIndex: paletteIndex },
+          };
+          componentToThemeMap.set(componentId, componentTheme);
+        }
+
+        // Recurse
+        component
+          .components()
+          .forEach((child: Component) =>
+            mapComponentsToThemes(child, componentBgColor || background)
+          );
+      }
+
+      mapComponentsToThemes(wrapper);
+
       console.log("Calculated theme:", theme);
+      console.log("Component to theme mappings:", componentToThemeMap);
     },
 
     // UI state
@@ -573,6 +471,56 @@ export const useEditorStore = create<EditorStore>((set, get) => {
       styles: Record<string, Record<string, string>> | undefined
     ) => {
       set({ defaultTailwindStyles: styles });
+    },
+
+    setTheme: (newTheme: Theme) => {
+      const { editor, theme } = get();
+      if (!editor) return;
+
+      // Step 1: Update the theme palettes one by one
+      const updatedTheme = { ...theme };
+      newTheme.pallet.forEach((newPalette, index) => {
+        if (updatedTheme.pallet[index]) {
+          // Update existing palette
+          updatedTheme.pallet[index] = {
+            background: newPalette.background,
+            text: newPalette.text,
+          };
+        } else {
+          // Add new palette if it doesn't exist
+          updatedTheme.pallet[index] = newPalette;
+        }
+      });
+
+      // Update the store with the new theme
+      set({ theme: updatedTheme });
+
+      // Step 2: Apply the theme changes to all components using componentToThemeMap
+      componentToThemeMap.forEach((componentTheme, componentId) => {
+        const component = editor.getWrapper()?.find(`#${componentId}`)[0];
+        if (!component) return;
+
+        const { palletIndex } = componentTheme.background;
+        const palette = updatedTheme.pallet[palletIndex];
+
+        if (palette) {
+          // Apply background color (use first background color from palette)
+          if (palette.background.length > 0) {
+            component.setStyle({
+              "background-color": palette.background[0],
+            });
+          }
+
+          // Apply text color (use first text color from palette)
+          if (palette.text.length > 0) {
+            component.setStyle({
+              color: palette.text[0],
+            });
+          }
+        }
+      });
+
+      console.log("Theme updated and applied:", updatedTheme);
     },
   };
 });

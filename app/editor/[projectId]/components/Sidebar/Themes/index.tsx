@@ -5,131 +5,93 @@ import { useEditorStore } from "../../../store";
 import { Theme } from "../../../types";
 import ThemeCard from "./ThemeCard";
 
-const themes: Map<string, Theme>[] = [
-  new Map([
-    [
-      "main",
+const themes: Theme[] = [
+  {
+    pallet: [
       {
-        background: "#e4d7b4",
-        color: "#7b3109",
-        priority: 10000,
+        background: ["#e4d7b4"],
+        text: ["#7b3109"],
+      },
+      {
+        background: ["#ff9fa0"],
+        text: ["#811518"],
+      },
+      {
+        background: ["#cf8700"],
+        text: ["#7a3002"],
       },
     ],
-    [
-      "primary",
+  },
+  {
+    pallet: [
       {
-        background: "#ff9fa0",
-        color: "#811518",
-        priority: 5000,
+        background: ["#d6e8d4"], // soft sage green
+        text: ["#1e3b2f"], // dark forest green
+      },
+      {
+        background: ["#a4cbb4"], // muted green-teal
+        text: ["#174038"], // deep teal
+      },
+      {
+        background: ["#f2e9dc"], // warm off-white
+        text: ["#6f4e37"], // coffee brown
       },
     ],
-    [
-      "accent",
+  },
+  {
+    pallet: [
       {
-        background: "#cf8700",
-        color: "#7a3002",
-        priority: 2000,
+        background: ["#fbe6e4"], // soft blush pink
+        text: ["#422419"], // dark reddish brown
+      },
+      {
+        background: ["#fab57a"], // sandy orange
+        text: ["#6b2c10"], // burnt sienna
+      },
+      {
+        background: ["#ffd3b6"], // peach
+        text: ["#3c1f0f"], // deep warm brown
       },
     ],
-  ]),
-  new Map([
-    [
-      "main",
+  },
+  {
+    pallet: [
       {
-        background: "#d6e8d4", // soft sage green
-        color: "#1e3b2f", // dark forest green
-        priority: 10000,
+        background: ["#f5f7fa"], // light gray-blue
+        text: ["#2e3a59"], // slate blue
+      },
+      {
+        background: ["#dbeafe"], // light sky blue
+        text: ["#1e3a8a"], // royal/navy blue
+      },
+      {
+        background: ["#cbd5e1"], // muted steel
+        text: ["#334155"], // deep slate gray
       },
     ],
-    [
-      "primary",
-      {
-        background: "#a4cbb4", // muted green-teal
-        color: "#174038", // deep teal
-        priority: 5000,
-      },
-    ],
-    [
-      "accent",
-      {
-        background: "#f2e9dc", // warm off-white
-        color: "#6f4e37", // coffee brown
-        priority: 2000,
-      },
-    ],
-  ]),
-  new Map([
-    [
-      "main",
-      {
-        background: "#fbe6e4", // soft blush pink
-        color: "#422419", // dark reddish brown
-        priority: 10000,
-      },
-    ],
-    [
-      "primary",
-      {
-        background: "#fab57a", // sandy orange
-        color: "#6b2c10", // burnt sienna
-        priority: 5000,
-      },
-    ],
-    [
-      "accent",
-      {
-        background: "#ffd3b6", // peach
-        color: "#3c1f0f", // deep warm brown
-        priority: 2000,
-      },
-    ],
-  ]),
-  new Map([
-    [
-      "main",
-      {
-        background: "#f5f7fa", // light gray-blue
-        color: "#2e3a59", // slate blue
-        priority: 10000,
-      },
-    ],
-    [
-      "primary",
-      {
-        background: "#dbeafe", // light sky blue
-        color: "#1e3a8a", // royal/navy blue
-        priority: 5000,
-      },
-    ],
-    [
-      "accent",
-      {
-        background: "#cbd5e1", // muted steel
-        color: "#334155", // deep slate gray
-        priority: 2000,
-      },
-    ],
-  ]),
+  },
 ];
 
 const Themes = () => {
-  // const { setTheme } = useEditorStore(
-  //   useShallow((state) => ({ setTheme: state.setTheme }))
-  // );
+  const { setTheme } = useEditorStore(
+    useShallow((state) => ({ setTheme: state.setTheme }))
+  );
 
-  const handleApplyTheme = (theme: Map<string, Theme>) => {
+  const handleApplyTheme = (theme: Theme) => {
     console.log(theme);
-    // setTheme(theme);
+    setTheme(theme);
   };
 
   return (
     <div className="grid grid-cols-2 gap-4 p-4">
-      {themes.map((theme) => (
+      {themes.map((theme, index) => (
         <ThemeCard
-          main={theme.get("main")!.background}
-          primary={theme.get("primary")!.background}
+          key={index}
+          main={theme.pallet[0]?.background[0] || "#FFFFFF"}
+          primary={theme.pallet[1]?.background[0] || "#FFFFFF"}
+          accent={theme.pallet[2]?.background[0] || "#FFFFFF"}
           secondary={"#FFFFFF"}
-          accent={theme.get("accent")!.background}
+          onClick={() => handleApplyTheme(theme)}
         />
       ))}
     </div>

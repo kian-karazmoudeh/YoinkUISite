@@ -21,15 +21,25 @@ interface ThemeCardProps {
   primary: string;
   secondary: string;
   accent: string;
+  onClick?: () => void;
 }
 
-const ThemeCard = (theme: ThemeCardProps) => {
+const ThemeCard = ({
+  main,
+  primary,
+  secondary,
+  accent,
+  onClick,
+}: ThemeCardProps) => {
   return (
-    <div className="pb-[100%] max-w-full box-content relative overflow-hidden rounded-[12px] cursor-pointer hover:scale-105 transition-transform">
-      <Color background={theme.secondary} paddingBottom="100%" />
-      <Color background={theme.accent} paddingBottom="85%" />
-      <Color background={theme.primary} paddingBottom="67%" />
-      <Color background={theme.main} paddingBottom="41%" />
+    <div
+      className="pb-[100%] max-w-full box-content relative overflow-hidden rounded-[12px] cursor-pointer hover:scale-105 transition-transform"
+      onClick={onClick}
+    >
+      <Color background={secondary} paddingBottom="100%" />
+      <Color background={accent} paddingBottom="85%" />
+      <Color background={primary} paddingBottom="67%" />
+      <Color background={main} paddingBottom="41%" />
     </div>
   );
 };

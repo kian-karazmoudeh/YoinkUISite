@@ -80,6 +80,16 @@ type EditorStore = EditorState & EditorActions;
 export const useEditorStore = create<EditorStore>((set, get) => {
   let componentToThemeMap = new Map<string, ComponentTheme>();
 
+  const isValidColor = (color: string) => {
+    return (
+      color &&
+      color !== "transparent" &&
+      color !== "rgba(0, 0, 0, 0)" &&
+      !color.includes("rgba(0, 0, 0, 0)") &&
+      !color.includes("transparent")
+    );
+  };
+
   const updateStyleState = () => {
     const { editor, selectedComponents, defaultBaseStyles, currentDevice } =
       get();
@@ -298,162 +308,112 @@ export const useEditorStore = create<EditorStore>((set, get) => {
       const wrapper = editor.getWrapper();
       if (!wrapper) return;
 
-      const palletMap = new Map<string, string[]>(); // key: bgColor. Value: textColors[]
+      // Collect colors and map components in a single pass
+      const colorData = new Map<
+        string,
+        { textColors: Set<string>; area: number; components: Component[] }
+      >();
 
-      function recurse(component: Component, background: string = "") {
+      function processComponents(component: Component, parentBg: string = "") {
         const element = component.getEl();
         const isTextNode = component.getType() === "textnode";
 
-        // step 1) get the background of the element. If its different than the argument, then add it to the palletMap given that its not already set.
-        let componentBgColor = background;
-        let textColor = "";
-
+        // Get background color
+        let bgColor = parentBg;
         if (!isTextNode && element) {
-          const componentStyles = element.computedStyleMap();
-          const rawBgColor = String(
-            componentStyles.get("background-color")?.toString() || background
+          const styles = element.computedStyleMap();
+          const rawBg = String(
+            styles.get("background-color")?.toString() || parentBg
           );
 
-          // Filter out transparent backgrounds
-          if (
-            rawBgColor &&
-            rawBgColor !== background &&
-            rawBgColor !== "transparent" &&
-            rawBgColor !== "rgba(0, 0, 0, 0)" &&
-            !rawBgColor.includes("rgba(0, 0, 0, 0)") &&
-            !rawBgColor.includes("transparent")
-          ) {
-            componentBgColor = colorToHex(rawBgColor);
-            if (!palletMap.has(componentBgColor)) {
-              palletMap.set(componentBgColor, []);
+          if (isValidColor(rawBg)) {
+            bgColor = colorToHex(rawBg);
+            const area = element.offsetWidth * element.offsetHeight;
+
+            if (!colorData.has(bgColor)) {
+              colorData.set(bgColor, {
+                textColors: new Set(),
+                area,
+                components: [],
+              });
+            } else {
+              colorData.get(bgColor)!.area += area;
             }
+            colorData.get(bgColor)!.components.push(component);
           }
         }
 
-        // step 2) check the element. if its a text node then add its text to the textColors given that the text color isnt already included;
-        if (isTextNode) {
-          // For text nodes, get color from parent element
+        // Get text color
+        let textColor = "";
+        if (isTextNode && element) {
           const parentElement = component.parent()?.getEl();
           if (parentElement) {
             const parentStyles = parentElement.computedStyleMap();
-            const rawTextColor = String(
-              parentStyles.get("color")?.toString() || ""
+            textColor = colorToHex(
+              String(parentStyles.get("color")?.toString() || "")
             );
-            textColor = colorToHex(rawTextColor);
           }
         } else if (element) {
-          // For regular elements, get color from their own styles
-          const componentStyles = element.computedStyleMap();
-          const rawTextColor = String(
-            componentStyles.get("color")?.toString() || ""
-          );
-          textColor = colorToHex(rawTextColor);
+          const styles = element.computedStyleMap();
+          textColor = colorToHex(String(styles.get("color")?.toString() || ""));
         }
 
-        if (textColor && textColor !== "") {
-          const currentBgColor = componentBgColor || background;
-          if (currentBgColor && palletMap.has(currentBgColor)) {
-            const textColors = palletMap.get(currentBgColor)!;
-            if (!textColors.includes(textColor)) {
-              textColors.push(textColor);
-            }
-          }
+        // Add text color to background
+        if (textColor && bgColor && colorData.has(bgColor)) {
+          colorData.get(bgColor)!.textColors.add(textColor);
         }
 
         // Recurse
         component
           .components()
-          .forEach((child: Component) =>
-            recurse(child, componentBgColor || background)
-          );
+          .forEach((child: Component) => processComponents(child, bgColor));
       }
 
-      recurse(wrapper);
+      processComponents(wrapper);
 
-      // Convert palletMap to Theme structure using GroupColors
-      const backgroundColors = Array.from(palletMap.keys());
-      const colorGroups = GroupColors(backgroundColors);
+      // Group and sort colors
+      const bgColors = Array.from(colorData.keys());
+      const colorGroups = GroupColors(bgColors);
 
-      const pallets: Pallet[] = colorGroups.map((bgColorGroup: string[]) => {
-        // Merge all text colors from components with backgrounds in this group
-        const mergedTextColors: string[] = [];
-        bgColorGroup.forEach((bgColor: string) => {
-          const textColors = palletMap.get(bgColor) || [];
-          textColors.forEach((textColor: string) => {
-            if (!mergedTextColors.includes(textColor)) {
-              mergedTextColors.push(textColor);
-            }
-          });
+      const pallets: Pallet[] = colorGroups.map((group) => {
+        // Sort by area and merge text colors
+        const sortedColors = group
+          .map((color) => ({ color, area: colorData.get(color)?.area || 0 }))
+          .sort((a, b) => b.area - a.area);
+
+        const allTextColors = new Set<string>();
+        group.forEach((color) => {
+          colorData
+            .get(color)
+            ?.textColors.forEach((textColor) => allTextColors.add(textColor));
         });
 
         return {
-          background: bgColorGroup,
-          text: mergedTextColors,
+          background: sortedColors.map((item) => item.color),
+          text: Array.from(allTextColors),
         };
       });
 
       const theme: Theme = { pallet: pallets };
-
-      // Update the store with the calculated theme
       set({ theme });
 
-      // Populate componentToThemeMap with component-to-theme mappings
+      // Map components to themes using stored component data
       componentToThemeMap.clear();
 
-      function mapComponentsToThemes(
-        component: Component,
-        background: string = ""
-      ) {
-        const element = component.getEl();
-        const isTextNode = component.getType() === "textnode";
-
-        let componentBgColor = background;
-
-        if (!isTextNode && element) {
-          const componentStyles = element.computedStyleMap();
-          const rawBgColor = String(
-            componentStyles.get("background-color")?.toString() || background
-          );
-
-          // Filter out transparent backgrounds
-          if (
-            rawBgColor &&
-            rawBgColor !== background &&
-            rawBgColor !== "transparent" &&
-            rawBgColor !== "rgba(0, 0, 0, 0)" &&
-            !rawBgColor.includes("rgba(0, 0, 0, 0)") &&
-            !rawBgColor.includes("transparent")
-          ) {
-            componentBgColor = colorToHex(rawBgColor);
-          }
-        }
-
-        // Find which palette this component belongs to
-        const paletteIndex = pallets.findIndex((palette) =>
-          palette.background.includes(componentBgColor)
-        );
-
-        if (paletteIndex !== -1) {
-          const componentId = component.getId();
-          const componentTheme: ComponentTheme = {
-            background: { palletIndex: paletteIndex },
-            color: { palletIndex: paletteIndex },
-          };
-          componentToThemeMap.set(componentId, componentTheme);
-        }
-
-        // Recurse
-        component
-          .components()
-          .forEach((child: Component) =>
-            mapComponentsToThemes(child, componentBgColor || background)
-          );
-      }
-
-      mapComponentsToThemes(wrapper);
+      colorGroups.forEach((group, paletteIndex) => {
+        group.forEach((bgColor) => {
+          const components = colorData.get(bgColor)?.components || [];
+          components.forEach((component) => {
+            componentToThemeMap.set(component.getId(), {
+              background: { palletIndex: paletteIndex },
+              color: { palletIndex: paletteIndex },
+            });
+          });
+        });
+      });
 
       console.log("Calculated theme:", theme);
-      console.log("Component to theme mappings:", componentToThemeMap);
+      console.log("Component mappings:", componentToThemeMap);
     },
 
     // UI state

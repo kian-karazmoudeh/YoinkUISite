@@ -24,7 +24,7 @@ export default function EditorPage() {
     editor,
     yoinkName,
     defaultBgColor,
-    themes,
+    // themes,
     initializeEditor,
     setYoinkId,
     setYoinkName,

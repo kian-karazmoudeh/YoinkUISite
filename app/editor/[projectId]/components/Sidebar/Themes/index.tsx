@@ -113,13 +113,13 @@ const themes: Map<string, Theme>[] = [
 ];
 
 const Themes = () => {
-  const { setTheme } = useEditorStore(
-    useShallow((state) => ({ setTheme: state.setTheme }))
-  );
+  // const { setTheme } = useEditorStore(
+  //   useShallow((state) => ({ setTheme: state.setTheme }))
+  // );
 
   const handleApplyTheme = (theme: Map<string, Theme>) => {
     console.log(theme);
-    setTheme(theme);
+    // setTheme(theme);
   };
 
   return (
@@ -131,18 +131,6 @@ const Themes = () => {
           secondary={"#FFFFFF"}
           accent={theme.get("accent")!.background}
         />
-        // <div
-        //   className="flex flex-wrap cursor-pointer"
-        //   onClick={() => handleApplyTheme(theme)}
-        // >
-        //   {Array.from(theme.entries()).map(([id, theme]) => (
-        //     <div
-        //       key={id}
-        //       className="size-10 m-3 rounded-md"
-        //       style={{ backgroundColor: theme.background }}
-        //     ></div>
-        //   ))}
-        // </div>
       ))}
     </div>
   );

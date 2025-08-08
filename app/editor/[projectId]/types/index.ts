@@ -1,21 +1,17 @@
 export type DeviceKey = "lg" | "md" | "sm";
 export type DeviceName = "Desktop" | "Tablet" | "Mobile";
 
-export type Theme = {
-  background: string;
-  color: string;
-  // typography: Typography;
-  priority: number;
-};
+export interface Theme {
+  pallet: Pallet[]; // different pallets -> Main, Primary, Accent, Secondary...
+}
 
-export type Typography = {
-  fontWeights: ThemeValue[];
-  fontFamilies: ThemeValue[];
-  fontSizes: ThemeValue[];
-  fontColors: ThemeValue[];
-};
+export interface Pallet {
+  background: string[]; // color values
+  text: string[]; // color values
+}
 
-export type ThemeValue = {
-  priority: number;
-  value: string;
-};
+export interface ThemeRef {
+  palletIndex: number;
+  backgroundIndex?: number;
+  textIndex?: number;
+}

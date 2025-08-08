@@ -49,7 +49,7 @@ export async function GET(
       client_reference_id: user.id,
       allow_promotion_codes: true,
       subscription_data: {
-        trial_period_days: 7,
+        trial_period_days: 3,
       },
       success_url: `${DOMAIN}/thanks`,
       cancel_url: `${DOMAIN}/pricing`,

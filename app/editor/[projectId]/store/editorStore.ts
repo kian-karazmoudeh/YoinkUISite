@@ -311,7 +311,11 @@ export const useEditorStore = create<EditorStore>((set, get) => {
       // Collect colors and map components in a single pass
       const colorData = new Map<
         string,
-        { textColors: Set<string>; area: number; components: Component[] }
+        {
+          textColors: Map<string, number>;
+          area: number;
+          components: Component[];
+        }
       >();
 
       function processComponents(component: Component, parentBg: string = "") {
@@ -332,7 +336,7 @@ export const useEditorStore = create<EditorStore>((set, get) => {
 
             if (!colorData.has(bgColor)) {
               colorData.set(bgColor, {
-                textColors: new Set(),
+                textColors: new Map(),
                 area,
                 components: [],
               });
@@ -343,8 +347,10 @@ export const useEditorStore = create<EditorStore>((set, get) => {
           }
         }
 
-        // Get text color
+        // Get text color and calculate text area
         let textColor = "";
+        let textArea = 0;
+
         if (isTextNode && element) {
           const parentElement = component.parent()?.getEl();
           if (parentElement) {
@@ -352,15 +358,33 @@ export const useEditorStore = create<EditorStore>((set, get) => {
             textColor = colorToHex(
               String(parentStyles.get("color")?.toString() || "")
             );
+
+            // Calculate text area: font-size * text length (approximate)
+            const fontSize = parseFloat(
+              String(parentStyles.get("font-size")?.toString() || "16")
+            );
+            const textContent = component.get("content") || "";
+            textArea = fontSize * textContent.length;
           }
         } else if (element) {
           const styles = element.computedStyleMap();
           textColor = colorToHex(String(styles.get("color")?.toString() || ""));
+
+          // Calculate text area for non-text nodes
+          const fontSize = parseFloat(
+            String(styles.get("font-size")?.toString() || "16")
+          );
+          const textContent = component.get("content") || "";
+          textArea = fontSize * textContent.length;
         }
 
-        // Add text color to background
+        // Add text color to background with area
         if (textColor && bgColor && colorData.has(bgColor)) {
-          colorData.get(bgColor)!.textColors.add(textColor);
+          const existingArea =
+            colorData.get(bgColor)!.textColors.get(textColor) || 0;
+          colorData
+            .get(bgColor)!
+            .textColors.set(textColor, existingArea + textArea);
         }
 
         // Recurse
@@ -381,16 +405,22 @@ export const useEditorStore = create<EditorStore>((set, get) => {
           .map((color) => ({ color, area: colorData.get(color)?.area || 0 }))
           .sort((a, b) => b.area - a.area);
 
-        const allTextColors = new Set<string>();
+        // Sort text colors by area
+        const allTextColorsWithArea = new Map<string, number>();
         group.forEach((color) => {
-          colorData
-            .get(color)
-            ?.textColors.forEach((textColor) => allTextColors.add(textColor));
+          colorData.get(color)?.textColors.forEach((area, textColor) => {
+            const existingArea = allTextColorsWithArea.get(textColor) || 0;
+            allTextColorsWithArea.set(textColor, existingArea + area);
+          });
         });
+
+        const sortedTextColors = Array.from(allTextColorsWithArea.entries())
+          .sort((a, b) => b[1] - a[1]) // Sort by area descending
+          .map(([color]) => color);
 
         return {
           background: sortedColors.map((item) => item.color),
-          text: Array.from(allTextColors),
+          text: sortedTextColors,
         };
       });
 

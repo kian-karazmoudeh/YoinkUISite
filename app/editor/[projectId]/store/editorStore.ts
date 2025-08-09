@@ -13,11 +13,6 @@ import { createClient } from "@/utils/supabase/client";
 import { getMergedComponentStyles } from "../utils/helpers";
 import { colorToHex } from "../export/tailwind/utils/colors/colorToHex";
 
-interface ComponentTheme {
-  background: ThemeRef;
-  color: ThemeRef;
-}
-
 interface EditorState {
   // Editor instance
   editor: Editor | null;
@@ -78,7 +73,7 @@ interface EditorActions {
 type EditorStore = EditorState & EditorActions;
 
 export const useEditorStore = create<EditorStore>((set, get) => {
-  let componentToThemeMap = new Map<string, ComponentTheme>();
+  let componentToThemeMap = new Map<string, ThemeRef>();
 
   const isValidColor = (color: string) => {
     return (
@@ -324,67 +319,79 @@ export const useEditorStore = create<EditorStore>((set, get) => {
 
         // Get background color
         let bgColor = parentBg;
-        if (!isTextNode && element) {
+
+        if (isTextNode && element) {
+          // For text nodes: get color from parent and get area
+          const parentComponent = component.parent();
+          if (parentComponent) {
+            const parentElement = parentComponent.getEl();
+            if (parentElement) {
+              const parentStyles = parentElement.computedStyleMap();
+              const textColor = colorToHex(
+                String(parentStyles.get("color")?.toString() || "")
+              );
+
+              // Calculate text area: font-size * text length (approximate)
+              const fontSize = parseFloat(
+                String(parentStyles.get("font-size")?.toString() || "16")
+              );
+              const textContent = component.get("content") || "";
+              const textArea = fontSize * textContent.length;
+
+              // Add the parent component to color data to show that the parent uses which text
+              if (textColor && isValidColor(textColor)) {
+                if (!colorData.has(bgColor)) {
+                  colorData.set(bgColor, {
+                    textColors: new Map(),
+                    area: 0,
+                    components: [],
+                  });
+                }
+
+                const existingArea =
+                  colorData.get(bgColor)!.textColors.get(textColor) || 0;
+                colorData
+                  .get(bgColor)!
+                  .textColors.set(textColor, existingArea + textArea);
+
+                // Add parent component if not already added
+                if (
+                  !colorData.get(bgColor)!.components.includes(parentComponent)
+                ) {
+                  colorData.get(bgColor)!.components.push(parentComponent);
+                }
+              }
+            }
+          }
+        } else if (!isTextNode && element) {
+          // For non-text nodes: check background and if different, add to color data
           const styles = element.computedStyleMap();
           const rawBg = String(
             styles.get("background-color")?.toString() || parentBg
           );
 
           if (isValidColor(rawBg)) {
-            bgColor = colorToHex(rawBg);
-            const area = element.offsetWidth * element.offsetHeight;
+            const newBgColor = colorToHex(rawBg);
 
-            if (!colorData.has(bgColor)) {
-              colorData.set(bgColor, {
-                textColors: new Map(),
-                area,
-                components: [],
-              });
-            } else {
-              colorData.get(bgColor)!.area += area;
+            // Only add if background is different from parent
+            if (newBgColor !== parentBg) {
+              bgColor = newBgColor;
+              const area = element.offsetWidth * element.offsetHeight;
+
+              if (!colorData.has(bgColor)) {
+                colorData.set(bgColor, {
+                  textColors: new Map(),
+                  area,
+                  components: [],
+                });
+              } else {
+                colorData.get(bgColor)!.area += area;
+              }
+
+              // Keep a reference to the component
+              colorData.get(bgColor)!.components.push(component);
             }
-            colorData.get(bgColor)!.components.push(component);
           }
-        }
-
-        // Get text color and calculate text area
-        let textColor = "";
-        let textArea = 0;
-
-        if (isTextNode && element) {
-          const parentElement = component.parent()?.getEl();
-          if (parentElement) {
-            const parentStyles = parentElement.computedStyleMap();
-            textColor = colorToHex(
-              String(parentStyles.get("color")?.toString() || "")
-            );
-
-            // Calculate text area: font-size * text length (approximate)
-            const fontSize = parseFloat(
-              String(parentStyles.get("font-size")?.toString() || "16")
-            );
-            const textContent = component.get("content") || "";
-            textArea = fontSize * textContent.length;
-          }
-        } else if (element) {
-          const styles = element.computedStyleMap();
-          textColor = colorToHex(String(styles.get("color")?.toString() || ""));
-
-          // Calculate text area for non-text nodes
-          const fontSize = parseFloat(
-            String(styles.get("font-size")?.toString() || "16")
-          );
-          const textContent = component.get("content") || "";
-          textArea = fontSize * textContent.length;
-        }
-
-        // Add text color to background with area
-        if (textColor && bgColor && colorData.has(bgColor)) {
-          const existingArea =
-            colorData.get(bgColor)!.textColors.get(textColor) || 0;
-          colorData
-            .get(bgColor)!
-            .textColors.set(textColor, existingArea + textArea);
         }
 
         // Recurse
@@ -399,13 +406,13 @@ export const useEditorStore = create<EditorStore>((set, get) => {
       const bgColors = Array.from(colorData.keys());
       const colorGroups = GroupColors(bgColors);
 
-      const pallets: Pallet[] = colorGroups.map((group) => {
+      const pallets: Pallet[] = colorGroups.map((group, groupIndex) => {
         // Sort by area and merge text colors
         const sortedColors = group
           .map((color) => ({ color, area: colorData.get(color)?.area || 0 }))
           .sort((a, b) => b.area - a.area);
 
-        // Sort text colors by area
+        // Sort text colors by area (descending from highest area)
         const allTextColorsWithArea = new Map<string, number>();
         group.forEach((color) => {
           colorData.get(color)?.textColors.forEach((area, textColor) => {
@@ -415,8 +422,16 @@ export const useEditorStore = create<EditorStore>((set, get) => {
         });
 
         const sortedTextColors = Array.from(allTextColorsWithArea.entries())
-          .sort((a, b) => b[1] - a[1]) // Sort by area descending
+          .sort((a, b) => b[1] - a[1]) // Sort by area descending (highest first)
           .map(([color]) => color);
+
+        console.log(`Palette ${groupIndex}:`, {
+          background: sortedColors.map((item) => item.color),
+          text: sortedTextColors,
+          textColorsWithArea: Array.from(allTextColorsWithArea.entries()).sort(
+            (a, b) => b[1] - a[1]
+          ),
+        });
 
         return {
           background: sortedColors.map((item) => item.color),
@@ -433,10 +448,41 @@ export const useEditorStore = create<EditorStore>((set, get) => {
       colorGroups.forEach((group, paletteIndex) => {
         group.forEach((bgColor) => {
           const components = colorData.get(bgColor)?.components || [];
+          const palette = pallets[paletteIndex];
+
           components.forEach((component) => {
+            // Find the background index in the palette
+            const backgroundIndex = palette.background.findIndex(
+              (color) => color === bgColor
+            );
+
+            // Find the text index - find the text color that has this component in its components array
+            let textIndex;
+            const palletTextColors = colorData.get(bgColor)?.textColors;
+            if (palletTextColors && palletTextColors.size > 0) {
+              // Find the text color that has this component in its components array
+              for (const [textColor, _area] of palletTextColors.entries()) {
+                // Check if this component is associated with this text color
+                // We need to check if the component or its parent is in the components array for this text color
+                const textColorData = colorData.get(bgColor);
+                if (
+                  textColorData &&
+                  textColorData.components.includes(component)
+                ) {
+                  textIndex = palette.text.findIndex(
+                    (color) => color === textColor
+                  );
+                  if (textIndex === -1) textIndex = undefined;
+                  break;
+                }
+              }
+            }
+
             componentToThemeMap.set(component.getId(), {
-              background: { palletIndex: paletteIndex },
-              color: { palletIndex: paletteIndex },
+              palletIndex: paletteIndex,
+              backgroundIndex:
+                backgroundIndex !== -1 ? backgroundIndex : undefined,
+              textIndex: textIndex,
             });
           });
         });
@@ -490,21 +536,24 @@ export const useEditorStore = create<EditorStore>((set, get) => {
         const component = editor.getWrapper()?.find(`#${componentId}`)[0];
         if (!component) return;
 
-        const { palletIndex } = componentTheme.background;
+        const { palletIndex, backgroundIndex, textIndex } = componentTheme;
         const palette = updatedTheme.pallet[palletIndex];
 
         if (palette) {
-          // Apply background color (use first background color from palette)
-          if (palette.background.length > 0) {
+          // Apply background color (use backgroundIndex from palette)
+          if (
+            backgroundIndex !== undefined &&
+            palette.background.length > backgroundIndex
+          ) {
             component.setStyle({
-              "background-color": palette.background[0],
+              "background-color": palette.background[backgroundIndex],
             });
           }
 
-          // Apply text color (use first text color from palette)
-          if (palette.text.length > 0) {
+          // Apply text color (use textIndex from palette)
+          if (textIndex !== undefined && palette.text.length > textIndex) {
             component.setStyle({
-              color: palette.text[0],
+              color: palette.text[textIndex],
             });
           }
         }

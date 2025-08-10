@@ -6,12 +6,15 @@ export interface Theme {
 }
 
 export interface Pallet {
-  background: string[]; // color values
-  text: string[]; // color values
+  background: ColorSet; // color values
+  text: ColorSet[]; // color values
 }
+
+export type ColorSet = string[];
 
 export interface ThemeRef {
   palletIndex: number;
   backgroundIndex?: number;
-  textIndex?: number;
+  contentColorSetIdx?: number;
+  contentColorIdx?: number;
 }

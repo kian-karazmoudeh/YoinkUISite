@@ -307,7 +307,13 @@ export const useEditorStore = create<EditorStore>((set, get) => {
       const colorData = new Map<
         string,
         {
-          textColors: Map<string, number>;
+          textColors: Map<
+            string,
+            {
+              area: number;
+              components: Component[];
+            }
+          >;
           area: number;
           components: Component[];
         }
@@ -349,10 +355,11 @@ export const useEditorStore = create<EditorStore>((set, get) => {
                 }
 
                 const existingArea =
-                  colorData.get(bgColor)!.textColors.get(textColor) || 0;
-                colorData
-                  .get(bgColor)!
-                  .textColors.set(textColor, existingArea + textArea);
+                  colorData.get(bgColor)!.textColors.get(textColor)?.area || 0;
+                colorData.get(bgColor)!.textColors.set(textColor, {
+                  area: existingArea + textArea,
+                  components: [parentComponent],
+                });
 
                 // Add parent component if not already added
                 if (
@@ -408,34 +415,68 @@ export const useEditorStore = create<EditorStore>((set, get) => {
 
       const pallets: Pallet[] = colorGroups.map((group, groupIndex) => {
         // Sort by area and merge text colors
-        const sortedColors = group
+        const sortedBackground = group
           .map((color) => ({ color, area: colorData.get(color)?.area || 0 }))
           .sort((a, b) => b.area - a.area);
 
-        // Sort text colors by area (descending from highest area)
-        const allTextColorsWithArea = new Map<string, number>();
+        const palletIndex = groupIndex;
         group.forEach((color) => {
-          colorData.get(color)?.textColors.forEach((area, textColor) => {
-            const existingArea = allTextColorsWithArea.get(textColor) || 0;
-            allTextColorsWithArea.set(textColor, existingArea + area);
+          const components = colorData.get(color)?.components || [];
+          components.forEach((component) => {
+            componentToThemeMap.set(component.getId(), {
+              palletIndex,
+              backgroundIndex: sortedBackground.findIndex(
+                (item) => item.color === color
+              ),
+            });
           });
         });
 
-        const sortedTextColors = Array.from(allTextColorsWithArea.entries())
-          .sort((a, b) => b[1] - a[1]) // Sort by area descending (highest first)
-          .map(([color]) => color);
+        // Create a map to store text color sets for each background color
+        const textColorSets = new Map<
+          string,
+          {
+            area: number;
+            components: Component[];
+          }
+        >();
+
+        // Group text colors by their background colors
+        group.forEach((bgColor) => {
+          const colorInfo = colorData.get(bgColor);
+          if (colorInfo?.textColors) {
+            for (const [
+              contentColor,
+              textColorInfo,
+            ] of colorInfo.textColors.entries()) {
+              textColorSets.set(contentColor, textColorInfo);
+            }
+          }
+        });
+
+        // Convert text color sets to the required format
+        const textColor = Array.from(textColorSets.keys());
+        const textColorGroups = GroupColors(textColor);
+        const textColorGroupsSorted = textColorGroups.map((group) => {
+          return group
+            .map((color) => {
+              return { color, area: textColorSets.get(color)?.area || 0 };
+            })
+            .sort((a, b) => b.area - a.area);
+        });
 
         console.log(`Palette ${groupIndex}:`, {
-          background: sortedColors.map((item) => item.color),
-          text: sortedTextColors,
-          textColorsWithArea: Array.from(allTextColorsWithArea.entries()).sort(
-            (a, b) => b[1] - a[1]
+          background: sortedBackground.map((item) => item.color),
+          text: textColorGroupsSorted.map((group) =>
+            group.map((item) => item.color)
           ),
         });
 
         return {
-          background: sortedColors.map((item) => item.color),
-          text: sortedTextColors,
+          background: sortedBackground.map((item) => item.color),
+          text: textColorGroupsSorted.map((group) =>
+            group.map((item) => item.color)
+          ),
         };
       });
 
@@ -456,24 +497,29 @@ export const useEditorStore = create<EditorStore>((set, get) => {
               (color) => color === bgColor
             );
 
-            // Find the text index - find the text color that has this component in its components array
-            let textIndex;
+            // Find the content color indices
+            let contentColorSetIdx: number | undefined;
+            let contentColorIdx: number | undefined;
             const palletTextColors = colorData.get(bgColor)?.textColors;
+
             if (palletTextColors && palletTextColors.size > 0) {
               // Find the text color that has this component in its components array
               for (const [textColor, _area] of palletTextColors.entries()) {
-                // Check if this component is associated with this text color
-                // We need to check if the component or its parent is in the components array for this text color
                 const textColorData = colorData.get(bgColor);
                 if (
                   textColorData &&
                   textColorData.components.includes(component)
                 ) {
-                  textIndex = palette.text.findIndex(
-                    (color) => color === textColor
-                  );
-                  if (textIndex === -1) textIndex = undefined;
-                  break;
+                  // Find which color set contains this text color
+                  for (let setIdx = 0; setIdx < palette.text.length; setIdx++) {
+                    const colorIdx = palette.text[setIdx].indexOf(textColor);
+                    if (colorIdx !== -1) {
+                      contentColorSetIdx = setIdx;
+                      contentColorIdx = colorIdx;
+                      break;
+                    }
+                  }
+                  if (contentColorSetIdx !== undefined) break;
                 }
               }
             }
@@ -482,7 +528,8 @@ export const useEditorStore = create<EditorStore>((set, get) => {
               palletIndex: paletteIndex,
               backgroundIndex:
                 backgroundIndex !== -1 ? backgroundIndex : undefined,
-              textIndex: textIndex,
+              contentColorSetIdx,
+              contentColorIdx,
             });
           });
         });
@@ -536,7 +583,12 @@ export const useEditorStore = create<EditorStore>((set, get) => {
         const component = editor.getWrapper()?.find(`#${componentId}`)[0];
         if (!component) return;
 
-        const { palletIndex, backgroundIndex, textIndex } = componentTheme;
+        const {
+          palletIndex,
+          backgroundIndex,
+          contentColorSetIdx,
+          contentColorIdx,
+        } = componentTheme;
         const palette = updatedTheme.pallet[palletIndex];
 
         if (palette) {
@@ -550,10 +602,15 @@ export const useEditorStore = create<EditorStore>((set, get) => {
             });
           }
 
-          // Apply text color (use textIndex from palette)
-          if (textIndex !== undefined && palette.text.length > textIndex) {
+          // Apply text color (use contentColorSetIdx and contentColorIdx from palette)
+          if (
+            contentColorSetIdx !== undefined &&
+            contentColorIdx !== undefined &&
+            palette.text.length > contentColorSetIdx &&
+            palette.text[contentColorSetIdx].length > contentColorIdx
+          ) {
             component.setStyle({
-              color: palette.text[textIndex],
+              color: palette.text[contentColorSetIdx][contentColorIdx],
             });
           }
         }

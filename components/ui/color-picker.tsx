@@ -6,58 +6,36 @@ import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
 import { useEditorStore } from "@/app/editor/[projectId]/store";
 import { useShallow } from "zustand/react/shallow";
+import chroma from "chroma-js";
 
 interface ColorPickerProps {
   value: string;
   onChange: (color: string) => void;
   className?: string;
+  presetColors?: string[];
 }
 
-// Helper functions to parse and format colors
-function parseColor(color: string): string {
-  if (typeof color !== "string") {
-    return "#000000";
-  }
-
-  const trimmed = color.trim();
-
-  // Check if it's a hex color
-  if (trimmed.startsWith("#")) {
-    return trimmed;
-  }
-
-  // Check if it's rgb/rgba and convert to hex
-  const rgbMatch = trimmed.match(/rgba?\(([^)]+)\)/);
-  if (rgbMatch) {
-    const values = rgbMatch[1].split(",").map((v) => parseInt(v.trim()));
-    if (values.length >= 3) {
-      return rgbToHex(values[0], values[1], values[2]);
-    }
-  }
-
-  // Default to hex
-  return "#000000";
-}
-
-function rgbToHex(r: number, g: number, b: number) {
-  return "#" + ((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1);
-}
-
-export function ColorPicker({ value, onChange, className }: ColorPickerProps) {
+export function ColorPicker({
+  value,
+  onChange,
+  className,
+  presetColors,
+}: ColorPickerProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [colorValue, setColorValue] = useState<string>("#000000");
   const [inputValue, setInputValue] = useState(value);
   const popoverRef = useRef<HTMLDivElement>(null);
 
-  const { selectedComponents, currentDevice } = useEditorStore(
+  const { selectedComponents, currentDevice, theme } = useEditorStore(
     useShallow((state) => ({
       selectedComponents: state.selectedComponents,
       currentDevice: state.currentDevice,
+      theme: state.theme,
     }))
   );
 
   useEffect(() => {
-    const parsedColor = parseColor(value);
+    const parsedColor = chroma(value).hex();
     setColorValue(parsedColor);
     setInputValue(parsedColor);
   }, [value, selectedComponents, currentDevice]);
@@ -92,24 +70,16 @@ export function ColorPicker({ value, onChange, className }: ColorPickerProps) {
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newValue = e.target.value;
     setInputValue(newValue);
-
-    // Try to parse the new value
-    const parsed = parseColor(newValue);
-    if (parsed !== "#000000") {
-      setColorValue(parsed);
-      onChange(parsed);
-    }
   };
 
   const handleInputBlur = () => {
     // Validate and format the input value
-    const parsed = parseColor(inputValue);
-    if (parsed !== "#000000") {
+    try {
+      const parsed = chroma(inputValue).hex();
       setInputValue(parsed);
       setColorValue(parsed);
       onChange(parsed);
-    } else {
-      // Reset to current value if invalid
+    } catch {
       setInputValue(value);
     }
   };
@@ -129,6 +99,18 @@ export function ColorPicker({ value, onChange, className }: ColorPickerProps) {
           {isOpen && (
             <div className="absolute top-full left-0 mt-2 z-50 w-auto p-3 bg-[#151515] border border-[#363736] rounded-md shadow-lg">
               <HexColorPicker color={colorValue} onChange={handleColorChange} />
+              {presetColors && (
+                <div className="flex flex-wrap gap-2 mt-2">
+                  {presetColors &&
+                    presetColors?.map((color) => (
+                      <div
+                        key={color}
+                        className="size-6 rounded-md shadow-md"
+                        style={{ backgroundColor: color }}
+                      />
+                    ))}
+                </div>
+              )}
             </div>
           )}
         </div>

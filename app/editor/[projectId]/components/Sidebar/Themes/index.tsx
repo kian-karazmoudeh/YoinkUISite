@@ -4,6 +4,7 @@ import { useShallow } from "zustand/react/shallow";
 import { useEditorStore } from "../../../store";
 import { Theme } from "../../../types";
 import ThemeCard from "./ThemeCard";
+import { ButtonColorful } from "@/components/ui/button-colorful";
 
 const themes: Theme[] = [
   {
@@ -99,17 +100,22 @@ const Themes = () => {
   };
 
   return (
-    <div className="grid grid-cols-2 gap-4 p-4">
-      {themes.map((theme, index) => (
-        <ThemeCard
-          key={index}
-          main={theme.pallet[0]?.background[0] || "#FFFFFF"}
-          primary={theme.pallet[1]?.background[0] || "#FFFFFF"}
-          accent={theme.pallet[2]?.background[0] || "#FFFFFF"}
-          secondary={"#FFFFFF"}
-          onClick={() => handleApplyTheme(theme)}
-        />
-      ))}
+    <div className="h-full flex flex-col">
+      <div className="grid grid-cols-2 gap-4 p-4 grow">
+        {themes.map((theme, index) => (
+          <ThemeCard
+            key={index}
+            main={theme.pallet[0]?.background[0] || "#FFFFFF"}
+            primary={theme.pallet[1]?.background[0] || "#FFFFFF"}
+            accent={theme.pallet[2]?.background[0] || "#FFFFFF"}
+            secondary={"#FFFFFF"}
+            onClick={() => handleApplyTheme(theme)}
+          />
+        ))}
+      </div>
+      <div className="p-4">
+        <ButtonColorful />
+      </div>
     </div>
   );
 };

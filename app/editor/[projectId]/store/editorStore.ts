@@ -436,7 +436,7 @@ export const useEditorStore = create<EditorStore>((set, get) => {
         });
 
         // Group text colors
-        const textColorGroups = GroupColors(Array.from(allTextColors));
+        const textColorGroups = GroupColors(Array.from(allTextColors), 30);
 
         // Calculate area for each text color group
         const textGroupsWithArea = textColorGroups.map((group) => {

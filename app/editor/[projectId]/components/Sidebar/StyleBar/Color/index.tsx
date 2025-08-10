@@ -4,10 +4,11 @@ import { useShallow } from "zustand/react/shallow";
 import { useEditorStore } from "@/app/editor/[projectId]/store";
 
 const Color = () => {
-  const { styleValues, updateComponentStyle } = useEditorStore(
+  const { styleValues, updateComponentStyle, theme } = useEditorStore(
     useShallow((state) => ({
       styleValues: state.styleValues,
       updateComponentStyle: state.updateComponentStyleProperty,
+      theme: state.theme,
     }))
   );
   return (
@@ -22,6 +23,7 @@ const Color = () => {
             onChange={(color) =>
               updateComponentStyle("background-color", color)
             }
+            presetColors={theme.pallet.flatMap((pallet) => pallet.background)}
           />
         </div>
       </div>
@@ -33,6 +35,7 @@ const Color = () => {
           <ColorPicker
             value={styleValues.color}
             onChange={(color) => updateComponentStyle("color", color)}
+            presetColors={theme.pallet.flatMap((pallet) => pallet.text).flat()}
           />
         </div>
       </div>

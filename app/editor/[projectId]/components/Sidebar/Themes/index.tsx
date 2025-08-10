@@ -10,7 +10,7 @@ const themes: Theme[] = [
     pallet: [
       {
         background: ["#e4d7b4", "#f2e6c9", "#d8c49a"],
-        text: [["#7b3109", "#ff9fa0", "#552200"], ["#a65b3f"]],
+        text: [["#7b3109", "#552200"], ["#ff9fa0"]],
       },
       {
         background: ["#ff9fa0", "#ffc1c2", "#ffb3ad"],

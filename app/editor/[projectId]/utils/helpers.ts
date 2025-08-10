@@ -156,3 +156,11 @@ export function getViewportComponentStyles({
 
   return viewportStyles;
 }
+
+export function normalize(
+  value: number,
+  squashFactor: number = 100, // bigger = less squashing
+  maxOutput: number = 1000
+): number {
+  return (value / (value + squashFactor)) * maxOutput;
+}

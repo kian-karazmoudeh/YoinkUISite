@@ -89,7 +89,9 @@ export default function EditorPage() {
       if (yoinkContent) {
         editor?.once("component:mount", () => {
           setIsLoading(false);
-          calculateThemes();
+          setTimeout(() => {
+            calculateThemes();
+          }, 700);
         });
         editor?.setComponents(yoinkContent);
 

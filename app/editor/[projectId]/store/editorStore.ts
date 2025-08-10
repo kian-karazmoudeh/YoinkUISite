@@ -10,8 +10,8 @@ import { initBaseDefaultStyles } from "../utils/defaultStyles/base";
 import { initTailwindDefaultStyles } from "../utils/defaultStyles/tailwind";
 import { objectToUniversalCss } from "../utils/objectToUniversalCss";
 import { createClient } from "@/utils/supabase/client";
-import { getMergedComponentStyles } from "../utils/helpers";
-import { colorToHex } from "../export/tailwind/utils/colors/colorToHex";
+import { getMergedComponentStyles, normalize } from "../utils/helpers";
+import chroma from "chroma-js";
 
 interface EditorState {
   // Editor instance
@@ -74,37 +74,6 @@ type EditorStore = EditorState & EditorActions;
 
 export const useEditorStore = create<EditorStore>((set, get) => {
   let componentToThemeMap = new Map<string, ThemeRef>();
-
-  const isValidColor = (color: string) => {
-    // First check if color exists and isn't transparent
-    if (
-      !color ||
-      color === "transparent" ||
-      color === "rgba(0, 0, 0, 0)" ||
-      color.includes("rgba(0, 0, 0, 0)") ||
-      color.includes("transparent")
-    ) {
-      return false;
-    }
-
-    // If it's already a hex color, validate the format
-    if (color.startsWith("#")) {
-      const validHexRegex = /^#([A-Fa-f0-9]{3}){1,2}$/;
-      return validHexRegex.test(color);
-    }
-
-    // For non-hex colors (rgb, rgba, etc), try to parse them
-    try {
-      // Create a temporary div to test color parsing
-      const tempDiv = document.createElement("div");
-      tempDiv.style.color = color;
-
-      // If the color is invalid, the style won't be set
-      return tempDiv.style.color !== "";
-    } catch {
-      return false;
-    }
-  };
 
   const updateStyleState = () => {
     const { editor, selectedComponents, defaultBaseStyles, currentDevice } =
@@ -350,9 +319,9 @@ export const useEditorStore = create<EditorStore>((set, get) => {
               let textColor;
 
               try {
-                textColor = colorToHex(
+                textColor = chroma(
                   parentStyles.get("color")?.toString() || ""
-                );
+                ).hex();
               } catch {
                 console.log("Invalid Text Color:", textColor);
                 textColor = "000000";
@@ -363,10 +332,10 @@ export const useEditorStore = create<EditorStore>((set, get) => {
                 parentStyles.get("font-size")?.toString() || "16"
               );
               const textContent = component.get("content") || "";
-              const textArea = fontSize * textContent.length;
+              const textArea = normalize(fontSize * textContent.length);
 
               // Add the parent component to color data to show that the parent uses which text
-              if (textColor && isValidColor(textColor)) {
+              if (textColor && chroma(textColor).alpha() > 0) {
                 if (!colorData.has(bgColor)) {
                   colorData.set(bgColor, {
                     textColors: new Map(),
@@ -375,32 +344,42 @@ export const useEditorStore = create<EditorStore>((set, get) => {
                 }
 
                 const existingArea =
-                  colorData.get(bgColor)!.textColors.get(textColor) || 0;
+                  colorData
+                    .get(bgColor)!
+                    .textColors.get(chroma(textColor).alpha(1).hex()) || 0;
                 colorData
                   .get(bgColor)!
-                  .textColors.set(textColor, existingArea + textArea);
+                  .textColors.set(
+                    chroma(textColor).alpha(1).hex(),
+                    existingArea + textArea
+                  );
               }
             }
           }
         } else if (!isTextNode && element) {
           // For non-text nodes: check background and if different, add to color data
           const styles = element.computedStyleMap();
-          const rawBg = String(
-            styles.get("background-color")?.toString() || parentBg
-          );
 
           let newBgColor;
           try {
-            newBgColor = colorToHex(rawBg);
+            newBgColor = chroma(
+              styles.get("background-color")?.toString() || parentBg
+            ).hex();
           } catch {
-            console.log("Invalid Background Color:", rawBg);
+            console.log(
+              "Invalid Background Color:",
+              styles.get("background-color")?.toString() || parentBg
+            );
             newBgColor = "00000000";
           }
-          if (newBgColor && newBgColor !== "00000000") {
+
+          if (newBgColor && chroma(newBgColor).alpha() > 0) {
             // Only add if background is different from parent
             if (newBgColor !== parentBg) {
-              bgColor = newBgColor;
-              const area = element.offsetWidth * element.offsetHeight;
+              bgColor = chroma(newBgColor).alpha(1).hex();
+              const area = normalize(
+                element.offsetWidth * element.offsetHeight
+              );
 
               if (!colorData.has(bgColor)) {
                 colorData.set(bgColor, {
@@ -511,15 +490,15 @@ export const useEditorStore = create<EditorStore>((set, get) => {
               const parentStyles = parentElement.computedStyleMap();
               let textColor;
               try {
-                textColor = colorToHex(
+                textColor = chroma(
                   parentStyles.get("color")?.toString() || ""
-                );
+                ).hex();
               } catch {
                 console.log("Invalid Text Color:", textColor);
                 textColor = "000000";
               }
 
-              if (textColor && isValidColor(textColor)) {
+              if (textColor && chroma(textColor).alpha() > 0) {
                 // Find palette and background index for parent background
                 const palletIndex = pallet.findIndex((p) =>
                   p.background.includes(parentBg)
@@ -555,33 +534,32 @@ export const useEditorStore = create<EditorStore>((set, get) => {
           // For non-text nodes: map background colors
           const styles = element.computedStyleMap();
           const rawBg = styles.get("background-color")?.toString() || parentBg;
-          let bgColor;
+          let bgColor: string;
           try {
-            bgColor = colorToHex(rawBg);
+            bgColor = chroma(rawBg).hex();
           } catch {
             console.log("Invalid Background Color:", rawBg);
             bgColor = "00000000";
           }
-          if (bgColor && bgColor !== "00000000") {
+          if (bgColor && bgColor !== parentBg && chroma(bgColor).alpha() > 0) {
             // Only process if background is different from parent
-            if (bgColor !== parentBg) {
-              // Find palette and background index
-              const palletIndex = pallet.findIndex((p) =>
-                p.background.includes(bgColor)
-              );
-              if (palletIndex !== -1) {
-                const backgroundIndex =
-                  pallet[palletIndex].background.indexOf(bgColor);
+            bgColor = chroma(bgColor).alpha(1).hex();
+            // Find palette and background index
+            const palletIndex = pallet.findIndex((p) =>
+              p.background.includes(bgColor)
+            );
+            if (palletIndex !== -1) {
+              const backgroundIndex =
+                pallet[palletIndex].background.indexOf(bgColor);
 
-                // Store the mapping
-                const componentId = component.getId();
-                componentToThemeMap.set(componentId, {
-                  palletIndex,
-                  backgroundIndex,
-                });
-              }
-              parentBg = bgColor; // Update parent background for children
+              // Store the mapping
+              const componentId = component.getId();
+              componentToThemeMap.set(componentId, {
+                palletIndex,
+                backgroundIndex,
+              });
             }
+            parentBg = bgColor; // Update parent background for children
           }
         }
 
@@ -640,7 +618,12 @@ export const useEditorStore = create<EditorStore>((set, get) => {
 
       // Step 2: Apply the theme changes to all components using componentToThemeMap
       componentToThemeMap.forEach((componentTheme, componentId) => {
-        const component = editor.getWrapper()?.find(`#${componentId}`)[0];
+        const wrapper = editor.getWrapper();
+        if (!wrapper) return;
+        let component =
+          wrapper.getId() === componentId
+            ? wrapper
+            : wrapper.find(`#${componentId}`)[0];
         if (!component) return;
 
         const {

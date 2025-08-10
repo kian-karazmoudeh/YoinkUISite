@@ -70,6 +70,22 @@ const themes: Theme[] = [
       },
     ],
   },
+  {
+    pallet: [
+      {
+        background: ["#fdffff", "#e9e8e7", "#d6d5d7"], // gray-blue variations
+        text: [["#313a4b"], ["#65cc8a", "#80d9a8", "#57b375", "#3d8b53"]], // slate blue variations
+      },
+      {
+        background: ["#65cc8a", "#80d9a8", "#57b375", "#3d8b53"], // sky blue variations
+        text: [["#1d4a35"], ["#fdffff", "#e9e8e7", "#d6d5d7"]], // royal blue variations
+      },
+      {
+        background: ["#333c4d", "#4d5970", "#333c4d", "#1a222d"], // steel variations
+        text: [["#fffcfe"], ["#f2f2f2"], ["#e6e6e6"], ["#d9d9d9"]], // deep slate gray variations
+      },
+    ],
+  },
 ];
 
 const Themes = () => {

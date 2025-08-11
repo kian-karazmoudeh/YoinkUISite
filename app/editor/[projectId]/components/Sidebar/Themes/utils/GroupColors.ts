@@ -14,6 +14,7 @@ import DBSCAN from "density-clustering";
 
 export function GroupColors(colors: string[], epsilon: number = 20) {
   // Step 1: Convert to Lab color space (for perceptual similarity)
+  console.log("🎨 Grouping Colors:", colors);
   const labColors = colors.map((hex) => chroma(hex).lab());
 
   // Step 2: Run DBSCAN clustering

@@ -4,7 +4,7 @@ import { useShallow } from "zustand/react/shallow";
 import { useEditorStore } from "../../../store";
 import { Theme } from "../../../types";
 import ThemeCard from "./ThemeCard";
-import { ButtonColorful } from "@/components/ui/button-colorful";
+import { RemixDialog } from "@/components/ui/remix-dialog";
 
 const themes: Theme[] = [
   {
@@ -101,20 +101,69 @@ const Themes = () => {
 
   return (
     <div className="h-full flex flex-col">
-      <div className="grid grid-cols-2 gap-4 p-4 grow">
-        {themes.map((theme, index) => (
-          <ThemeCard
-            key={index}
-            main={theme.pallet[0]?.background[0] || "#FFFFFF"}
-            primary={theme.pallet[1]?.background[0] || "#FFFFFF"}
-            accent={theme.pallet[2]?.background[0] || "#FFFFFF"}
-            secondary={"#FFFFFF"}
-            onClick={() => handleApplyTheme(theme)}
-          />
-        ))}
+      <div className="p-4 grow">
+        <div className="grid grid-cols-2 gap-4 items-start">
+          {themes.map((theme, index) => (
+            <button
+              key={index}
+              onClick={() => handleApplyTheme(theme)}
+              className="p-2 rounded-lg hover:bg-zinc-800 transition-transform hover:scale-105 cursor-pointer flex flex-col gap-1"
+            >
+              <div
+                className="h-12 px-2 rounded-md flex items-end justify-start font-semibold"
+                style={{
+                  background: theme.pallet[0]?.background[0],
+                  color: theme.pallet[0]?.text[0][0],
+                }}
+              >
+                Aa
+              </div>
+              <div
+                className="h-3 rounded-sm"
+                style={{ background: theme.pallet[1]?.background[0] }}
+              />
+              <div
+                className="h-3 rounded-sm"
+                style={{ background: theme.pallet[2]?.background[0] }}
+              />
+            </button>
+          ))}
+        </div>
       </div>
-      <div className="p-4">
-        <ButtonColorful />
+      <div className="p-4 flex ">
+        <RemixDialog className="grow">
+          <div className="text-zinc-100 space-y-4">
+            <p className="text-sm text-zinc-400">
+              Keep your components consistent by using themes from any other
+              component
+            </p>
+            <div className="grid grid-cols-3 gap-3">
+              {themes.map((theme, index) => (
+                <button
+                  key={index}
+                  onClick={() => handleApplyTheme(theme)}
+                  className="p-2 rounded-lg hover:bg-zinc-800 hover:scale-105 cursor-pointer transition-colors"
+                >
+                  <div className="flex flex-col gap-1">
+                    <div
+                      className="h-12 rounded-md"
+                      style={{ background: theme.pallet[0]?.background[0] }}
+                    />
+                    <div
+                      className="h-3 rounded-sm"
+                      style={{ background: theme.pallet[1]?.background[0] }}
+                    />
+                    <div
+                      className="h-3 rounded-sm"
+                      style={{ background: theme.pallet[2]?.background[0] }}
+                    />
+                  </div>
+                </button>
+              ))}
+            </div>
+          </div>
+        </RemixDialog>
+        <div>hello</div>
       </div>
     </div>
   );

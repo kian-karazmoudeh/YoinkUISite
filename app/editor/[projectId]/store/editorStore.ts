@@ -322,37 +322,34 @@ export const useEditorStore = create<EditorStore>((set, get) => {
                 textColor = chroma(
                   parentStyles.get("color")?.toString() || ""
                 ).hex();
-              } catch {
-                console.log("Invalid Text Color:", textColor);
-                textColor = "000000";
-              }
+                // Calculate text area: font-size * text length (approximate)
+                const fontSize = parseFloat(
+                  parentStyles.get("font-size")?.toString() || "16"
+                );
+                const textContent = component.get("content") || "";
+                const textArea = normalize(fontSize * textContent.length);
+                // Add the parent component to color data to show that the parent uses which text
+                if (textColor && chroma(textColor).alpha() > 0 && bgColor) {
+                  if (!colorData.has(bgColor)) {
+                    colorData.set(bgColor, {
+                      textColors: new Map(),
+                      area: 0,
+                    });
+                  }
 
-              // Calculate text area: font-size * text length (approximate)
-              const fontSize = parseFloat(
-                parentStyles.get("font-size")?.toString() || "16"
-              );
-              const textContent = component.get("content") || "";
-              const textArea = normalize(fontSize * textContent.length);
-
-              // Add the parent component to color data to show that the parent uses which text
-              if (textColor && chroma(textColor).alpha() > 0) {
-                if (!colorData.has(bgColor)) {
-                  colorData.set(bgColor, {
-                    textColors: new Map(),
-                    area: 0,
-                  });
-                }
-
-                const existingArea =
+                  const existingArea =
+                    colorData
+                      .get(bgColor)!
+                      .textColors.get(chroma(textColor).alpha(1).hex()) || 0;
                   colorData
                     .get(bgColor)!
-                    .textColors.get(chroma(textColor).alpha(1).hex()) || 0;
-                colorData
-                  .get(bgColor)!
-                  .textColors.set(
-                    chroma(textColor).alpha(1).hex(),
-                    existingArea + textArea
-                  );
+                    .textColors.set(
+                      chroma(textColor).alpha(1).hex(),
+                      existingArea + textArea
+                    );
+                }
+              } catch {
+                console.log("Invalid Text Color:", textColor);
               }
             }
           }
@@ -365,31 +362,29 @@ export const useEditorStore = create<EditorStore>((set, get) => {
             newBgColor = chroma(
               styles.get("background-color")?.toString() || parentBg
             ).hex();
+            if (newBgColor && chroma(newBgColor).alpha() > 0) {
+              // Only add if background is different from parent
+              if (newBgColor !== parentBg) {
+                bgColor = chroma(newBgColor).alpha(1).hex();
+                const area = normalize(
+                  element.offsetWidth * element.offsetHeight
+                );
+
+                if (!colorData.has(bgColor)) {
+                  colorData.set(bgColor, {
+                    textColors: new Map(),
+                    area,
+                  });
+                } else {
+                  colorData.get(bgColor)!.area += area;
+                }
+              }
+            }
           } catch {
             console.log(
               "Invalid Background Color:",
               styles.get("background-color")?.toString() || parentBg
             );
-            newBgColor = "00000000";
-          }
-
-          if (newBgColor && chroma(newBgColor).alpha() > 0) {
-            // Only add if background is different from parent
-            if (newBgColor !== parentBg) {
-              bgColor = chroma(newBgColor).alpha(1).hex();
-              const area = normalize(
-                element.offsetWidth * element.offsetHeight
-              );
-
-              if (!colorData.has(bgColor)) {
-                colorData.set(bgColor, {
-                  textColors: new Map(),
-                  area,
-                });
-              } else {
-                colorData.get(bgColor)!.area += area;
-              }
-            }
           }
         }
 
@@ -488,46 +483,42 @@ export const useEditorStore = create<EditorStore>((set, get) => {
             const parentElement = parentComponent.getEl();
             if (parentElement) {
               const parentStyles = parentElement.computedStyleMap();
-              let textColor;
+              let textColor: string;
               try {
                 textColor = chroma(
                   parentStyles.get("color")?.toString() || ""
                 ).hex();
-              } catch {
-                console.log("Invalid Text Color:", textColor);
-                textColor = "000000";
-              }
-
-              if (textColor && chroma(textColor).alpha() > 0) {
-                // Find palette and background index for parent background
-                const palletIndex = pallet.findIndex((p) =>
-                  p.background.includes(parentBg)
-                );
-                if (palletIndex !== -1) {
-                  const backgroundIndex =
-                    pallet[palletIndex].background.indexOf(parentBg);
-
-                  // Find text color group and index
-                  const contentColorSetIdx = pallet[palletIndex].text.findIndex(
-                    (group) => group.includes(textColor)
+                if (textColor && chroma(textColor).alpha() > 0) {
+                  // Find palette and background index for parent background
+                  const palletIndex = pallet.findIndex((p) =>
+                    p.background.includes(parentBg)
                   );
-                  if (contentColorSetIdx !== -1) {
-                    const contentColorIdx =
-                      pallet[palletIndex].text[contentColorSetIdx].indexOf(
-                        textColor
-                      );
+                  if (palletIndex !== -1) {
+                    const backgroundIndex =
+                      pallet[palletIndex].background.indexOf(parentBg);
 
-                    // Store the mapping
-                    const parentId = parentComponent.getId();
-                    componentToThemeMap.set(parentId, {
-                      palletIndex,
-                      backgroundIndex,
-                      contentColorSetIdx,
-                      contentColorIdx,
-                    });
+                    // Find text color group and index
+                    const contentColorSetIdx = pallet[
+                      palletIndex
+                    ].text.findIndex((group) => group.includes(textColor));
+                    if (contentColorSetIdx !== -1) {
+                      const contentColorIdx =
+                        pallet[palletIndex].text[contentColorSetIdx].indexOf(
+                          textColor
+                        );
+
+                      // Store the mapping
+                      const parentId = parentComponent.getId();
+                      componentToThemeMap.set(parentId, {
+                        palletIndex,
+                        backgroundIndex,
+                        contentColorSetIdx,
+                        contentColorIdx,
+                      });
+                    }
                   }
                 }
-              }
+              } catch {}
             }
           }
         } else if (!isTextNode && element) {
@@ -537,29 +528,32 @@ export const useEditorStore = create<EditorStore>((set, get) => {
           let bgColor: string;
           try {
             bgColor = chroma(rawBg).hex();
+            if (
+              bgColor &&
+              bgColor !== parentBg &&
+              chroma(bgColor).alpha() > 0
+            ) {
+              // Only process if background is different from parent
+              bgColor = chroma(bgColor).alpha(1).hex();
+              // Find palette and background index
+              const palletIndex = pallet.findIndex((p) =>
+                p.background.includes(bgColor)
+              );
+              if (palletIndex !== -1) {
+                const backgroundIndex =
+                  pallet[palletIndex].background.indexOf(bgColor);
+
+                // Store the mapping
+                const componentId = component.getId();
+                componentToThemeMap.set(componentId, {
+                  palletIndex,
+                  backgroundIndex,
+                });
+              }
+              parentBg = bgColor; // Update parent background for children
+            }
           } catch {
             console.log("Invalid Background Color:", rawBg);
-            bgColor = "00000000";
-          }
-          if (bgColor && bgColor !== parentBg && chroma(bgColor).alpha() > 0) {
-            // Only process if background is different from parent
-            bgColor = chroma(bgColor).alpha(1).hex();
-            // Find palette and background index
-            const palletIndex = pallet.findIndex((p) =>
-              p.background.includes(bgColor)
-            );
-            if (palletIndex !== -1) {
-              const backgroundIndex =
-                pallet[palletIndex].background.indexOf(bgColor);
-
-              // Store the mapping
-              const componentId = component.getId();
-              componentToThemeMap.set(componentId, {
-                palletIndex,
-                backgroundIndex,
-              });
-            }
-            parentBg = bgColor; // Update parent background for children
           }
         }
 

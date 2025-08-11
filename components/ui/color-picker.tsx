@@ -105,7 +105,8 @@ export function ColorPicker({
                     presetColors?.map((color) => (
                       <div
                         key={color}
-                        className="size-6 rounded-md shadow-md"
+                        className="size-6 rounded-md shadow-md cursor-pointer"
+                        onClick={() => handleColorChange(color)}
                         style={{ backgroundColor: color }}
                       />
                     ))}

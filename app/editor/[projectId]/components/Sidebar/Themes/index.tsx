@@ -1,10 +1,13 @@
 "use client";
 
+import { motion } from "framer-motion";
 import { useShallow } from "zustand/react/shallow";
 import { useEditorStore } from "../../../store";
 import { Theme } from "../../../types";
-import ThemeCard from "./ThemeCard";
-import { RemixDialog } from "@/components/ui/remix-dialog";
+// import ThemeCard from "./ThemeCard";
+// import { RemixDialog } from "@/components/ui/remix-dialog";
+// import { Button } from "@/components/ui/button";
+// import { Edit } from "lucide-react";
 
 const themes: Theme[] = [
   {
@@ -95,13 +98,21 @@ const Themes = () => {
   );
 
   const handleApplyTheme = (theme: Theme) => {
-    console.log(theme);
     setTheme(theme);
   };
 
   return (
-    <div className="h-full flex flex-col">
-      <div className="p-4 grow">
+    <div className="h-full flex flex-col overflow-y-hidden">
+      <motion.div
+        className="p-4 overflow-y-auto flex-1"
+        style={{
+          scrollbarWidth: "thin",
+          scrollbarColor: "#26272B #18191A",
+        }}
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.3, ease: "easeOut" }}
+      >
         <div className="grid grid-cols-2 gap-4 items-start">
           {themes.map((theme, index) => (
             <button
@@ -129,8 +140,8 @@ const Themes = () => {
             </button>
           ))}
         </div>
-      </div>
-      <div className="p-4 flex ">
+      </motion.div>
+      {/* <div className="p-4 flex gap-4">
         <RemixDialog className="grow">
           <div className="text-zinc-100 space-y-4">
             <p className="text-sm text-zinc-400">
@@ -163,8 +174,14 @@ const Themes = () => {
             </div>
           </div>
         </RemixDialog>
-        <div>hello</div>
-      </div>
+        <Button
+          variant="outline"
+          className="h-full w-10 cursor-pointer"
+          size="icon"
+        >
+          <Edit className="size-4 text-zinc-900" />
+        </Button>
+      </div> */}
     </div>
   );
 };

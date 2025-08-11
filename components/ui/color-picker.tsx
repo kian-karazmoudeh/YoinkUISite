@@ -102,9 +102,9 @@ export function ColorPicker({
               {presetColors && (
                 <div className="flex flex-wrap gap-2 mt-2">
                   {presetColors &&
-                    presetColors?.map((color) => (
+                    presetColors?.map((color, index) => (
                       <div
-                        key={color}
+                        key={index}
                         className="size-6 rounded-md shadow-md cursor-pointer"
                         onClick={() => handleColorChange(color)}
                         style={{ backgroundColor: color }}

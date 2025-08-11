@@ -308,6 +308,7 @@ export const useEditorStore = create<EditorStore>((set, get) => {
 
         // Get background color
         let bgColor = parentBg;
+        let tempColor = "";
 
         if (isTextNode && element) {
           // For text nodes: get color from parent and get area
@@ -384,6 +385,106 @@ export const useEditorStore = create<EditorStore>((set, get) => {
             console.log(
               "Invalid Background Color:",
               styles.get("background-color")?.toString() || parentBg
+            );
+          }
+
+          let borderLeftColor;
+          try {
+            borderLeftColor = chroma(
+              styles.get("border-left-color")?.toString() || ""
+            ).hex();
+            if (borderLeftColor && chroma(borderLeftColor).alpha() > 0) {
+              // Only add if background is different from parent
+              if (borderLeftColor !== parentBg) {
+                tempColor = chroma(borderLeftColor).alpha(1).hex();
+
+                if (!colorData.has(tempColor)) {
+                  colorData.set(tempColor, {
+                    textColors: new Map(),
+                    area: 0,
+                  });
+                }
+              }
+            }
+          } catch {
+            console.log(
+              "Invalid Border Left Color:",
+              styles.get("border-left-color")?.toString()
+            );
+          }
+
+          let borderRightColor;
+          try {
+            borderRightColor = chroma(
+              styles.get("border-right-color")?.toString() || ""
+            ).hex();
+            if (borderRightColor && chroma(borderRightColor).alpha() > 0) {
+              // Only add if background is different from parent
+              if (borderRightColor !== parentBg) {
+                tempColor = chroma(borderRightColor).alpha(1).hex();
+
+                if (!colorData.has(tempColor)) {
+                  colorData.set(tempColor, {
+                    textColors: new Map(),
+                    area: 0,
+                  });
+                }
+              }
+            }
+          } catch {
+            console.log(
+              "Invalid Border Right Color:",
+              styles.get("border-right-color")?.toString()
+            );
+          }
+
+          let borderTopColor;
+          try {
+            borderTopColor = chroma(
+              styles.get("border-top-color")?.toString() || ""
+            ).hex();
+            if (borderTopColor && chroma(borderTopColor).alpha() > 0) {
+              // Only add if background is different from parent
+              if (borderTopColor !== parentBg) {
+                tempColor = chroma(borderTopColor).alpha(1).hex();
+
+                if (!colorData.has(tempColor)) {
+                  colorData.set(tempColor, {
+                    textColors: new Map(),
+                    area: 0,
+                  });
+                }
+              }
+            }
+          } catch {
+            console.log(
+              "Invalid Border Top Color:",
+              styles.get("border-top-color")?.toString()
+            );
+          }
+
+          let borderBottomColor;
+          try {
+            borderBottomColor = chroma(
+              styles.get("border-bottom-color")?.toString() || ""
+            ).hex();
+            if (borderBottomColor && chroma(borderBottomColor).alpha() > 0) {
+              // Only add if background is different from parent
+              if (borderBottomColor !== parentBg) {
+                tempColor = chroma(borderBottomColor).alpha(1).hex();
+
+                if (!colorData.has(tempColor)) {
+                  colorData.set(tempColor, {
+                    textColors: new Map(),
+                    area: 0,
+                  });
+                }
+              }
+            }
+          } catch {
+            console.log(
+              "Invalid Border Bottom Color:",
+              styles.get("border-bottom-color")?.toString()
             );
           }
         }
@@ -494,9 +595,6 @@ export const useEditorStore = create<EditorStore>((set, get) => {
                     p.background.includes(parentBg)
                   );
                   if (palletIndex !== -1) {
-                    const backgroundIndex =
-                      pallet[palletIndex].background.indexOf(parentBg);
-
                     // Find text color group and index
                     const contentColorSetIdx = pallet[
                       palletIndex
@@ -506,12 +604,13 @@ export const useEditorStore = create<EditorStore>((set, get) => {
                         pallet[palletIndex].text[contentColorSetIdx].indexOf(
                           textColor
                         );
+                      const existingContentColorSetIdx =
+                        componentToThemeMap.get(parentComponent.getId()) || {};
 
                       // Store the mapping
-                      const parentId = parentComponent.getId();
-                      componentToThemeMap.set(parentId, {
+                      componentToThemeMap.set(parentComponent.getId(), {
+                        ...existingContentColorSetIdx,
                         palletIndex,
-                        backgroundIndex,
                         contentColorSetIdx,
                         contentColorIdx,
                       });
@@ -525,6 +624,14 @@ export const useEditorStore = create<EditorStore>((set, get) => {
           // For non-text nodes: map background colors
           const styles = element.computedStyleMap();
           const rawBg = styles.get("background-color")?.toString() || parentBg;
+          const rawBorderLeft =
+            styles.get("border-left-color")?.toString() || "";
+          const rawBorderRight =
+            styles.get("border-right-color")?.toString() || "";
+          const rawBorderTop = styles.get("border-top-color")?.toString() || "";
+          const rawBorderBottom =
+            styles.get("border-bottom-color")?.toString() || "";
+
           let bgColor: string;
           try {
             bgColor = chroma(rawBg).hex();
@@ -554,6 +661,189 @@ export const useEditorStore = create<EditorStore>((set, get) => {
             }
           } catch {
             console.log("Invalid Background Color:", rawBg);
+          }
+
+          let borderLeftColor: string;
+          try {
+            borderLeftColor = chroma(rawBorderLeft).hex();
+
+            if (borderLeftColor && chroma(borderLeftColor).alpha() > 0) {
+              // Only process if background is different from parent
+              borderLeftColor = chroma(borderLeftColor).alpha(1).hex();
+
+              // Find palette and background index
+              const borderLeftColorPalletIndex = pallet.findIndex((p) =>
+                p.background.includes(borderLeftColor)
+              );
+              if (component.getId() === "i6ze6") {
+                console.log("borderLeftColorPalletIndex");
+                console.log(borderLeftColorPalletIndex);
+              }
+              if (borderLeftColorPalletIndex !== -1) {
+                const borderLeftColorIndex =
+                  pallet[borderLeftColorPalletIndex].background.indexOf(
+                    borderLeftColor
+                  );
+                const existingBorderLeftColorIndex =
+                  componentToThemeMap.get(component.getId()) || {};
+
+                // Store the mapping
+                if (borderLeftColorIndex > -1) {
+                  if (component.getId() === "i6ze6") {
+                    console.log({
+                      ...existingBorderLeftColorIndex,
+                      borderLeftColorPalletIndex,
+                      borderLeftColorIndex,
+                    });
+                  }
+                  const componentId = component.getId();
+                  componentToThemeMap.set(componentId, {
+                    ...existingBorderLeftColorIndex,
+                    borderLeftColorPalletIndex,
+                    borderLeftColorIndex,
+                  });
+                }
+              }
+            }
+          } catch {
+            console.log("Invalid Border Left Color:", rawBorderLeft);
+          }
+
+          let borderRightColor: string;
+          try {
+            borderRightColor = chroma(rawBorderRight).hex();
+
+            if (borderRightColor && chroma(borderRightColor).alpha() > 0) {
+              // Only process if background is different from parent
+              borderRightColor = chroma(borderRightColor).alpha(1).hex();
+
+              // Find palette and background index
+              const borderRightColorPalletIndex = pallet.findIndex((p) =>
+                p.background.includes(borderRightColor)
+              );
+              if (component.getId() === "i6ze6") {
+                console.log("borderRightColorPalletIndex");
+                console.log(borderRightColorPalletIndex);
+              }
+              if (borderRightColorPalletIndex !== -1) {
+                const borderRightColorIndex =
+                  pallet[borderRightColorPalletIndex].background.indexOf(
+                    borderRightColor
+                  );
+                const existingBorderRightColorIndex =
+                  componentToThemeMap.get(component.getId()) || {};
+
+                // Store the mapping
+                if (borderRightColorIndex > -1) {
+                  if (component.getId() === "i6ze6") {
+                    console.log({
+                      ...existingBorderRightColorIndex,
+                      borderRightColorPalletIndex,
+                      borderRightColorIndex,
+                    });
+                  }
+                  const componentId = component.getId();
+                  componentToThemeMap.set(componentId, {
+                    ...existingBorderRightColorIndex,
+                    borderRightColorPalletIndex,
+                    borderRightColorIndex,
+                  });
+                }
+              }
+            }
+          } catch {
+            console.log("Invalid Border Left Color:", rawBorderLeft);
+          }
+          let borderTopColor: string;
+          try {
+            borderTopColor = chroma(rawBorderTop).hex();
+
+            if (borderTopColor && chroma(borderTopColor).alpha() > 0) {
+              // Only process if background is different from parent
+              borderTopColor = chroma(borderTopColor).alpha(1).hex();
+
+              // Find palette and background index
+              const borderTopColorPalletIndex = pallet.findIndex((p) =>
+                p.background.includes(borderTopColor)
+              );
+              if (component.getId() === "i6ze6") {
+                console.log("borderTopColorPalletIndex");
+                console.log(borderTopColorPalletIndex);
+              }
+              if (borderTopColorPalletIndex !== -1) {
+                const borderTopColorIndex =
+                  pallet[borderTopColorPalletIndex].background.indexOf(
+                    borderTopColor
+                  );
+                const existingBorderTopColorIndex =
+                  componentToThemeMap.get(component.getId()) || {};
+
+                // Store the mapping
+                if (borderTopColorIndex > -1) {
+                  if (component.getId() === "i6ze6") {
+                    console.log({
+                      ...existingBorderTopColorIndex,
+                      borderTopColorPalletIndex,
+                      borderTopColorIndex,
+                    });
+                  }
+                  const componentId = component.getId();
+                  componentToThemeMap.set(componentId, {
+                    ...existingBorderTopColorIndex,
+                    borderTopColorPalletIndex,
+                    borderTopColorIndex,
+                  });
+                }
+              }
+            }
+          } catch {
+            console.log("Invalid Border Top Color:", rawBorderTop);
+          }
+
+          let borderBottomColor: string;
+          try {
+            borderBottomColor = chroma(rawBorderBottom).hex();
+
+            if (borderBottomColor && chroma(borderBottomColor).alpha() > 0) {
+              // Only process if background is different from parent
+              borderBottomColor = chroma(borderBottomColor).alpha(1).hex();
+
+              // Find palette and background index
+              const borderBottomColorPalletIndex = pallet.findIndex((p) =>
+                p.background.includes(borderBottomColor)
+              );
+              if (component.getId() === "i6ze6") {
+                console.log("borderBottomColorPalletIndex");
+                console.log(borderBottomColorPalletIndex);
+              }
+              if (borderBottomColorPalletIndex !== -1) {
+                const borderBottomColorIndex =
+                  pallet[borderBottomColorPalletIndex].background.indexOf(
+                    borderBottomColor
+                  );
+                const existingBorderBottomColorIndex =
+                  componentToThemeMap.get(component.getId()) || {};
+
+                // Store the mapping
+                if (borderBottomColorIndex > -1) {
+                  if (component.getId() === "i6ze6") {
+                    console.log({
+                      ...existingBorderBottomColorIndex,
+                      borderBottomColorPalletIndex,
+                      borderBottomColorIndex,
+                    });
+                  }
+                  const componentId = component.getId();
+                  componentToThemeMap.set(componentId, {
+                    ...existingBorderBottomColorIndex,
+                    borderBottomColorPalletIndex,
+                    borderBottomColorIndex,
+                  });
+                }
+              }
+            }
+          } catch {
+            console.log("Invalid Border Left Color:", rawBorderLeft);
           }
         }
 
@@ -625,8 +915,19 @@ export const useEditorStore = create<EditorStore>((set, get) => {
           backgroundIndex,
           contentColorSetIdx,
           contentColorIdx,
+          borderLeftColorPalletIndex,
+          borderLeftColorIndex,
+          borderRightColorPalletIndex,
+          borderRightColorIndex,
+          borderTopColorPalletIndex,
+          borderTopColorIndex,
+          borderBottomColorPalletIndex,
+          borderBottomColorIndex,
         } = componentTheme;
-        const palette = updatedTheme.pallet[palletIndex];
+        let palette;
+        if (palletIndex !== undefined) {
+          palette = updatedTheme.pallet[palletIndex];
+        }
 
         if (palette) {
           // Apply background color (use backgroundIndex from palette)
@@ -648,6 +949,45 @@ export const useEditorStore = create<EditorStore>((set, get) => {
           ) {
             component.setStyle({
               color: palette.text[contentColorSetIdx][contentColorIdx],
+            });
+          }
+
+          if (
+            borderLeftColorPalletIndex !== undefined &&
+            borderLeftColorIndex !== undefined
+          ) {
+            component.setStyle({
+              "border-left-color":
+                palette.background[borderLeftColorPalletIndex],
+            });
+          }
+
+          if (
+            borderRightColorPalletIndex !== undefined &&
+            borderRightColorIndex !== undefined
+          ) {
+            component.setStyle({
+              "border-right-color":
+                palette.background[borderRightColorPalletIndex],
+            });
+          }
+
+          if (
+            borderTopColorPalletIndex !== undefined &&
+            borderTopColorIndex !== undefined
+          ) {
+            component.setStyle({
+              "border-top-color": palette.background[borderTopColorPalletIndex],
+            });
+          }
+
+          if (
+            borderBottomColorPalletIndex !== undefined &&
+            borderBottomColorIndex !== undefined
+          ) {
+            component.setStyle({
+              "border-bottom-color":
+                palette.background[borderBottomColorPalletIndex],
             });
           }
         }

@@ -13,8 +13,16 @@ export interface Pallet {
 export type ColorSet = string[];
 
 export interface ThemeRef {
-  palletIndex: number;
+  palletIndex?: number;
   backgroundIndex?: number;
   contentColorSetIdx?: number;
   contentColorIdx?: number;
+  borderLeftColorPalletIndex?: number;
+  borderLeftColorIndex?: number;
+  borderRightColorPalletIndex?: number;
+  borderRightColorIndex?: number;
+  borderTopColorPalletIndex?: number;
+  borderTopColorIndex?: number;
+  borderBottomColorPalletIndex?: number;
+  borderBottomColorIndex?: number;
 }

@@ -26,18 +26,22 @@ export function ColorPicker({
   const [inputValue, setInputValue] = useState(value);
   const popoverRef = useRef<HTMLDivElement>(null);
 
-  const { selectedComponents, currentDevice, theme } = useEditorStore(
+  const { selectedComponents, currentDevice } = useEditorStore(
     useShallow((state) => ({
       selectedComponents: state.selectedComponents,
       currentDevice: state.currentDevice,
-      theme: state.theme,
     }))
   );
 
   useEffect(() => {
-    const parsedColor = chroma(value).hex();
-    setColorValue(parsedColor);
-    setInputValue(parsedColor);
+    try {
+      const parsedColor = chroma(value).hex();
+      setColorValue(parsedColor);
+      setInputValue(parsedColor);
+    } catch {
+      setColorValue("#000000");
+      setInputValue("#000000");
+    }
   }, [value, selectedComponents, currentDevice]);
 
   useEffect(() => {

@@ -40,8 +40,17 @@ const DraggableInput = ({
       e.preventDefault();
       setIsDragging(true);
       setStartX(e.clientX);
-      setStartValue(0);
-      document.body.style.userSelect = "none";
+
+      // Extract numeric value from localValue (e.g. "10px" -> 10)
+      const numericValue = parseFloat(localValue);
+      // Use current value if valid, otherwise start from 0
+      setStartValue(isNaN(numericValue) ? 0 : numericValue);
+
+      // Disable pointer events on gjs-container and user selection
+      const container = document.getElementById("gjs-container");
+      if (container) {
+        container.style.pointerEvents = "none";
+      }
     },
     [localValue]
   );
@@ -66,7 +75,11 @@ const DraggableInput = ({
 
   const handleMouseUp = useCallback(() => {
     setIsDragging(false);
-    document.body.style.userSelect = "";
+    // Reset pointer events on gjs-container
+    const container = document.getElementById("gjs-container");
+    if (container) {
+      container.style.pointerEvents = "auto";
+    }
   }, []);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {

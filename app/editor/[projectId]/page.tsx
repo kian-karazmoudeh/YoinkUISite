@@ -115,6 +115,15 @@ export default function EditorPage() {
               .update({ content_url: `${currentUser.id}/${data.id}.json` })
               .eq("id", data.id);
           });
+
+          const parser = editor?.Parser;
+          if (parser) {
+            console.log(
+              parser.parseHtml(
+                "<div style='background-color: red;'>hello</div>"
+              )
+            );
+          }
         }
       }
     };

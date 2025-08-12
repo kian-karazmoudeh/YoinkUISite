@@ -1,7 +1,7 @@
 "use client";
 
 import { Block } from "grapesjs";
-import { useEditorStore } from "../../store";
+import { useEditorStore } from "../../../store";
 import { useShallow } from "zustand/react/shallow";
 import { motion } from "framer-motion";
 
@@ -38,7 +38,7 @@ const Blocks = () => {
   const categoryNames = Object.keys(categories);
 
   return (
-    <div className="flex-1 p-6 overflow-hidden flex flex-col h-full min-h-0">
+    <div className="flex-1 overflow-hidden flex flex-col h-full min-h-0">
       <motion.div
         className="flex-1 overflow-y-auto"
         style={{

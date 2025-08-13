@@ -67,9 +67,36 @@ export const blocks = [
     label: "Testtt",
     category: "Basic",
     content: {
-      attributes: {
-        style:
-          'margin-top: 80px; margin-right: auto; margin-bottom: 80px; margin-left: auto; padding-top: 32px; padding-right: 32px; padding-bottom: 32px; padding-left: 32px; background-color: rgb(253, 253, 255); color: rgb(0, 0, 0); width: 600px; border-top-right-radius: 8px; border-top-left-radius: 8px; border-bottom-right-radius: 8px; border-bottom-left-radius: 8px; border-top-width: 0px; border-top-color: rgb(0, 0, 0); border-right-width: 0px; border-right-color: rgb(0, 0, 0); border-bottom-width: 0px; border-bottom-color: rgb(0, 0, 0); border-left-width: 0px; border-left-color: rgb(0, 0, 0); box-shadow: rgba(0, 0, 0, 0.02) 2px 3px 7px 2px; font-family: -apple-system, system-ui, BlinkMacSystemFont, "Segoe UI", "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif, system-ui, sans-serif; font-variant: normal; text-decoration-color: rgb(0, 0, 0); word-spacing: 0px;',
+      style: {
+        "margin-top": "80px",
+        "margin-right": "auto",
+        "margin-bottom": "80px",
+        "margin-left": "auto",
+        "padding-top": "32px",
+        "padding-right": "32px",
+        "padding-bottom": "32px",
+        "padding-left": "32px",
+        "background-color": "rgb(253, 253, 255)",
+        color: "rgb(0, 0, 0)",
+        width: "600px",
+        "border-top-right-radius": "8px",
+        "border-top-left-radius": "8px",
+        "border-bottom-right-radius": "8px",
+        "border-bottom-left-radius": "8px",
+        "border-top-width": "0px",
+        "border-top-color": "rgb(0, 0, 0)",
+        "border-right-width": "0px",
+        "border-right-color": "rgb(0, 0, 0)",
+        "border-bottom-width": "0px",
+        "border-bottom-color": "rgb(0, 0, 0)",
+        "border-left-width": "0px",
+        "border-left-color": "rgb(0, 0, 0)",
+        "box-shadow": "rgba(0, 0, 0, 0.02) 2px 3px 7px 2px",
+        "font-family":
+          '-apple-system, system-ui, BlinkMacSystemFont, "Segoe UI", "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif, system-ui, sans-serif',
+        "font-variant": "normal",
+        "text-decoration-color": "rgb(0, 0, 0)",
+        "word-spacing": "0px",
       },
       tagName: "div",
       components: [
@@ -78,10 +105,8 @@ export const blocks = [
           content: "\n    ",
         },
         {
-          attributes: {
-            style:
-              'margin-top: 21.44px; margin-bottom: 21.44px; color: rgb(0, 0, 0); border-top-width: 0px; border-top-color: rgb(0, 0, 0); border-right-width: 0px; border-right-color: rgb(0, 0, 0); border-bottom-width: 0px; border-bottom-color: rgb(0, 0, 0); border-left-width: 0px; border-left-color: rgb(0, 0, 0); font-family: -apple-system, system-ui, BlinkMacSystemFont, "Segoe UI", "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif, system-ui, sans-serif; font-variant: normal; font-weight: 700; font-size: 32px; text-decoration-color: rgb(0, 0, 0); word-spacing: 0px;',
-          },
+          style:
+            'margin-top: 21.44px; margin-bottom: 21.44px; color: rgb(0, 0, 0); border-top-width: 0px; border-top-color: rgb(0, 0, 0); border-right-width: 0px; border-right-color: rgb(0, 0, 0); border-bottom-width: 0px; border-bottom-color: rgb(0, 0, 0); border-left-width: 0px; border-left-color: rgb(0, 0, 0); font-family: -apple-system, system-ui, BlinkMacSystemFont, "Segoe UI", "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif, system-ui, sans-serif; font-variant: normal; font-weight: 700; font-size: 32px; text-decoration-color: rgb(0, 0, 0); word-spacing: 0px;',
           tagName: "h1",
           components: [
             {
@@ -95,10 +120,8 @@ export const blocks = [
           content: "\n    ",
         },
         {
-          attributes: {
-            style:
-              'margin-top: 16px; margin-bottom: 16px; color: rgb(0, 0, 0); border-top-width: 0px; border-top-color: rgb(0, 0, 0); border-right-width: 0px; border-right-color: rgb(0, 0, 0); border-bottom-width: 0px; border-bottom-color: rgb(0, 0, 0); border-left-width: 0px; border-left-color: rgb(0, 0, 0); font-family: -apple-system, system-ui, BlinkMacSystemFont, "Segoe UI", "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif, system-ui, sans-serif; font-variant: normal; text-decoration-color: rgb(0, 0, 0); word-spacing: 0px;',
-          },
+          style:
+            'margin-top: 16px; margin-bottom: 16px; color: rgb(0, 0, 0); border-top-width: 0px; border-top-color: rgb(0, 0, 0); border-right-width: 0px; border-right-color: rgb(0, 0, 0); border-bottom-width: 0px; border-bottom-color: rgb(0, 0, 0); border-left-width: 0px; border-left-color: rgb(0, 0, 0); font-family: -apple-system, system-ui, BlinkMacSystemFont, "Segoe UI", "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif, system-ui, sans-serif; font-variant: normal; text-decoration-color: rgb(0, 0, 0); word-spacing: 0px;',
           tagName: "p",
           components: [
             {
@@ -120,10 +143,10 @@ export const blocks = [
           tagName: "p",
           components: [
             {
+              style:
+                'color: rgb(56, 72, 143); border-top-width: 0px; border-top-color: rgb(56, 72, 143); border-right-width: 0px; border-right-color: rgb(56, 72, 143); border-bottom-width: 0px; border-bottom-color: rgb(56, 72, 143); border-left-width: 0px; border-left-color: rgb(56, 72, 143); display: inline; font-family: -apple-system, system-ui, BlinkMacSystemFont, "Segoe UI", "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif, system-ui, sans-serif; font-variant: normal; cursor: pointer; outline-color: rgb(56, 72, 143); text-decoration-color: rgb(56, 72, 143); word-spacing: 0px;',
               attributes: {
                 href: "https://www.iana.org/domains/example",
-                style:
-                  'color: rgb(56, 72, 143); border-top-width: 0px; border-top-color: rgb(56, 72, 143); border-right-width: 0px; border-right-color: rgb(56, 72, 143); border-bottom-width: 0px; border-bottom-color: rgb(56, 72, 143); border-left-width: 0px; border-left-color: rgb(56, 72, 143); display: inline; font-family: -apple-system, system-ui, BlinkMacSystemFont, "Segoe UI", "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif, system-ui, sans-serif; font-variant: normal; cursor: pointer; outline-color: rgb(56, 72, 143); text-decoration-color: rgb(56, 72, 143); word-spacing: 0px;',
               },
               tagName: "a",
               components: [

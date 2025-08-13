@@ -31,7 +31,7 @@ export default function EditorPage() {
     setYoinkCreatorId,
     resetStore,
     setDefaultBgColor,
-    calculateThemes,
+    // calculateThemes,
   } = useEditorStore();
 
   useEffect(() => {
@@ -89,9 +89,9 @@ export default function EditorPage() {
       if (yoinkContent) {
         editor?.once("component:mount", () => {
           setIsLoading(false);
-          setTimeout(() => {
-            calculateThemes();
-          }, 700);
+          // setTimeout(() => {
+          //   calculateThemes();
+          // }, 700);
         });
         editor?.setComponents(yoinkContent);
 
@@ -109,21 +109,20 @@ export default function EditorPage() {
 
           window.history.pushState(null, "", `/editor/${data.id}`);
 
-          editor?.store().then(() => {
-            supabase
-              .from("yoinks")
-              .update({ content_url: `${currentUser.id}/${data.id}.json` })
-              .eq("id", data.id);
-          });
+          editor?.store();
 
-          const parser = editor?.Parser;
-          if (parser) {
-            console.log(
-              parser.parseHtml(
-                "<div style='background-color: red;'>hello</div>"
-              )
-            );
-          }
+          // .then(async () => {
+          //   const {
+          //     data: updatedData,
+          //     error: updatedError,
+          //     status,
+          //   } = await supabase
+          //     .from("yoinks")
+          //     .update({ content_url: `${currentUser.id}/${data.id}.json` })
+          //     .eq("id", data.id);
+
+          //   console.log(updatedData, updatedError, status);
+          // });
         }
       }
     };
@@ -144,7 +143,7 @@ export default function EditorPage() {
 
       editor?.load().then(() => {
         setIsLoading(false);
-        calculateThemes();
+        // calculateThemes();
       });
     } else if (projectId == "new" && user && editor && yoinkContent) {
       createNewYoink(user);

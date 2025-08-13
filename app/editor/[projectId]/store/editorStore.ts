@@ -163,14 +163,13 @@ export const useEditorStore = create<EditorStore>((set, get) => {
           async store(data) {
             try {
               const supabase = createClient();
-              // IMPORTANT: window.projectId must be set by the main page before initializing the editor
 
               const filePath = `${get().yoinkCreatorId}/${get().yoinkId}.json`;
               // Convert data to string if needed
               const fileContent =
                 typeof data === "string" ? data : JSON.stringify(data);
               const { error } = await supabase.storage
-                .from("yoink-content")
+                .from("yoink-content-test")
                 .upload(filePath, fileContent, {
                   upsert: true,
                   contentType: "application/json",
@@ -180,7 +179,7 @@ export const useEditorStore = create<EditorStore>((set, get) => {
                 return { error: error.message };
               }
 
-              supabase
+              await supabase
                 .from("yoinks")
                 .update({
                   updated_at: new Date().toISOString(),
@@ -205,7 +204,7 @@ export const useEditorStore = create<EditorStore>((set, get) => {
               const supabase = createClient();
               const filePath = `${get().yoinkCreatorId}/${get().yoinkId}.json`;
               const { data: fileData, error } = await supabase.storage
-                .from("yoink-content")
+                .from("yoink-content-test")
                 .download(filePath);
               if (error || !fileData) {
                 console.error("Error downloading project:", error?.message);
@@ -213,6 +212,87 @@ export const useEditorStore = create<EditorStore>((set, get) => {
               }
               const textContent = JSON.parse(await fileData.text());
               return textContent;
+              // return {
+              //   type: "wrapper",
+              //   components: [
+              //     {
+              //       attributes: {
+              //         style:
+              //           "margin-top: 80px; margin-right: auto; margin-bottom: 80px; margin-left: auto; padding-top: 32px; padding-right: 32px; padding-bottom: 32px; padding-left: 32px; color: rgb(0, 0, 0); width: 600px; border-top-right-radius: 8px; border-top-left-radius: 8px; border-bottom-right-radius: 8px; border-bottom-left-radius: 8px; border-top-width: 0px; border-top-color: rgb(0, 0, 0); border-right-width: 0px; border-right-color: rgb(0, 0, 0); border-bottom-width: 0px; border-bottom-color: rgb(0, 0, 0); border-left-width: 0px; border-left-color: rgb(0, 0, 0); box-shadow: rgba(0, 0, 0, 0.02) 2px 3px 7px 2px; font-variant: normal; text-decoration-color: rgb(0, 0, 0); word-spacing: 0px;",
+              //       },
+              //       tagName: "div",
+              //       components: [
+              //         {
+              //           type: "textnode",
+              //           content: "\n    ",
+              //         },
+              //         {
+
+              //           attributes: {
+              //             style:
+              //               'margin-top: 21.44px; margin-bottom: 21.44px; color: rgb(0, 0, 0); border-top-width: 0px; border-top-color: rgb(0, 0, 0); border-right-width: 0px; border-right-color: rgb(0, 0, 0); border-bottom-width: 0px; border-bottom-color: rgb(0, 0, 0); border-left-width: 0px; border-left-color: rgb(0, 0, 0); font-family: -apple-system, system-ui, BlinkMacSystemFont, "Segoe UI", "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif, system-ui, sans-serif; font-variant: normal; font-weight: 700; font-size: 32px; text-decoration-color: rgb(0, 0, 0); word-spacing: 0px;',
+              //           },
+              //           tagName: "h1",
+              //           components: [
+              //             {
+              //               type: "textnode",
+              //               content: "Example Domain",
+              //             },
+              //           ],
+              //         },
+              //         {
+              //           type: "textnode",
+              //           content: "\n    ",
+              //         },
+              //         {
+              //           attributes: {
+              //             style:
+              //               'margin-top: 16px; margin-bottom: 16px; color: rgb(0, 0, 0); border-top-width: 0px; border-top-color: rgb(0, 0, 0); border-right-width: 0px; border-right-color: rgb(0, 0, 0); border-bottom-width: 0px; border-bottom-color: rgb(0, 0, 0); border-left-width: 0px; border-left-color: rgb(0, 0, 0); font-family: -apple-system, system-ui, BlinkMacSystemFont, "Segoe UI", "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif, system-ui, sans-serif; font-variant: normal; text-decoration-color: rgb(0, 0, 0); word-spacing: 0px;',
+              //           },
+              //           tagName: "p",
+              //           components: [
+              //             {
+              //               type: "textnode",
+              //               content:
+              //                 "This domain is for use in illustrative examples in documents. You may use this\n    domain in literature without prior coordination or asking for permission.",
+              //             },
+              //           ],
+              //         },
+              //         {
+              //           type: "textnode",
+              //           content: "\n    ",
+              //         },
+              //         {
+              //           attributes: {
+              //             style:
+              //               'margin-top: 16px; margin-bottom: 16px; color: rgb(0, 0, 0); border-top-width: 0px; border-top-color: rgb(0, 0, 0); border-right-width: 0px; border-right-color: rgb(0, 0, 0); border-bottom-width: 0px; border-bottom-color: rgb(0, 0, 0); border-left-width: 0px; border-left-color: rgb(0, 0, 0); font-family: -apple-system, system-ui, BlinkMacSystemFont, "Segoe UI", "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif, system-ui, sans-serif; font-variant: normal; text-decoration-color: rgb(0, 0, 0); word-spacing: 0px;',
+              //           },
+              //           tagName: "p",
+              //           components: [
+              //             {
+              //               attributes: {
+              //                 href: "https://www.iana.org/domains/example",
+              //                 style:
+              //                   'color: rgb(56, 72, 143); border-top-width: 0px; border-top-color: rgb(56, 72, 143); border-right-width: 0px; border-right-color: rgb(56, 72, 143); border-bottom-width: 0px; border-bottom-color: rgb(56, 72, 143); border-left-width: 0px; border-left-color: rgb(56, 72, 143); display: inline; font-family: -apple-system, system-ui, BlinkMacSystemFont, "Segoe UI", "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif, system-ui, sans-serif; font-variant: normal; cursor: pointer; outline-color: rgb(56, 72, 143); text-decoration-color: rgb(56, 72, 143); word-spacing: 0px;',
+              //               },
+              //               tagName: "a",
+              //               components: [
+              //                 {
+              //                   type: "textnode",
+              //                   content: "More information...",
+              //                 },
+              //               ],
+              //             },
+              //           ],
+              //         },
+              //         {
+              //           type: "textnode",
+              //           content: "\n",
+              //         },
+              //       ],
+              //     },
+              //   ],
+              // };
             } catch (err: unknown) {
               const errorMessage =
                 err instanceof Error ? err.message : String(err);

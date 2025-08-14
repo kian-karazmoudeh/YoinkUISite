@@ -89,9 +89,16 @@ export const useBlockCategories = (editor: Editor | null) => {
     categories[category].push(block);
   });
 
+  // Sort categories to put "imported" at the top if it exists
+  const categoryNames = Object.keys(categories).sort((a, b) => {
+    if (a.toLowerCase() === "imported") return -1;
+    if (b.toLowerCase() === "imported") return 1;
+    return a.localeCompare(b);
+  });
+
   return {
     categories,
-    categoryNames: Object.keys(categories),
+    categoryNames,
   };
 };
 

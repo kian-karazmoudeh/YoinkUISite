@@ -14,9 +14,9 @@ export const CategoryBlock = ({
     <div className="mb-6">
       <button
         onClick={() => onToggleCollapse(category)}
-        className="flex items-center justify-between w-full text-left py-2 px-1 rounded-md hover:bg-gray-800/50 transition-colors duration-200"
+        className="flex items-center justify-between w-full text-left py-2 px-1 rounded-md hover:bg-zinc-900 transition-colors duration-200"
       >
-        <div className="flex items-center gap-2 text-xs font-bold text-gray-400 uppercase tracking-wide">
+        <div className="leading-[16px] text-xs box-border font-medium">
           {category}
         </div>
         <ChevronDown

@@ -5,7 +5,7 @@ import { useEditorStore } from "../../store";
 import { useShallow } from "zustand/react/shallow";
 // import PromotionalCard from "../Promotional/Card";
 import LayerManager from "./LayerManager";
-import Themes from "./Themes";
+// import Themes from "./Themes";
 
 const Sidebar = () => {
   const { activeTab, setActiveTab } = useEditorStore(
@@ -22,10 +22,10 @@ const Sidebar = () => {
           onValueChange={setActiveTab}
           className="flex-1 flex flex-col h-full min-h-0 gap-0"
         >
-          <TabsList className="m-2 bg-[#262728]">
+          <TabsList className="m-2 bg-zinc-900 p-[2px]">
             <TabsTrigger value="blocks">Blocks</TabsTrigger>
             <TabsTrigger value="styles">Styles</TabsTrigger>
-            <TabsTrigger value="themes">Themes</TabsTrigger>
+            {/* <TabsTrigger value="themes">Themes</TabsTrigger> */}
             <TabsTrigger value="layers">Layers</TabsTrigger>
           </TabsList>
           <TabsContent
@@ -40,12 +40,12 @@ const Sidebar = () => {
           >
             <StylesBar />
           </TabsContent>
-          <TabsContent
+          {/* <TabsContent
             value="themes"
             className="flex-1 h-full min-h-0 border-t border-t-[#26272B]"
           >
             <Themes />
-          </TabsContent>
+          </TabsContent> */}
           <TabsContent
             value="layers"
             className="flex-1 h-full min-h-0 border-t border-t-[#26272B]"

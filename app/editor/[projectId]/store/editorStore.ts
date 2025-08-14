@@ -4,14 +4,12 @@ import grapesjs from "grapesjs";
 import "grapesjs/dist/css/grapes.min.css";
 import { getEditorConfig } from "../config/editorConfig";
 import "../styles/editor.css";
-import { DeviceName, Theme, ThemeRef, Pallet } from "../types";
-import { GroupColors } from "../components/Sidebar/Themes/utils/GroupColors";
+import { DeviceName, Theme, ThemeRef } from "../types";
 import { initBaseDefaultStyles } from "../utils/defaultStyles/base";
 import { initTailwindDefaultStyles } from "../utils/defaultStyles/tailwind";
 import { objectToUniversalCss } from "../utils/objectToUniversalCss";
 import { createClient } from "@/utils/supabase/client";
-import { getMergedComponentStyles, normalize } from "../utils/helpers";
-import chroma from "chroma-js";
+import { getMergedComponentStyles } from "../utils/helpers";
 import { ThemeCalculator } from "../utils/theme/ThemeCalculator";
 
 interface EditorState {
@@ -21,6 +19,7 @@ interface EditorState {
   // Yoink metadata
   yoinkId: string | null;
   yoinkName: string | null;
+  yoinkContentUrl: string | null;
   yoinkCreatorId: string | null;
   defaultBgColor: string | undefined;
 
@@ -50,6 +49,7 @@ interface EditorActions {
   // Yoink metadata
   setYoinkId: (id: string) => void;
   setYoinkName: (name: string) => void;
+  setYoinkContentUrl: (url: string) => void;
   setYoinkCreatorId: (id: string) => void;
   setDefaultBgColor: (color: string) => void;
 
@@ -120,6 +120,7 @@ export const useEditorStore = create<EditorStore>((set, get) => {
     defaultTailwindStyles: undefined,
     yoinkId: null,
     yoinkName: null,
+    yoinkContentUrl: null,
     yoinkCreatorId: null,
     theme: { pallet: [] },
     defaultBgColor: undefined,
@@ -163,31 +164,72 @@ export const useEditorStore = create<EditorStore>((set, get) => {
           async store(data) {
             try {
               const supabase = createClient();
+              const state = get();
 
-              const filePath = `${get().yoinkCreatorId}/${get().yoinkId}.json`;
+              if (!state.yoinkCreatorId || !state.yoinkId) {
+                console.error("Missing creator ID or yoink ID");
+                return { error: "Missing creator ID or yoink ID" };
+              }
+
+              // Determine the file path
+              let newFileName: string;
+
+              if (state.yoinkContentUrl) {
+                // delete the previous version
+                supabase.storage
+                  .from("yoink-content-test")
+                  .remove([state.yoinkContentUrl]);
+
+                // If we have an existing content URL, check if it's versioned
+                if (state.yoinkContentUrl.includes("_V")) {
+                  // Extract base name and increment version
+                  const [baseName, version] = state.yoinkContentUrl.split("_V");
+                  const currentVersion = parseInt(version.split(".")[0]);
+                  newFileName = `${baseName}_V${currentVersion + 1}.json`;
+                } else {
+                  // Not versioned, so add _V1 before the extension
+                  if (state.yoinkContentUrl.endsWith(".json")) {
+                    newFileName = state.yoinkContentUrl.replace(
+                      /\.json$/,
+                      "_V1.json"
+                    );
+                  } else {
+                    newFileName = state.yoinkContentUrl + "_V1";
+                  }
+                }
+              } else {
+                return { error: "No content URL found" };
+              }
               // Convert data to string if needed
               const fileContent =
                 typeof data === "string" ? data : JSON.stringify(data);
+
+              // Upload the new version
               const { error } = await supabase.storage
                 .from("yoink-content-test")
-                .upload(filePath, fileContent, {
+                .upload(newFileName, fileContent, {
                   upsert: true,
                   contentType: "application/json",
                 });
+
               if (error) {
                 console.error("Error uploading project:", error.message);
                 return { error: error.message };
               }
 
+              // Update the database record with just the filename
               await supabase
                 .from("yoinks")
                 .update({
                   updated_at: new Date().toISOString(),
-                  content_url: filePath,
+                  content_url: newFileName,
                 })
-                .eq("id", get().yoinkId);
+                .eq("id", state.yoinkId);
 
-              return { result: "success", filePath };
+              // Update the content URL in the store
+              set({ yoinkContentUrl: newFileName });
+
+              return { result: "success", filePath: newFileName };
             } catch (err: unknown) {
               const errorMessage =
                 err instanceof Error ? err.message : String(err);
@@ -202,14 +244,27 @@ export const useEditorStore = create<EditorStore>((set, get) => {
           async load() {
             try {
               const supabase = createClient();
-              const filePath = `${get().yoinkCreatorId}/${get().yoinkId}.json`;
+              const state = get();
+
+              // First try to find the latest version by listing files
+              if (!state.yoinkCreatorId) {
+                console.error("No creator ID found");
+                return {};
+              } else if (!state.yoinkContentUrl) {
+                console.error("No content URL found");
+                return {};
+              }
+
+              // Download the latest version
               const { data: fileData, error } = await supabase.storage
                 .from("yoink-content-test")
-                .download(filePath);
+                .download(state.yoinkContentUrl);
+
               if (error || !fileData) {
                 console.error("Error downloading project:", error?.message);
                 return {};
               }
+
               const textContent = JSON.parse(await fileData.text());
               return textContent;
               // return {
@@ -319,6 +374,7 @@ export const useEditorStore = create<EditorStore>((set, get) => {
         yoinkId: null,
         yoinkName: null,
         yoinkCreatorId: null,
+        yoinkContentUrl: null,
         theme: { pallet: [] },
         currentDevice: "Desktop",
         selectedComponents: [],
@@ -331,6 +387,7 @@ export const useEditorStore = create<EditorStore>((set, get) => {
     // Yoink metadata
     setYoinkId: (id: string) => set({ yoinkId: id }),
     setYoinkName: (name: string) => set({ yoinkName: name }),
+    setYoinkContentUrl: (url: string) => set({ yoinkContentUrl: url }),
     setYoinkCreatorId: (id: string) => set({ yoinkCreatorId: id }),
     setDefaultBgColor: (color: string) => set({ defaultBgColor: color }),
 

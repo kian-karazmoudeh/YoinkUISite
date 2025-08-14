@@ -31,6 +31,7 @@ export default function EditorPage() {
     setYoinkCreatorId,
     resetStore,
     setDefaultBgColor,
+    setYoinkContentUrl,
     // calculateThemes,
   } = useEditorStore();
 
@@ -106,6 +107,7 @@ export default function EditorPage() {
         } else if (data) {
           setYoinkId(data.id);
           setYoinkName(data.name);
+          setYoinkContentUrl(`${currentUser.id}/${data.id}.json`);
 
           window.history.pushState(null, "", `/editor/${data.id}`);
 
@@ -131,20 +133,21 @@ export default function EditorPage() {
       setYoinkId(projectId as string);
       supabase
         .from("yoinks")
-        .select("name")
+        .select("*")
         .eq("id", projectId as string)
         .single()
         .then(({ data }) => {
           if (!data) {
             router.push("/404");
           }
+          console.log("data", data);
+          setYoinkContentUrl(data?.content_url || null);
           setYoinkName(data?.name || "Untitled");
+          editor?.load().then(() => {
+            setIsLoading(false);
+            // calculateThemes();
+          });
         });
-
-      editor?.load().then(() => {
-        setIsLoading(false);
-        // calculateThemes();
-      });
     } else if (projectId == "new" && user && editor && yoinkContent) {
       createNewYoink(user);
     }

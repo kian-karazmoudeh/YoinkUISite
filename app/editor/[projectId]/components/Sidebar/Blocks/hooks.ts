@@ -4,6 +4,7 @@ import { YoinkFile } from "./types";
 import { Block } from "grapesjs";
 import { Editor } from "grapesjs";
 import { pageToBlock } from "./utils";
+import { BUCKET_NAME } from "@/utils/getStorageBucketName";
 
 export const useYoinks = () => {
   const [yoinks, setYoinks] = useState<YoinkFile[]>([]);
@@ -41,7 +42,7 @@ export const useYoinks = () => {
 
     try {
       const { data: fileData, error } = await supabase.storage
-        .from("yoink-content")
+        .from(BUCKET_NAME)
         .download(yoink.content_url);
 
       if (error || !fileData) {
@@ -52,23 +53,6 @@ export const useYoinks = () => {
       const parsedContent = JSON.parse(content);
 
       pageToBlock(parsedContent, editor, yoink);
-
-      // if (parsedContent.pages && parsedContent.pages.length > 0) {
-      //   const frames = parsedContent.pages[0].frames;
-      //   const styles = parsedContent.styles;
-      //   editor.addStyle(styles);
-
-      //   if (frames && frames.length > 0) {
-      //     const firstComponent = frames[0].component;
-      //     if (firstComponent) {
-      //       editor.BlockManager.add(yoink.name, {
-      //         label: yoink.name,
-      //         category: "Imported",
-      //         content: firstComponent.components,
-      //       });
-      //     }
-      //   }
-      // }
     } catch (error) {
       console.error("Error importing yoink:", error);
       throw error;

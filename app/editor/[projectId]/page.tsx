@@ -112,19 +112,6 @@ export default function EditorPage() {
           window.history.pushState(null, "", `/editor/${data.id}`);
 
           editor?.store();
-
-          // .then(async () => {
-          //   const {
-          //     data: updatedData,
-          //     error: updatedError,
-          //     status,
-          //   } = await supabase
-          //     .from("yoinks")
-          //     .update({ content_url: `${currentUser.id}/${data.id}.json` })
-          //     .eq("id", data.id);
-
-          //   console.log(updatedData, updatedError, status);
-          // });
         }
       }
     };

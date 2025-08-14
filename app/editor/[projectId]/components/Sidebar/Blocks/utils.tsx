@@ -1,4 +1,4 @@
-import { Editor, Page, ProjectData } from "grapesjs";
+import { Editor, ProjectData } from "grapesjs";
 import { LayoutGrid, Box, Type, Image } from "lucide-react";
 import { YoinkFile } from "./types";
 

@@ -11,6 +11,7 @@ import { objectToUniversalCss } from "../utils/objectToUniversalCss";
 import { createClient } from "@/utils/supabase/client";
 import { getMergedComponentStyles } from "../utils/helpers";
 import { ThemeCalculator } from "../utils/theme/ThemeCalculator";
+import { BUCKET_NAME } from "@/utils/getStorageBucketName";
 
 interface EditorState {
   // Editor instance
@@ -177,7 +178,7 @@ export const useEditorStore = create<EditorStore>((set, get) => {
               if (state.yoinkContentUrl) {
                 // delete the previous version
                 supabase.storage
-                  .from("yoink-content-test")
+                  .from(BUCKET_NAME)
                   .remove([state.yoinkContentUrl]);
 
                 // If we have an existing content URL, check if it's versioned
@@ -206,7 +207,7 @@ export const useEditorStore = create<EditorStore>((set, get) => {
 
               // Upload the new version
               const { error } = await supabase.storage
-                .from("yoink-content-test")
+                .from(BUCKET_NAME)
                 .upload(newFileName, fileContent, {
                   upsert: true,
                   contentType: "application/json",
@@ -257,7 +258,7 @@ export const useEditorStore = create<EditorStore>((set, get) => {
 
               // Download the latest version
               const { data: fileData, error } = await supabase.storage
-                .from("yoink-content-test")
+                .from(BUCKET_NAME)
                 .download(state.yoinkContentUrl);
 
               if (error || !fileData) {

@@ -1,6 +1,6 @@
 import { Component } from "grapesjs";
 import { Pallet } from "../../types";
-import { ThemeUtils, Logger } from "./ThemeUtils";
+import { ThemeUtils } from "./ThemeUtils";
 import { ThemeRef } from "../../types";
 
 export class ComponentMapper {

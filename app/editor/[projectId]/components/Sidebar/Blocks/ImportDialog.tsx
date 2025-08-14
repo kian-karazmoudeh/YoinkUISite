@@ -1,5 +1,4 @@
 import {
-  Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
@@ -25,7 +24,7 @@ export const ImportDialog = ({
         </DialogTitle>
         <DialogDescription className="text-zinc-400 mt-1">
           Choose a component to import into your project. You can import
-          components you've previously created.
+          components you&apos;ve previously created.
         </DialogDescription>
       </DialogHeader>
       <div className="my-4 space-y-3 max-h-[60vh] overflow-y-auto pr-2">

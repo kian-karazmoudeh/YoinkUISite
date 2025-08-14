@@ -54,11 +54,11 @@ export const pageToBlock = (
       interface Component {
         attributes?: {
           id?: string;
-          [key: string]: any;
+          [key: string]: unknown;
         };
         style?: Record<string, string>;
         components?: Component[] | Component;
-        [key: string]: any;
+        [key: string]: unknown;
       }
 
       // Function to recursively process components and add styles

@@ -1,6 +1,3 @@
-import { Component } from "grapesjs";
-import { Theme, ThemeRef } from "../../types";
-
 export interface ColorData {
   textColors: Map<string, number>;
   area: number;
@@ -25,7 +22,7 @@ export interface ColorMapping {
 }
 
 export class ThemeError extends Error {
-  constructor(message: string, public context: any) {
+  constructor(message: string, public context: unknown) {
     super(message);
     this.name = "ThemeError";
   }

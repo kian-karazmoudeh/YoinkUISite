@@ -484,7 +484,7 @@ export const useEditorStore = create<EditorStore>((set, get) => {
       componentToThemeMap.forEach((componentTheme, componentId) => {
         const wrapper = editor.getWrapper();
         if (!wrapper) return;
-        let component =
+        const component =
           wrapper.getId() === componentId
             ? wrapper
             : wrapper.find(`#${CSS.escape(componentId)}`)[0];

@@ -11,7 +11,7 @@ const SubscribeBtn = ({ className = "", href, onClick }: SubscribeBtnProps) => {
         className
       )}
     >
-      Start Free Trial
+      Upgrade now
     </Link>
   );
 };

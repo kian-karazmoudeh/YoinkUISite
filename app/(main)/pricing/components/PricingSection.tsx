@@ -1,10 +1,9 @@
 "use client";
 
-import BasicCard from "./Cards/BasicCard";
-import EnterpriseCard from "./Cards/EnterpriceCard";
 import { useEffect, useState } from "react";
 import { createClient } from "@/utils/supabase/client";
-import MembershipTypeBtn from "./Btns/MembershipTypeBtn";
+import Yearly from "./Cards/Yearly";
+import Monthly from "./Cards/Monthly";
 
 const PricingSection = () => {
   const [userMembership, setUserMembership] = useState<
@@ -20,10 +19,7 @@ const PricingSection = () => {
     const supabase = createClient();
     supabase.auth
       .getSession()
-      .then(({ data: { session }, error }) => {
-        if (error) {
-          console.log("BYE", error);
-        }
+      .then(({ data: { session } }) => {
         if (session == null) {
           setUserMembership(session);
         } else {
@@ -69,34 +65,17 @@ const PricingSection = () => {
 
   return (
     <div className="max-w-7xl mx-auto px-6 lg:px-8">
-      <div className="mt-6 flex justify-start">
-        <fieldset>
-          <div
-            className="leading-[20px] gap-x-2 text-xs flex text-center font-semibold p-1"
-            id="headlessui-radiogroup-«R1jrn9b»"
-            role="radiogroup"
-          >
-            <MembershipTypeBtn
-              selected={membershipType == "Monthly"}
-              onChange={() => setMembershipType("Monthly")}
-              label="Monthly"
-            />
-            <MembershipTypeBtn
-              selected={membershipType == "Annual"}
-              onChange={() => setMembershipType("Annual")}
-              label="Annually"
-            />
-          </div>
-        </fieldset>
-      </div>
       <div className="mt-16 max-w-md grid-cols-1 grid mx-auto gap-8  lg:max-w-[none] lg:grid-cols-2 lg:mx-[0px]">
-        <BasicCard
-          type={membershipType}
+        <Yearly
           userMembership={userMembership}
           loading={loading}
           setLoading={setLoading}
         />
-        <EnterpriseCard />
+        <Monthly
+          userMembership={userMembership}
+          loading={loading}
+          setLoading={setLoading}
+        />
       </div>
     </div>
   );

@@ -45,14 +45,13 @@ const features: { icon: ReactNode; label: ReactNode }[] = [
 ];
 
 const EnterpriseCard = () => {
-  // console.log(session);
   return (
     <div className="bg-zinc-900 shadow-[_oklch(0.21_0.006_285.885)_0px_0px_0px_1px] p-[26px] rounded-lg">
       <h3
         id="tier-enterprise"
         className="text-white leading-[32px] text-[40px]"
       >
-        Enterprise
+        $19 /mo
       </h3>
       <p className="mt-3 gap-x-1 flex items-baseline">
         <span className="text-zinc-400 leading-[1.11111] tracking-[-0.9px] text-4xl block">

@@ -2,6 +2,7 @@ import { ReactNode } from "react";
 import CurrentPlanBtn from "../Btns/CurrentPlanBtn";
 import LoadingBtn from "../Btns/LoadingBtn";
 import SubscribeBtn from "../Btns/SubscribeBtn";
+import { Badge } from "@/components/ui/badge";
 
 const CheckIcon = () => {
   return (
@@ -59,33 +60,36 @@ const features: { icon: ReactNode; label: ReactNode }[] = [
   },
 ];
 
-const BasicCard = ({
-  type,
-  userMembership,
-  loading,
-  setLoading,
-}: CardProps) => {
+const Yearly = ({ userMembership, loading, setLoading }: CardProps) => {
   return (
-    <div className="shadow-[_oklch(0.92_0.004_286.32)_0px_0px_0px_1px] p-[26px] rounded-lg">
-      <h3 id="tier-free" className="text-zinc-900 leading-[32px] text-[40px]">
-        Premium
+    <div className="shadow-lg border-4 border-sky-700 p-[26px] rounded-lg relative">
+      <div className="absolute -top-4 right-0 left-0 text-sky-700 text-sm font-semibold flex justify-center items-center">
+        <span className="text-white bg-sky-700 text-sm font-semibold py-1 px-3 rounded-full">
+          Most Popular
+        </span>
+      </div>
+      <h3
+        id="tier-free"
+        className="text-zinc-900 leading-[32px] text-2xl font-semibold flex items-center gap-2"
+      >
+        Yearly <Badge variant="success">Save 70%</Badge>
       </h3>
       <p className="mt-3 gap-x-1 flex items-baseline">
-        <span className="text-zinc-600 leading-[1.11111] tracking-[-0.9px] text-4xl block">
-          {type == "Monthly" ? "$29" : "$199"}
+        <span className="text-zinc-900 leading-[1.11111] tracking-[-0.9px] text-4xl block">
+          $5.75
         </span>
-        <span className="text-zinc-600 leading-[24px] text-3xl block">
-          /{type == "Monthly" ? "mo" : "yr"}
+        <span className="text-zinc-500 leading-[24px] text-2xl block">
+          /month
         </span>
       </p>
       <p className="mt-16 text-zinc-800 leading-[18px] text-sm">
-        For curious devs who want to test the waters.
+        For serious developers who want to scale their workflow.
       </p>
       {loading ? (
         <LoadingBtn className="bg-sky-700 text-zinc-50" />
       ) : userMembership != "premium" ? (
         <SubscribeBtn
-          href={paymentLinks[type]}
+          href={paymentLinks["Annual"]}
           onClick={() => setLoading(true)}
         />
       ) : (
@@ -103,4 +107,4 @@ const BasicCard = ({
   );
 };
 
-export default BasicCard;
+export default Yearly;

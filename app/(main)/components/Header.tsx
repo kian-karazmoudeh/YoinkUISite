@@ -1,8 +1,8 @@
 "use client";
 import Squares from "./Squares";
 import AddToChrome from "@/components/AddToChromeBtn";
-import Image from "next/image";
 import { motion, Variants } from "framer-motion";
+import TestimonialSmall from "./TestimonialSmall";
 
 const Header = () => {
   const fadeUpVariants: Variants = {
@@ -49,8 +49,8 @@ const Header = () => {
         />
       </motion.div>
 
-      <div className="max-w-3xl z-[1] relative text-center mx-auto pointer-events-none lg:pb-30 py-32 md:py-48 lg:pt-33 ">
-        <motion.div
+      <div className="max-w-3xl z-[1] relative text-center mx-auto pointer-events-none lg:pb-30 py-32 md:py-48 lg:pt-45 ">
+        {/* <motion.div
           custom={0}
           variants={fadeUpVariants}
           initial="hidden"
@@ -64,7 +64,7 @@ const Header = () => {
             src="/landing/Toolbar.png"
             className="h-12 mb-15"
           />
-        </motion.div>
+        </motion.div> */}
         <motion.div
           custom={0}
           variants={fadeUpVariants}
@@ -89,6 +89,16 @@ const Header = () => {
         <div className="mt-10 gap-y-[10px] grid justify-center items-center">
           <motion.div
             custom={2}
+            variants={fadeUpVariants}
+            initial="hidden"
+            animate="visible"
+          >
+            <TestimonialSmall />
+          </motion.div>
+        </div>
+        <div className="mt-10 gap-y-[10px] grid justify-center items-center">
+          <motion.div
+            custom={3}
             variants={fadeUpVariants}
             initial="hidden"
             animate="visible"

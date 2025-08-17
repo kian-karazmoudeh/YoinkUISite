@@ -3,6 +3,7 @@ import CurrentPlanBtn from "../Btns/CurrentPlanBtn";
 import LoadingBtn from "../Btns/LoadingBtn";
 import SubscribeBtn from "../Btns/SubscribeBtn";
 import { Badge } from "@/components/ui/badge";
+import { paymentLinks } from "./prices";
 
 const CheckIcon = () => {
   return (
@@ -19,19 +20,6 @@ const CheckIcon = () => {
       ></path>
     </svg>
   );
-};
-
-const paymentLinks: Record<"Monthly" | "Annual", string> = {
-  Monthly: `/api/stripe/subscribe/${
-    process.env.NODE_ENV === "development"
-      ? "price_1RqRWsF3W42U01iFUv4A23H6" // dev
-      : "price_1RqSANF3W42U01iFUUpEJuSf" // production
-  }`,
-  Annual: `/api/stripe/subscribe/${
-    process.env.NODE_ENV === "development"
-      ? "price_1RqRXfF3W42U01iFKTZTQSBY" // dev
-      : "price_1RqSAsF3W42U01iFrXVDLXrj" // production
-  }`,
 };
 
 const features: { icon: ReactNode; label: ReactNode }[] = [
@@ -70,20 +58,18 @@ const Yearly = ({ userMembership, loading, setLoading }: CardProps) => {
       </div>
       <h3
         id="tier-free"
-        className="text-zinc-900 leading-[32px] text-2xl font-semibold flex items-center gap-2"
+        className="text-zinc-700 leading-[32px] text-xl font-semibold flex items-center gap-2"
       >
         Yearly <Badge variant="success">Save 70%</Badge>
       </h3>
-      <p className="mt-3 gap-x-1 flex items-baseline">
-        <span className="text-zinc-900 leading-[1.11111] tracking-[-0.9px] text-4xl block">
+      <p className="mt-3 text-zinc-800 leading-[18px] text-sm">
+        For serious developers who want to scale their workflow.
+      </p>
+      <p className="mt-8 gap-x-1 flex items-baseline">
+        <span className="text-zinc-900 leading-[1.11111] tracking-[-0.9px] font-bold text-4xl">
           $5.75
         </span>
-        <span className="text-zinc-500 leading-[24px] text-2xl block">
-          /month
-        </span>
-      </p>
-      <p className="mt-16 text-zinc-800 leading-[18px] text-sm">
-        For serious developers who want to scale their workflow.
+        <span className="text-zinc-500 leading-[24px] text-2xl">/month</span>
       </p>
       {loading ? (
         <LoadingBtn className="bg-sky-700 text-zinc-50" />

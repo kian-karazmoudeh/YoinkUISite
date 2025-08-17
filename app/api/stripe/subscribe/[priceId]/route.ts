@@ -6,7 +6,7 @@ import { DOMAIN } from "@/utils/getDomain";
 const priceIds =
   process.env.NODE_ENV === "development"
     ? ["price_1RqRWsF3W42U01iFUv4A23H6", "price_1RqRXfF3W42U01iFKTZTQSBY"] // testing
-    : ["price_1RqSANF3W42U01iFUUpEJuSf", "price_1RqSAsF3W42U01iFrXVDLXrj"]; // production
+    : ["price_1RwfIFF3W42U01iFG5itktm4", "price_1RwfHlF3W42U01iFuHHHdP8b"]; // production
 
 export async function GET(
   request: NextRequest,
@@ -47,10 +47,6 @@ export async function GET(
       ],
       customer_email: user.email,
       client_reference_id: user.id,
-      allow_promotion_codes: true,
-      subscription_data: {
-        trial_period_days: 3,
-      },
       success_url: `${DOMAIN}/thanks`,
       cancel_url: `${DOMAIN}/pricing`,
     });

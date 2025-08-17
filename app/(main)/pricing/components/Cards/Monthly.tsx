@@ -2,6 +2,7 @@ import { ReactNode } from "react";
 import CurrentPlanBtn from "../Btns/CurrentPlanBtn";
 import LoadingBtn from "../Btns/LoadingBtn";
 import SubscribeBtn from "../Btns/SubscribeBtn";
+import { paymentLinks } from "./prices";
 
 const CheckIcon = () => {
   return (
@@ -18,19 +19,6 @@ const CheckIcon = () => {
       ></path>
     </svg>
   );
-};
-
-const paymentLinks: Record<"Monthly" | "Annual", string> = {
-  Monthly: `/api/stripe/subscribe/${
-    process.env.NODE_ENV === "development"
-      ? "price_1RqRWsF3W42U01iFUv4A23H6" // dev
-      : "price_1RqSANF3W42U01iFUUpEJuSf" // production
-  }`,
-  Annual: `/api/stripe/subscribe/${
-    process.env.NODE_ENV === "development"
-      ? "price_1RqRXfF3W42U01iFKTZTQSBY" // dev
-      : "price_1RqSAsF3W42U01iFrXVDLXrj" // production
-  }`,
 };
 
 const features: { icon: ReactNode; label: ReactNode }[] = [
@@ -64,20 +52,20 @@ const Monthly = ({ userMembership, loading, setLoading }: CardProps) => {
     <div className="border-2 border-zinc-200 p-[26px] rounded-lg relative">
       <h3
         id="tier-free"
-        className="text-zinc-900 leading-[32px] text-2xl font-semibold"
+        className="text-zinc-700 leading-[32px] text-xl font-semibold"
       >
         Monthly
       </h3>
-      <p className="mt-3 gap-x-1 flex items-baseline">
-        <span className="text-zinc-900 leading-[1.11111] tracking-[-0.9px] text-4xl block">
+      <p className="mt-3 text-zinc-800 leading-[18px] text-sm">
+        For serious developers who want to scale their workflow.
+      </p>
+      <p className="mt-8 gap-x-1 flex items-baseline">
+        <span className="text-zinc-900 leading-[1.11111] tracking-[-0.9px] text-4xl font-bold block">
           $19.99
         </span>
         <span className="text-zinc-500 leading-[24px] text-2xl block">
           /month
         </span>
-      </p>
-      <p className="mt-16 text-zinc-800 leading-[18px] text-sm">
-        For serious developers who want to scale their workflow.
       </p>
       {loading ? (
         <LoadingBtn className="bg-zinc-300 text-zinc-900" />

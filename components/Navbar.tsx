@@ -130,7 +130,7 @@ const Navbar = () => {
         transition={{ duration: 0.3, ease: "easeInOut" }}
       >
         <header className="w-full relative">
-          <nav className="text-stone-950 leading-[1.5] font-[Aeonik,_sans-serif] flex justify-between items-center p-2">
+          <nav className="text-stone-950 leading-[1.5] flex justify-between items-center p-2">
             <div className="mt-[-2px] ml-2 grow-[1] flex">
               <Link
                 className="gap-x-[2px] flex items-center cursor-pointer"
@@ -141,10 +141,10 @@ const Navbar = () => {
                   height={28}
                   src="/logo/yoinkUI.svg"
                   alt="YoinkUI Logo"
-                  className="size-7 mt-1 cursor-pointer"
+                  className="size-7 mt-1 cursor-pointer rounded-md"
                 />
 
-                <span className="mt-[6px] leading-[1.55556] text-lg block font-medium cursor-pointer">
+                <span className="mt-[6px] ml-2 leading-[1.55556] text-lg block font-inter font-semibold cursor-pointer">
                   YoinkUI
                 </span>
               </Link>

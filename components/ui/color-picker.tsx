@@ -16,16 +16,9 @@ import { Search } from "lucide-react";
 interface ColorPickerProps {
   value: string;
   onChange: (color: string) => void;
-  className?: string;
-  presetColors?: string[];
 }
 
-export function ColorPicker({
-  value,
-  onChange,
-  className,
-  presetColors,
-}: ColorPickerProps) {
+export function ColorPicker({ value, onChange }: ColorPickerProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [colorValue, setColorValue] = useState<string>("#000000");
   const [inputValue, setInputValue] = useState(value);

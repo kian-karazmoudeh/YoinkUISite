@@ -10,9 +10,6 @@ const PricingSection = () => {
     "free" | "premium" | null
   >(null);
   const [loading, setLoading] = useState<boolean>(true);
-  const [membershipType, setMembershipType] = useState<"Monthly" | "Annual">(
-    "Monthly"
-  );
 
   useEffect(() => {
     setLoading(true);

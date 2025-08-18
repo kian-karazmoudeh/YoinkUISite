@@ -12,6 +12,7 @@ interface DraggableInputProps {
   step?: number;
   onChange?: (value: string) => void;
   icon?: React.ReactNode;
+  unit?: string;
 }
 
 const DraggableInput = ({
@@ -19,6 +20,7 @@ const DraggableInput = ({
   min = 0,
   max,
   step = 1,
+  unit = "px",
   onChange,
   icon,
 }: DraggableInputProps) => {
@@ -66,7 +68,7 @@ const DraggableInput = ({
       } else {
         newValue = Math.max(min, startValue + deltaValue);
       }
-      const newString = `${newValue}px`;
+      const newString = `${newValue}${unit}`;
       setLocalValue(newString);
       onChange?.(newString);
     },

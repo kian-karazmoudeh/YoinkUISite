@@ -101,7 +101,7 @@ const Typography = () => {
               value={styleValues["font-weight"]}
               onValueChange={(val) => updateComponentStyle("font-weight", val)}
             >
-              <SelectTrigger className="w-full">
+              <SelectTrigger className="w-full" size="sm">
                 <SelectValue placeholder="select" />
               </SelectTrigger>
               <SelectContent>

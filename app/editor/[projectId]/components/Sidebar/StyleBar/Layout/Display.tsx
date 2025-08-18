@@ -27,7 +27,7 @@ const Display = () => {
               value={styleValues["display"]}
               onValueChange={(val) => updateComponentStyle("display", val)}
             >
-              <SelectTrigger className="w-full">
+              <SelectTrigger className="w-full" size="sm">
                 <SelectValue placeholder="select" />
               </SelectTrigger>
               <SelectContent>

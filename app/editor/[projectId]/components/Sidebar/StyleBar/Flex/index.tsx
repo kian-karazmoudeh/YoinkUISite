@@ -16,6 +16,23 @@ const FLEX_DIRECTION_BUTTONS: Option[] = [
   { label: "Column", key: "column", icon: ColumnIcon },
 ];
 
+const ALIGN_ITEMS_BUTTONS: { label: string; value: string }[] = [
+  { label: "Flex Start", value: "flex-start" },
+  { label: "Flex End", value: "flex-end" },
+  { label: "Center", value: "center" },
+  { label: "Stretch", value: "stretch" },
+  { label: "Baseline", value: "baseline" },
+];
+
+const JUSTIFY_CONTENT_BUTTONS: { label: string; value: string }[] = [
+  { label: "Flex Start", value: "flex-start" },
+  { label: "Flex End", value: "flex-end" },
+  { label: "Center", value: "center" },
+  { label: "Space Between", value: "space-between" },
+  { label: "Space Around", value: "space-around" },
+  { label: "Space Evenly", value: "space-evenly" },
+];
+
 const Flex = () => {
   const { styleValues, updateComponentStyle } = useEditorStore(
     useShallow((state) => ({
@@ -49,18 +66,17 @@ const Flex = () => {
                 updateComponentStyle("justify-content", val)
               }
             >
-              <SelectTrigger className="w-full">
-                <SelectValue placeholder="select" />
+              <SelectTrigger className="w-full" size="sm">
+                {!JUSTIFY_CONTENT_BUTTONS.some(
+                  (btn) => btn.value == styleValues["justify-content"]
+                ) ? (
+                  <p className="text-zinc-500">Custom</p>
+                ) : (
+                  <SelectValue placeholder="select" />
+                )}
               </SelectTrigger>
               <SelectContent>
-                {[
-                  { label: "Flex Start", value: "flex-start" },
-                  { label: "Flex End", value: "flex-end" },
-                  { label: "Center", value: "center" },
-                  { label: "Space Between", value: "space-between" },
-                  { label: "Space Around", value: "space-around" },
-                  { label: "Space Evenly", value: "space-evenly" },
-                ].map((opt) => (
+                {JUSTIFY_CONTENT_BUTTONS.map((opt) => (
                   <SelectItem value={opt.value} key={opt.value}>
                     {opt.label}
                   </SelectItem>
@@ -78,17 +94,17 @@ const Flex = () => {
               value={styleValues["align-items"]}
               onValueChange={(val) => updateComponentStyle("align-items", val)}
             >
-              <SelectTrigger className="w-full">
-                <SelectValue placeholder="select" />
+              <SelectTrigger className="w-full" size="sm">
+                {!ALIGN_ITEMS_BUTTONS.some(
+                  (btn) => btn.value == styleValues["align-items"]
+                ) ? (
+                  <p className="text-zinc-500">Custom</p>
+                ) : (
+                  <SelectValue placeholder="select" />
+                )}
               </SelectTrigger>
               <SelectContent>
-                {[
-                  { label: "Flex Start", value: "flex-start" },
-                  { label: "Flex End", value: "flex-end" },
-                  { label: "Center", value: "center" },
-                  { label: "Stretch", value: "stretch" },
-                  { label: "Baseline", value: "baseline" },
-                ].map((opt) => (
+                {ALIGN_ITEMS_BUTTONS.map((opt) => (
                   <SelectItem value={opt.value} key={opt.value}>
                     {opt.label}
                   </SelectItem>

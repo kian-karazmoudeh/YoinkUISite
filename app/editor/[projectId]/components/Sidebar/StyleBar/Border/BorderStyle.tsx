@@ -44,7 +44,7 @@ const BorderStyle = () => {
             updateComponentStyle("border-right-style", val);
           }}
         >
-          <SelectTrigger className="w-full">
+          <SelectTrigger className="w-full" size="sm">
             {PatternIcon}
             <SelectValue placeholder="select" />
           </SelectTrigger>
@@ -86,7 +86,7 @@ const BorderStyle = () => {
             updateComponentStyle("border-bottom-left-radius", val);
           }}
         >
-          <SelectTrigger className="w-full">
+          <SelectTrigger className="w-full" size="sm">
             <SquareRoundCorner />
             <SelectValue placeholder="select" />
           </SelectTrigger>

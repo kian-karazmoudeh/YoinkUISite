@@ -185,14 +185,14 @@ export function ColorPicker({
             }}
           >
             <div className="space-y-2">
-              <div className="relative">
+              <div className="sticky top-0">
                 <Search className="absolute left-2 top-1/2 -translate-y-1/2 h-4 w-4 text-zinc-400" />
                 <Input
                   type="text"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   placeholder="Search colors..."
-                  className="flex-1 bg-transparent text-sm border-none text-zinc-50 focus-visible:outline-none focus-visible:ring-0 focus-visible:border-none pl-8"
+                  className="flex-1 bg-[#151515] text-sm border-none text-zinc-50 focus-visible:outline-none focus-visible:ring-0 focus-visible:border-none pl-8"
                 />
               </div>
               <div className="grid gap-2">

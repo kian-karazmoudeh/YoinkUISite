@@ -3,17 +3,10 @@
 import { useState, useRef, useEffect, useMemo } from "react";
 import { HexColorPicker } from "react-colorful";
 import { Input } from "@/components/ui/input";
-import { cn } from "@/lib/utils";
 import { useEditorStore } from "@/app/editor/[projectId]/store";
 import { useShallow } from "zustand/react/shallow";
 import chroma from "chroma-js";
-import {
-  Select,
-  SelectTrigger,
-  SelectValue,
-  SelectContent,
-  SelectItem,
-} from "@/components/ui/select";
+import { Select, SelectTrigger, SelectContent } from "@/components/ui/select";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import colors, {
   DefaultColors,

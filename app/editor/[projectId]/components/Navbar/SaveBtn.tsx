@@ -24,7 +24,8 @@ const SaveBtn = () => {
       onClick={handleSave}
       disabled={isSaving}
       variant="ghost"
-      className="mr-2 cursor-pointer text-zinc-50 bg-zinc-900 hover:bg-zinc-800 border hover:text-text-200 border-zinc-800"
+      className="mr-2 cursor-pointer text-zinc-50 bg-zinc-900 hover:bg-zinc-800 border hover:text-text-200 border-zinc-800 rounded-lg"
+      size="sm"
     >
       <SaveIcon className="w-4 h-4 mr-2" />
       {isSaving ? "Saving..." : "Save"}

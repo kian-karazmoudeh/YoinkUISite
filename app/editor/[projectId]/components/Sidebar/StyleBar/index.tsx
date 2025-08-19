@@ -11,6 +11,7 @@ import Flex from "./Flex";
 import Grid from "./Grid";
 import Border from "./Border";
 import Appearance from "./Appearance";
+import Position from "./Position";
 
 // // Helper: categorize properties and define input types
 // const propertyConfig: PropertyConfigType = {
@@ -536,6 +537,7 @@ export default function StylesBar() {
               <Color />
               <Border />
               <Appearance />
+              <Position />
             </>
           ) : (
             <div className="text-center text-gray-500 italic py-8">

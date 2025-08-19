@@ -68,7 +68,10 @@ const ExportBtn = () => {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button className="cursor-pointer text-zinc-900 bg-zinc-50 hover:bg-zinc-100 border border-zinc-200">
+        <Button
+          className="cursor-pointer text-zinc-900 bg-zinc-50 hover:bg-zinc-100 border border-zinc-200 rounded-lg"
+          size="sm"
+        >
           <Upload className="size-4 mr-2" /> Export
         </Button>
       </DialogTrigger>

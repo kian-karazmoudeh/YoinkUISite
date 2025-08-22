@@ -36,8 +36,8 @@ export function initTailwindDefaultStyles() {
 export function getDefaultTailwindStyles(node: Component) {
   const { defaultTailwindStyles } = useEditorStore.getState();
   if (defaultTailwindStyles) {
-    if (tags.includes(node.getAttributes().tagName)) {
-      return defaultTailwindStyles[node.getAttributes().tagName];
+    if (tags.includes(node.tagName.toLowerCase())) {
+      return defaultTailwindStyles[node.tagName.toLowerCase()];
     } else {
       return defaultTailwindStyles["div"];
     }

@@ -27,7 +27,13 @@ export const ImportDialog = ({
           components you&apos;ve previously created.
         </DialogDescription>
       </DialogHeader>
-      <div className="my-4 space-y-3 max-h-[60vh] overflow-y-auto pr-2">
+      <div
+        className="my-4 space-y-3 max-h-[60vh] overflow-y-auto pr-2"
+        style={{
+          scrollbarWidth: "thin",
+          scrollbarColor: "#26272B #18191A",
+        }}
+      >
         {isLoading ? (
           <div className="flex items-center justify-center py-8">
             <Loader2 className="size-6 animate-spin text-zinc-400" />

@@ -16,7 +16,6 @@ const LandingPage = () => {
       <Navbar />
       <Header />
       <HowItWorks />
-      {/* <Usage /> */}
       <CTA />
       <Footer />
     </div>

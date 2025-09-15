@@ -1,5 +1,6 @@
 import TextCursor from "@/components/ui/TextCursor";
 import Image from "next/image";
+import Demo from "./Demo";
 
 const HowItWorks = () => {
   return (
@@ -13,8 +14,9 @@ const HowItWorks = () => {
             How it works
           </p>
         </div>
+        <Demo />
         <div className="mt-20 mb-16 grid  lg:mb-0 lg:grid-cols-[repeat(2,_minmax(0px,_1fr))] lg:border-y-[0.8px] lg:border-y-zinc-700">
-          <div className="relative  lg:border-r-[0.8px] lg:border-r-zinc-700">
+          <div className="relative lg:border-r-[0.8px] lg:border-r-zinc-700">
             <Image
               width={0}
               height={0}

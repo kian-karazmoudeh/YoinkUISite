@@ -32,7 +32,7 @@ const Header = () => {
   };
 
   return (
-    <div className="relative lg:border-b-[0.8px] lg:border-b-zinc-200">
+    <div className="relative lg:border-b lg:border-b-zinc-200">
       <motion.div
         custom={0}
         variants={fadeDownVariants}
@@ -49,7 +49,7 @@ const Header = () => {
         />
       </motion.div>
 
-      <div className="max-w-3xl z-[1] relative text-center mx-auto pointer-events-none lg:pb-30 py-32 md:py-48 lg:pt-45 ">
+      <div className="max-w-3xl relative text-center mx-auto pointer-events-none lg:pb-30 py-32 md:py-48 lg:pt-45 ">
         {/* <motion.div
           custom={0}
           variants={fadeUpVariants}

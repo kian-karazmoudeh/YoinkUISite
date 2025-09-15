@@ -42,7 +42,7 @@ export default function TestimonialSmall() {
           <Star fill="currentColor" />
         </div>
         <div className="text-gray-700/80 leading-[24px] font-semibold">
-          Loved by <span className="text-[#223d30]">2,000</span> developers{" "}
+          Loved by <span className="text-[#223d30]">2,239</span> developers{" "}
         </div>
       </div>
     </div>

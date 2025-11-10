@@ -2,6 +2,7 @@ import { createClient } from "@supabase/supabase-js";
 import { headers } from "next/headers";
 import { NextRequest, NextResponse } from "next/server";
 import Stripe from "stripe";
+import crypto from "crypto";
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
 const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET!;
@@ -30,7 +31,6 @@ export async function POST(req: NextRequest) {
 
     switch (eventType) {
       case "checkout.session.completed": {
-        // console.log(sessionObject);
         // First payment is successful and a subscription is created (if mode was set to "subscription" in ButtonCheckout)
         // ✅ Grant access to the product
         // Ensure data.object is a Checkout.Session
@@ -49,6 +49,46 @@ export async function POST(req: NextRequest) {
             console.error("Failed to update membership:", error.message);
             throw new Error("Failed to update membership");
           }
+
+          const pixelId = process.env.NEXT_PUBLIC_FB_PIXEL;
+          const conversionApiKey = process.env.FB_CONVERSION_API_KEY;
+          const nowTime = Math.floor(Date.now() / 1000);
+
+          const body = JSON.stringify({
+            data: [
+              {
+                event_name: "Purchase",
+                event_time: nowTime,
+                action_source: "website",
+                user_data: {
+                  external_id: clientReferenceId,
+                  em: crypto
+                    .createHash("sha256")
+                    .update(
+                      sessionObject.customer_email?.trim().toLowerCase() || ""
+                    )
+                    .digest("hex"),
+                },
+                custom_data: {
+                  currency: sessionObject.currency,
+                  value: sessionObject.amount_total,
+                },
+              },
+            ],
+            test_event_code: "TEST2280", // TODO: Remove this before production
+          });
+
+          // send event to Facebook Pixel
+          fetch(
+            `https://graph.facebook.com/v22.0/${pixelId}/events?access_token=${conversionApiKey}`,
+            {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body,
+            }
+          );
         } else {
           console.error("client_reference_id is missing in session");
           throw new Error("client_reference_id is missing in session");

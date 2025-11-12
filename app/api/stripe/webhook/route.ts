@@ -55,27 +55,35 @@ export async function POST(req: NextRequest) {
           const nowTime = Math.floor(Date.now() / 1000);
 
           const body = JSON.stringify({
-            data: [
-              {
-                event_name: "Purchase",
-                event_time: nowTime,
-                action_source: "website",
-                user_data: {
-                  external_id: clientReferenceId,
-                  em: crypto
-                    .createHash("sha256")
-                    .update(
-                      sessionObject.customer_email?.trim().toLowerCase() || ""
-                    )
-                    .digest("hex"),
-                },
-                custom_data: {
-                  currency: sessionObject.currency,
-                  value: sessionObject.amount_total,
-                },
-              },
-            ],
-            test_event_code: "TEST2280", // TODO: Remove this before production
+            ...(() => {
+              const payload: any = {
+                data: [
+                  {
+                    event_name: "Purchase",
+                    event_time: nowTime,
+                    action_source: "website",
+                    user_data: {
+                      external_id: clientReferenceId,
+                      em: crypto
+                        .createHash("sha256")
+                        .update(
+                          sessionObject.customer_email?.trim().toLowerCase() ||
+                            ""
+                        )
+                        .digest("hex"),
+                    },
+                    custom_data: {
+                      currency: sessionObject.currency,
+                      value: sessionObject.amount_total,
+                    },
+                  },
+                ],
+              };
+              if (process.env.NODE_ENV === "development") {
+                payload.test_event_code = process.env.FACEBOOK_TEST_EVENT_CODE;
+              }
+              return payload;
+            })(),
           });
 
           // send event to Facebook Pixel

@@ -92,6 +92,99 @@ export async function POST(req: NextRequest) {
               body,
             }
           );
+
+          const redditPixelId = process.env.REDDIT_PIXEL;
+          const redditAccessToken = process.env.REDDIT_CONVERSION_API_KEY;
+
+          if (redditPixelId && redditAccessToken) {
+            const redditEvent: {
+              event_at: number;
+              action_source: string;
+              type: { tracking_type: string };
+              user: {
+                email?: string;
+                phone_number?: string;
+                external_id?: string;
+              };
+              metadata?: {
+                item_count?: number;
+                currency?: string | null;
+                value?: number;
+                conversion_id?: string | null;
+              };
+            } = {
+              event_at: Date.now(),
+              action_source: "WEBSITE",
+              type: {
+                tracking_type: "Purchase",
+              },
+              metadata: {
+                item_count: 1,
+                currency: sessionObject.currency,
+                value: sessionObject.amount_total || 0,
+                conversion_id: sessionObject.id,
+              },
+              user: {},
+            };
+
+            if (sessionObject.customer_email) {
+              redditEvent.user.email = sessionObject.customer_email
+                .trim()
+                .toLowerCase();
+            }
+
+            if (clientReferenceId) {
+              redditEvent.user.external_id = clientReferenceId;
+            }
+
+            const redditBody = JSON.stringify({
+              data: {
+                events: [redditEvent],
+                test_id:
+                  process.env.NODE_ENV === "development"
+                    ? process.env.REDDIT_TEST_EVENT_CODE
+                    : undefined,
+              },
+            });
+
+            const redditUrl = `https://ads-api.reddit.com/api/v3/pixels/${redditPixelId}/conversion_events`;
+
+            // send conversion to Reddit Ads
+            try {
+              console.log("Reddit API Request:", {
+                url: redditUrl,
+                body: redditBody,
+              });
+
+              const redditResponse = await fetch(redditUrl, {
+                method: "POST",
+                headers: {
+                  "Content-Type": "application/json",
+                  Authorization: `Bearer ${redditAccessToken}`,
+                },
+                body: redditBody,
+              });
+
+              const responseData = await redditResponse.json();
+
+              if (!redditResponse.ok) {
+                console.error("Reddit API Error:", {
+                  status: redditResponse.status,
+                  statusText: redditResponse.statusText,
+                  response: responseData,
+                });
+              }
+            } catch (error) {
+              console.error("Reddit API Request Failed:", {
+                error: error instanceof Error ? error.message : String(error),
+                stack: error instanceof Error ? error.stack : undefined,
+              });
+            }
+          } else {
+            console.warn(
+              "Reddit conversion skipped: missing pixel ID or token"
+            );
+          }
         } else {
           console.error("client_reference_id is missing in session");
           throw new Error("client_reference_id is missing in session");
